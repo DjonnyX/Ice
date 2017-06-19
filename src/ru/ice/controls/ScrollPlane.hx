@@ -71,6 +71,54 @@ class ScrollPlane extends Scroller
 		return get_verticalScrollBarFactory();
 	}
 	
+	private var _horizontalScrollbarOffsetLeft : Float = 0;
+	public var horizontalScrollbarOffsetLeft(get, set) : Float;
+	private function get_horizontalScrollbarOffsetLeft() : Float {
+		return _horizontalScrollbarOffsetLeft;
+	}
+	private function set_horizontalScrollbarOffsetLeft(v:Float) : Float
+	{
+		if (_horizontalScrollbarOffsetLeft != v)
+			_horizontalScrollbarOffsetLeft = v;
+		return get_horizontalScrollbarOffsetLeft();
+	}
+	
+	private var _horizontalScrollbarOffsetRight : Float = 0;
+	public var horizontalScrollbarOffsetRight(get, set) : Float;
+	private function get_horizontalScrollbarOffsetRight() : Float {
+		return _horizontalScrollbarOffsetRight;
+	}
+	private function set_horizontalScrollbarOffsetRight(v:Float) : Float
+	{
+		if (_horizontalScrollbarOffsetRight != v)
+			_horizontalScrollbarOffsetRight = v;
+		return get_horizontalScrollbarOffsetRight();
+	}
+	
+	private var _verticalScrollbarOffsetTop : Float = 0;
+	public var verticalScrollbarOffsetTop(get, set) : Float;
+	private function get_verticalScrollbarOffsetTop() : Float {
+		return _verticalScrollbarOffsetTop;
+	}
+	private function set_verticalScrollbarOffsetTop(v:Float) : Float
+	{
+		if (_verticalScrollbarOffsetTop != v)
+			_verticalScrollbarOffsetTop = v;
+		return get_verticalScrollbarOffsetTop();
+	}
+	
+	private var _verticalScrollbarOffsetBottom : Float = 0;
+	public var verticalScrollbarOffsetBottom(get, set) : Float;
+	private function get_verticalScrollbarOffsetBottom() : Float {
+		return _verticalScrollbarOffsetBottom;
+	}
+	private function set_verticalScrollbarOffsetBottom(v:Float) : Float
+	{
+		if (_verticalScrollbarOffsetBottom != v)
+			_verticalScrollbarOffsetBottom = v;
+		return get_verticalScrollbarOffsetBottom();
+	}
+	
 	private var _defaultHorizontalScrollBarFactory : Function = function() : IScrollBar {
 		return cast new ScrollBar(new ElementData({'name':'sb'}), null, ScrollBar.DIRECTION_HORIZONTAL);
 	}
@@ -314,8 +362,28 @@ class ScrollPlane extends Scroller
 			scrollY();
 	}
 	
+	private var _delayedCall_contentResized:IAnimatable;
+	
+	private function dispose_delayedCall_contentResized() : Void {
+		if (_delayedCall_contentResized != null) {
+			Ice.animator.remove(_delayedCall_contentResized);
+			_delayedCall_contentResized = null;
+		}
+	}
+	
+	private function needDelayed_contentResized(data:Dynamic) : Void 
+	{
+		dispose_delayedCall_contentResized();
+		//_delayedCall_contentResized = Ice.animator.delayCall(_resizeC, 1, [data]);
+	}
+	
 	public override function resizeContent(?data:Dynamic) : Void
 	{
+		/*if (!isDragging) {
+			super.resizeContent(data);
+		} else
+			needDelayed_contentResized(data);
+			*/
 		super.resizeContent(data);
 		resizeScrollBars();
 		if (_horizontalScrollbar != null && !_horizontalScrollbar.isDragging && !_horizontalScrollbar.isOutScrollPosition)
@@ -323,6 +391,15 @@ class ScrollPlane extends Scroller
 		if (_verticalScrollbar != null && !_verticalScrollbar.isDragging && !_verticalScrollbar.isOutScrollPosition)
 			scrollY();
 	}
+	
+	/*private function _resizeC(?data:Dynamic) : Void {
+		super.resizeContent(data);
+		resizeScrollBars();
+		if (_horizontalScrollbar != null && !_horizontalScrollbar.isDragging && !_horizontalScrollbar.isOutScrollPosition)
+			scrollX();
+		if (_verticalScrollbar != null && !_verticalScrollbar.isDragging && !_verticalScrollbar.isOutScrollPosition)
+			scrollY();
+	}*/
 	
 	private function resizeScrollBars() : Void
 	{
@@ -333,7 +410,8 @@ class ScrollPlane extends Scroller
 	private function resizeHorizontalScrollBar() : Void
 	{
 		if (_horizontalScrollbar != null) {
-			_horizontalScrollbar.width = _width;
+			_horizontalScrollbar.x = _horizontalScrollbarOffsetLeft;
+			_horizontalScrollbar.width = _width - _horizontalScrollbarOffsetLeft - _horizontalScrollbarOffsetRight;
 			_horizontalScrollbar.y = _height - _horizontalScrollbar.height;
 		}
 	}
@@ -341,7 +419,8 @@ class ScrollPlane extends Scroller
 	private function resizeVerticalScrollBar() : Void
 	{
 		if (_verticalScrollbar != null) {
-			_verticalScrollbar.height = _height;
+			_verticalScrollbar.y = _verticalScrollbarOffsetTop;
+			_verticalScrollbar.height = _height - _verticalScrollbarOffsetTop - _verticalScrollbarOffsetBottom;
 			_verticalScrollbar.x = _width - _verticalScrollbar.width;
 		}
 	}
@@ -350,12 +429,19 @@ class ScrollPlane extends Scroller
 		if (_horizontalScrollbar != null)
 			_horizontalScrollbar.setScrollPosition(horizontalScrollPosition);
 		updateHorizontalBarriers();
+		dispatchEventWith(Event.SCROLL, true, {direction:'horizontal'});
 	}
 	
 	private override function scrollY() : Void {
 		if (_verticalScrollbar != null)
 			_verticalScrollbar.setScrollPosition(verticalScrollPosition);
 		updateVerticalBarriers();
+		dispatchEventWith(Event.SCROLL, true, {direction:'vertical'});
+	}
+	
+	private override function clearAnimations() : Void {
+		dispose_delayedCall_contentResized();
+		super.clearAnimations();
 	}
 	
 	override public function dispose() : Void

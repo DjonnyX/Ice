@@ -691,9 +691,18 @@ class ScrollBar extends Scroller
 	private override function clearAnimations() : Void
 	{
 		super.clearAnimations();
-		Ice.animator.remove(_wTween);
-		Ice.animator.remove(_hTween);
-		Ice.animator.remove(_helpTween);
+		if (_wTween != null) {
+			Ice.animator.remove(_wTween);
+			_wTween = null;
+		}
+		if (_hTween != null) {
+			Ice.animator.remove(_hTween);
+			_hTween = null;
+		}
+		if (_helpTween != null) {
+			Ice.animator.remove(_helpTween);
+			_helpTween = null;
+		}
 	}
 	
 	public override function resize(?data:ResizeData) : Void {}

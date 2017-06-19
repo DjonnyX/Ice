@@ -67,21 +67,6 @@ class PortfolioScreen extends Screen
 	
 	override public function initialize():Void 
 	{
-		if (App.portfolioModel == null) {
-			var loader:Loader = new Loader('../assets/portfolio.json', {onComplete:function(response:String):Void {
-					App.portfolioModel = cast haxe.Json.parse(response);
-					onLoadData();
-					App.hidePreloader();
-				}
-			});
-			loader.load();
-		} else
-			onLoadData();
-		styleName = DEFAULT_STYLE;
-		super.initialize();
-	}
-	
-	private function onLoadData() : Void {
 		_navigator = new ScreenNavigator();
 		_navigator.styleFactory = _navigatorStyleFactory;
 		addChild(_navigator);
@@ -89,10 +74,10 @@ class PortfolioScreen extends Screen
 		_transitionManager = new TransitionManager(_navigator);
 		_transitionManager.isInvert = true;
 		
-		var galleryScreenItem:ScreenNavigatorItem = new ScreenNavigatorItem(PortfolioGalleryScreen, null, {data: cast(App.portfolioModel, Array<Dynamic>)});
+		var galleryScreenItem:ScreenNavigatorItem = new ScreenNavigatorItem(PortfolioGalleryScreen, null, {data: cast(App.portfolioData, Array<Dynamic>)});
 		_navigator.addScreen(ScreenTypes.PORTFOLIO_GALLERY, galleryScreenItem);
 		
-		for (i in App.portfolioModel) {
+		for (i in App.portfolioData) {
 			var gallery:Array<Dynamic> = cast i.gallery;
 			for (j in gallery) {
 				var screenName:String = cast j.screenName;
@@ -105,6 +90,9 @@ class PortfolioScreen extends Screen
 			_navigator.showScreen(_requestedScreen);
 		else
 			_navigator.showScreen(ScreenTypes.PORTFOLIO_GALLERY);
+		
+		styleName = DEFAULT_STYLE;
+		super.initialize();
 	}
 	
 	public override function dispose() : Void {

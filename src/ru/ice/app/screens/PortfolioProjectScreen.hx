@@ -9,6 +9,7 @@ import ru.ice.controls.Header;
 
 import ru.ice.controls.super.IceControl;
 import ru.ice.controls.ScrollPlane;
+import ru.ice.controls.Header;
 import ru.ice.data.ElementData;
 import ru.ice.controls.Screen;
 import ru.ice.app.events.EventTypes;
@@ -25,6 +26,21 @@ class PortfolioProjectScreen extends Screen
 	private var _plane:ScrollPlane;
 	private var _backButton:Button;
 	private var _content:IceControl;
+	private var _header:IceControl;
+	
+	private var _headerStyleFactory:Function;
+	public var headerStyleFactory(get, set) : Function;
+	private function set_headerStyleFactory(v:Function) : Function {
+		if (_headerStyleFactory != v) {
+			_headerStyleFactory = v;
+			if (_header != null)
+				_header.styleFactory = v;
+		}
+		return get_headerStyleFactory();
+	}
+	private function get_headerStyleFactory() : Function {
+		return _headerStyleFactory;
+	}
 	
 	private var _planeStyleFactory:Function;
 	public var planeStyleFactory(get, set) : Function;
@@ -79,7 +95,7 @@ class PortfolioProjectScreen extends Screen
 	
 	public override function initialize() : Void {
 		_plane = new ScrollPlane();
-		//_plane.addEventListener(Event.SCROLL, planeScrollHandler);
+		_plane.addEventListener(Event.SCROLL, planeScrollHandler);
 		addChild(_plane);
 		
 		_plane.addDelayedItemFactory(function() : DisplayObject {
@@ -89,13 +105,20 @@ class PortfolioProjectScreen extends Screen
 			return _plane.addItem(_content);
 		});
 		
+		_header = new IceControl();
+		addChild(_header);
+		
 		_backButton = new Button();
 		_backButton.styleFactory = _backButtonStyleFactory;
 		_backButton.addEventListener(Event.TRIGGERED, backButtonTriggeredHandler);
-		addChild(_backButton);
+		_header.addChild(_backButton);
 		
 		styleName = DEFAULT_STYLE;
 		super.initialize();
+	}
+	
+	private function planeScrollHandler(e:Event) : Void {
+		//_backButton.visible = _plane.verticalScrollPosition > 0;
 	}
 	
 	private function backButtonTriggeredHandler(e:Event) : Void {
@@ -111,12 +134,16 @@ class PortfolioProjectScreen extends Screen
 			_backButton.removeFromParent(true);
 			_backButton = null;
 		}
+		if (_header != null) {
+			_header.removeFromParent(true);
+			_header = null;
+		}
 		if (_content != null) {
 			_content.removeFromParent(true);
 			_content = null;
 		}
 		if (_plane != null) {
-			//_plane.removeEventListener(Event.SCROLL, planeScrollHandler);
+			_plane.removeEventListener(Event.SCROLL, planeScrollHandler);
 			_plane.removeFromParent(true);
 			_plane = null;
 		}

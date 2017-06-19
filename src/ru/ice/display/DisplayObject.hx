@@ -256,7 +256,7 @@ class DisplayObject extends DOMExpress
 	}
 	private function set_width(v:Float) : Float {
 		if (_isSvg) {
-			if (_width != v) {
+			if (_width != v && v >= 0) {
 				_width = v;
 				setSvgParams(_svg, {width:v});
 			}
@@ -276,7 +276,7 @@ class DisplayObject extends DOMExpress
 	}
 	private function set_height(v:Float) : Float {
 		if (_isSvg) {
-			if (_height != v) {
+			if (_height != v && v >= 0) {
 				_height = v;
 				setSvgParams(_svg, {height:v});
 			}

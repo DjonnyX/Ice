@@ -382,7 +382,6 @@ class Scroller extends BaseStatesControl
 	
 	public function resizeContent(?data:ResizeData) : Void
 	{
-		trace('resize content');
 		if (!_isDragging && _isTweensComplete)
 			clearAnimations();
 		resetScrollParams();
@@ -708,12 +707,12 @@ class Scroller extends BaseStatesControl
 	
 	private function scrollX() : Void {
 		updateHorizontalBarriers();
-		dispatchEventWith(Event.SCROLL, false, {direction:'horizontal'});
+		dispatchEventWith(Event.SCROLL, true, {direction:'horizontal'});
 	}
 	
 	private function scrollY() : Void {
 		updateVerticalBarriers();
-		dispatchEventWith(Event.SCROLL, false, {direction:'vertical'});
+		dispatchEventWith(Event.SCROLL, true, {direction:'vertical'});
 	}
 	
 	private function updateHorizontalBarriers() : Void {
@@ -1025,6 +1024,7 @@ class Scroller extends BaseStatesControl
 	
 	override public function dispose() : Void
 	{
+		clearAnimations();
 		_barrierStyleFactory = null;
 		removeEventListener(WheelScrollEvent.SCROLL, wheelScrollHandler);
 		stopScrolling();
@@ -1074,10 +1074,62 @@ class Barrier extends IceControl
 	}
 	private function set_barrierColor(v:String):String {
 		if (_barrierColor != v) {
-			_barrierColor = v;
+			_barrierColor = _barrierTopColor = _barrierBottomColor = _barrierLeftColor = _barrierRightColor = v;
 			updateBarriers();
 		}
 		return get_barrierColor();
+	}
+	
+	private var _barrierTopColor:String = 'rgb(0,0,0)';
+	public var barrierTopColor(get, set):String;
+	private function get_barrierTopColor():String{
+		return _barrierTopColor;
+	}
+	private function set_barrierTopColor(v:String):String {
+		if (_barrierTopColor != v) {
+			_barrierTopColor = v;
+			updateTopBarrier();
+		}
+		return get_barrierTopColor();
+	}
+	
+	private var _barrierBottomColor:String = 'rgb(0,0,0)';
+	public var barrierBottomColor(get, set):String;
+	private function get_barrierBottomColor():String{
+		return _barrierBottomColor;
+	}
+	private function set_barrierBottomColor(v:String):String {
+		if (_barrierBottomColor != v) {
+			_barrierBottomColor = v;
+			updateBottomBarrier();
+		}
+		return get_barrierBottomColor();
+	}
+	
+	private var _barrierLeftColor:String = 'rgb(0,0,0)';
+	public var barrierLeftColor(get, set):String;
+	private function get_barrierLeftColor():String{
+		return _barrierLeftColor;
+	}
+	private function set_barrierLeftColor(v:String):String {
+		if (_barrierLeftColor != v) {
+			_barrierLeftColor = v;
+			updateLeftBarrier();
+		}
+		return get_barrierLeftColor();
+	}
+	
+	private var _barrierRightColor:String = 'rgb(0,0,0)';
+	public var barrierRightColor(get, set):String;
+	private function get_barrierRightColor():String{
+		return _barrierColor;
+	}
+	private function set_barrierRightColor(v:String):String {
+		if (_barrierRightColor != v) {
+			_barrierRightColor = v;
+			updateRightBarrier();
+		}
+		return get_barrierRightColor();
 	}
 	
 	private var _left:SVGElement;
@@ -1187,7 +1239,7 @@ class Barrier extends IceControl
 		v.x2 = _leftTension;
 		v.y3 = _height;
 		v.y2 = _height * .5;
-		applyVertex(_left, v);
+		applyVertex(_left, v, _barrierLeftColor);
 	}
 	
 	private function updateRightBarrier() : Void {
@@ -1197,7 +1249,7 @@ class Barrier extends IceControl
 		v.x2 = _width - _rightTension;
 		v.y3 = _height;
 		v.y2 = _height * .5;
-		applyVertex(_right, v);
+		applyVertex(_right, v, _barrierRightColor);
 	}
 	
 	private function updateTopBarrier() : Void {
@@ -1206,7 +1258,7 @@ class Barrier extends IceControl
 		v.x2 = _width * .5;
 		v.x3 = _width;
 		v.y2 = _topTension;
-		applyVertex(_top, v);
+		applyVertex(_top, v, _barrierTopColor);
 	}
 	
 	private function updateBottomBarrier() : Void {
@@ -1216,11 +1268,12 @@ class Barrier extends IceControl
 		v.y1 = v.y3 = _height;
 		v.x2 = _width * .5;
 		v.x3 = _width;
-		applyVertex(_bottom, v);
+		trace('_barrierBottomColor = ' + _barrierBottomColor);
+		applyVertex(_bottom, v, _barrierBottomColor);
 	}
 	
-	private function applyVertex(barrier:SVGElement, v:{x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float}) : Void {
-		setSvgParams(barrier, {d:'M' + v.x1 + ',' + v.y1 + 'C' + v.x1 + ',' + v.y1 + ' ' + v.x2 + ',' + v.y2 + ' ' + v.x3 + ',' + v.y3, fill:_barrierColor/*, filter:'url(#f1)'*/});
+	private function applyVertex(barrier:SVGElement, v:{x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float}, color:String) : Void {
+		setSvgParams(barrier, {d:'M' + v.x1 + ',' + v.y1 + 'C' + v.x1 + ',' + v.y1 + ' ' + v.x2 + ',' + v.y2 + ' ' + v.x3 + ',' + v.y3, fill:color/*, filter:'url(#f1)'*/});
 	}
 	
 	public override function setSize(width:Float, height:Float) : Void {

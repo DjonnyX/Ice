@@ -35,7 +35,7 @@ class App extends Screen
 {
 	public static inline var DEFAULT_STYLE:String = 'app-default-style';
 	
-	public static var portfolioModel:Array<Dynamic>;
+	public static var portfolioData:Array<Dynamic>;
 	public static var mainData:Dynamic;
 	
 	private var _menuPanelStyleFactory:Function;
@@ -167,7 +167,37 @@ class App extends Screen
 		
 		var loader:Loader = new Loader('../assets/main.json', {onComplete:function(response:String) : Void {
 				mainData = cast haxe.Json.parse(response);
-				onLoadData();
+				loadingPortfolio();
+			}
+		});
+		loader.load();
+	}
+	
+	private function loadingPortfolio() : Void {
+		var totalLoadingItems:Int = 0;
+		var loadedItemsCount:Int = 0;
+		var loader:Loader = new Loader('../assets/portfolio.json', {
+			onComplete:function(response:String) : Void {
+				portfolioData = cast haxe.Json.parse(response);
+				for (i in portfolioData) {
+					var gallery:Array<Dynamic> = cast i.gallery;
+					for (j in gallery) {
+						totalLoadingItems ++;
+						var description:Dynamic = j.description;
+						var contentUrl:String = cast description.contentUrl;
+						var loader1:Loader = new Loader('../' + contentUrl, {
+							onComplete:function(response1:String) : Void {
+								description.content = response1;
+								loadedItemsCount ++;
+								if (loadedItemsCount == totalLoadingItems)
+									onLoadData();
+							}
+						});
+						loader1.load();
+					}
+				}
+				if (loadedItemsCount == totalLoadingItems)
+					onLoadData();
 			}
 		});
 		loader.load();
@@ -209,13 +239,20 @@ class App extends Screen
 		_navigator.isClipped = true;
 		_contentContainer.addChild(_navigator);
 		
-		var portfolioScreenItem:ScreenNavigatorItem = new ScreenNavigatorItem(PortfolioScreen);
-		portfolioScreenItem.setScreenIDForEvent(ScreenTypes.ABOUT_ME, ScreenTypes.ABOUT_ME);
-		_navigator.addScreen(ScreenTypes.PORTFOLIO, portfolioScreenItem);
-		
 		var aboutMeScreenItem:ScreenNavigatorItem = new ScreenNavigatorItem(AboutMeScreen);
 		aboutMeScreenItem.setScreenIDForEvent(ScreenTypes.PORTFOLIO, ScreenTypes.PORTFOLIO);
+		aboutMeScreenItem.setScreenIDForEvent(ScreenTypes.CONTACTS, ScreenTypes.CONTACTS);
 		_navigator.addScreen(ScreenTypes.ABOUT_ME, aboutMeScreenItem);
+		
+		var portfolioScreenItem:ScreenNavigatorItem = new ScreenNavigatorItem(PortfolioScreen);
+		portfolioScreenItem.setScreenIDForEvent(ScreenTypes.ABOUT_ME, ScreenTypes.ABOUT_ME);
+		portfolioScreenItem.setScreenIDForEvent(ScreenTypes.CONTACTS, ScreenTypes.CONTACTS);
+		_navigator.addScreen(ScreenTypes.PORTFOLIO, portfolioScreenItem);
+		
+		var contactsScreenItem:ScreenNavigatorItem = new ScreenNavigatorItem(PortfolioScreen);
+		aboutMeScreenItem.setScreenIDForEvent(ScreenTypes.PORTFOLIO, ScreenTypes.PORTFOLIO);
+		portfolioScreenItem.setScreenIDForEvent(ScreenTypes.ABOUT_ME, ScreenTypes.ABOUT_ME);
+		_navigator.addScreen(ScreenTypes.CONTACTS, contactsScreenItem);
 		
 		_transitionManager = new TabBarTransitionManager(_navigator, _tabBar);
 		
@@ -230,6 +267,8 @@ class App extends Screen
 		 * По цепи идет переход на нужный экран.
 		 */
 		Browser.window.onhashchange = watchHashChanged;
+		
+		hidePreloader();
 	}
 	
 	private function watchHashChanged() : Void {
@@ -280,6 +319,8 @@ class App extends Screen
 			return 0;
 		if (name == ScreenTypes.PORTFOLIO)
 			return 1;
+		if (name == ScreenTypes.CONTACTS)
+			return 2;
 		return -1;
 	}
 	

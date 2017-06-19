@@ -96,11 +96,11 @@ class RockGalleryItemRenderer extends BaseStatesControl
 	
 	private function createHeader() : Void {
 		if (_header == null) {
-			_header = new Header();
+			/*_header = new Header();
 			_header.interactive = false;
 			_header.innerHTML = _data.title;
 			_header.styleFactory = _headerStyleFactory;
-			addChild(_header);
+			addChild(_header);*/
 		}
 	}
 	

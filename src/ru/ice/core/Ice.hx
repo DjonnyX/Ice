@@ -72,6 +72,7 @@ class Ice
 	{
 		Capabilities.initialize();
 		stage = new Stage(new ElementData({name:name, style:Dynamic}));
+		stage.fps = 100;
 		stage.add(main);
 	}
 	

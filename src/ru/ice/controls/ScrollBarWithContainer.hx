@@ -237,6 +237,7 @@ class ScrollBarWithContainer extends BaseStatesControl implements IScrollBar {
 	public override function dispose() : Void {
 		removeEventListener(WheelScrollEvent.SCROLL, wheelScrollHandler);
 		if (_scrollBar != null) {
+			_scrollBar.removeEventListener(Event.SCROLL, scrollHandler);
 			_scrollBar.removeEventListeners();
 			_scrollBar.removeFromParent(true);
 			_scrollBar = null;

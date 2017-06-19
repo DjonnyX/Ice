@@ -154,7 +154,7 @@ class AppTheme extends Theme
 	
 	private function setAppMenuPanelTabBarItemRendererStyle(renderer:TabBarItemRenderer) : Void {
 		renderer.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_SELF);
-		renderer.height = 50;
+		renderer.height = 64;
 		renderer.buttonFactory = function(renderer:Button) : Void {
 			renderer.style = {'z-index':TABBAR_DEPTH};
 			renderer.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_PARENT);
@@ -167,8 +167,9 @@ class AppTheme extends Theme
 			renderer.addClass(['mp-tabbar-button']);
 			renderer.setPivot('center', 'center');
 			renderer.labelInitializedStyleFactory = function(label:Label) : Void {
+				label.snapTo(IceControl.SNAP_TO_CONTENT, IceControl.SNAP_TO_CONTENT);
 				label.addClass(['mp-tabbar-button-label']);
-				label.wordwap = false;
+				label.wordwap = true;
 			}
 			renderer.iconInitializedStyleFactory = function(icon:Label) : Void {
 				icon.addClass(['mp-item-renderer-icon']);
@@ -387,8 +388,8 @@ class AppTheme extends Theme
 		}
 		plane.barrierStyleFactory = function(barrier:Barrier) : Void {
 			barrier.emitResizeEvents = false;
-			barrier.barrierColor = 'rgb(59,53,48)';
-			barrier.maxTension = 24;
+			barrier.barrierColor = 'rgb(220,220,220)';
+			barrier.maxTension = 54;
 		}
 		plane.delayedBuilderStyleFactory = function(delayedBuilder:DelayedBuilder) : Void {
 			delayedBuilder.delay = .001;
@@ -513,7 +514,7 @@ class AppTheme extends Theme
 		renderer.setPivot('center', 'center');
 		var btnTween:IAnimatable = null;
 		renderer.labelInitializedStyleFactory = function(label:Label) : Void {
-			label.addClass(['i-label']);
+			label.addClass(['i-animated-button-label']);
 			label.wordwap = true;
 		}
 		renderer.contentBoxStyleFactory = function(box:IceControl) : Void {
@@ -778,6 +779,47 @@ class AppTheme extends Theme
 		screen.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_PARENT);
 		screen.planeStyleFactory = function(plane:ScrollPlane) : Void {
 			setPortfolioScreenScrollPlaneStyle(plane);
+			
+			plane.horizontalScrollBarStyleFactory = function(renderer:IScrollBar) : Void {
+				setHorizontalScrollbarStyle(renderer);
+				renderer.style = {'z-index':99999999999999999};
+			}
+			plane.verticalScrollBarStyleFactory = function(renderer:IScrollBar) : Void {
+				setVerticalScrollbarStyle(renderer);
+				renderer.style = {'z-index':99999999999999999};
+			}
+			
+			plane.contentStyleFactory = function(content:IceControl) : Void {
+				content.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_CONTENT);
+				var vLayout:VerticalLayout = new VerticalLayout();
+				vLayout.horizontalAlign = VerticalLayout.HORIZONTAL_ALIGN_JUSTIFY;
+				vLayout.paddingLeft = 30;
+				vLayout.paddingRight = 30;
+				vLayout.paddingTop = 64;
+				vLayout.paddingBottom = 30;
+				vLayout.verticalGap = 40;
+				content.layout = vLayout;
+			}
+			plane.verticalScrollbarOffsetBottom = 0;
+			plane.verticalScrollbarOffsetTop = 0;// 64;
+			
+			plane.barrierStyleFactory = function(barrier:Barrier) : Void {
+				barrier.emitResizeEvents = false;
+				barrier.barrierTopColor = 'rgb(0,0,0)';
+				barrier.barrierBottomColor = 'rgb(220,220,220)';
+				barrier.maxTension = 54;
+			}
+		}
+		
+		screen.headerStyleFactory = function(header:IceControl) : Void {
+			header.includeInLayout = false;
+			header.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_SELF);
+			header.addClass(['app-portfolio-project-header']);
+			header.isClipped = true;
+			var vLayoutParams:VerticalLayoutParams = new VerticalLayoutParams();
+			vLayoutParams.fitHeight = VerticalLayoutParams.NO_FIT;
+			header.layoutParams = vLayoutParams;
+			header.height = 64;
 		}
 		
 		screen.contentStyleFactory = function(content:IceControl) : Void {
@@ -787,10 +829,10 @@ class AppTheme extends Theme
 		screen.backButtonStyleFactory = function(button:Button) : Void {
 			setAnimatedButtonStyle(button);
 			button.includeInLayout = false;
-			button.height = 60;
-			button.width = 60;
-			button.x = 20;
-			button.y = 20;
+			button.height = 54;
+			button.width = 54;
+			button.x = 10;
+			button.y = 5;
 			button.icon = ['icon-arrow-left-24', 'back-button-icon'];
 		}
 	}
