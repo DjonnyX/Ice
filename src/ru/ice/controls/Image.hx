@@ -163,7 +163,6 @@ class Image extends IceControl
 			if (!_isFirstResizedImg) {
 				_isFirstResizedImg = true;
 				resizeImage();
-				this.dispatchEventWith(Event.RESIZE, true);
 			}
 		}
 	}

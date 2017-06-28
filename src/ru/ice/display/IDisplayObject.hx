@@ -26,7 +26,7 @@ interface IDisplayObject extends IDOMExpress
 	public var scaleX(get, set):Float;
 	public var scaleY(get, set):Float;
 	public var rotate(get, set):Float;
-	private function resetTransformation(sx:Float, sy:Float, r:Float) : Void;
+	private function resetTransformation() : Void;
 	public var bound(get, never) : Rectangle;
 	public var totalContentWidth(get, never) : Float;
 	public var totalContentHeight(get, never) : Float;

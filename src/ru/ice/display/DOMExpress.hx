@@ -84,7 +84,8 @@ class DOMExpress extends EventDispatcher
 		if (svg != null && params != null) {
 			var i:Array<String> = Reflect.fields(params);
 			for (p in i) {
-				svg.setAttributeNS(null, p, Reflect.getProperty(params, p));
+				if (Reflect.getProperty(params, p) != null)
+					svg.setAttributeNS(null, p, Reflect.getProperty(params, p));
 			}
 		}
 		return svg;
@@ -174,7 +175,7 @@ class DOMExpress extends EventDispatcher
 	
 	public var innerHTML(never, set):Dynamic;
 	private function set_innerHTML(v:Dynamic) : Dynamic {
-		_element.innerHTML = v;
+		_element.innerHTML = '<div>' + v + '</div>';
 		return v;
 	}
 	

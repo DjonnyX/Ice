@@ -66,7 +66,7 @@ class TabBarTransitionManager
 			onComplete();
 			return;
 		}
-		_isFromLeft = _newScreen.index < _oldScreen.index;
+		_isFromLeft = _newScreen.index > _oldScreen.index;
 		if (invertNext) {
 			_isFromLeft = false;
 			invertNext = false;

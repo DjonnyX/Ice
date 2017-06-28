@@ -100,11 +100,9 @@ class DisplayObject extends DOMExpress
 				setSvgParams(_svg, {x:v});
 			}
 		} else {
-			if (_x != v || _element.offsetLeft != v) {
+			if (_x != v) {
 				_x = v;
-				//_element.style.left = _x + 'px';
-				//_element.style.transform = 'translate(' + _x + 'px, ' + _y + 'px)';
-				_element.style.left = _x + 'px';
+				resetTransformation();
 			}
 		}
 		return _x;
@@ -122,13 +120,32 @@ class DisplayObject extends DOMExpress
 				setSvgParams(_svg, {y:v});
 			}
 		} else {
-			if (_y != v || _element.offsetTop != v) {
+			if (_y != v) {
 				_y = v;
-				//_element.style.transform = 'translate(' + _x + 'px, ' + _y + 'px)';
-				_element.style.top = _y + 'px';
+				resetTransformation();
 			}
 		}
 		return _y;
+	}
+	
+	private var _z:Float = 0;
+	public var z(get, set):Float;
+	private function get_z() : Float {
+		return _z;
+	}
+	private function set_z(v:Float) : Float {
+		if (_isSvg) {
+			if (_z != v) {
+				_z = v;
+				setSvgParams(_svg, {z:v});
+			}
+		} else {
+			if (_z != v) {
+				_z = v;
+				resetTransformation();
+			}
+		}
+		return _x;
 	}
 	
 	private var _scaleX:Float = 1;
@@ -139,7 +156,7 @@ class DisplayObject extends DOMExpress
 	private function set_scaleX(v:Float) : Float {
 		if (_scaleX != v) {
 			_scaleX = v;
-			resetTransformation(_scaleX, _scaleY, _rotate);
+			resetTransformation();
 		}
 		return _scaleX;
 	}
@@ -152,7 +169,7 @@ class DisplayObject extends DOMExpress
 	private function set_scaleY(v:Float) : Float {
 		if (_scaleY != v) {
 			_scaleY = v;
-			resetTransformation(_scaleX, _scaleY, _rotate);
+			resetTransformation();
 		}
 		return _scaleY;
 	}
@@ -165,15 +182,15 @@ class DisplayObject extends DOMExpress
 	private function set_rotate(v:Float) : Float {
 		if (_rotate != v) {
 			_rotate = v;
-			resetTransformation(_scaleX, _scaleY, _rotate);
+			resetTransformation();
 		}
 		return _rotate;
 	}
 	
-	private function resetTransformation(sx:Float, sy:Float, r:Float) : Void
+	private function resetTransformation() : Void
 	{
 		if (_element != null) 
-			Reflect.setField(_element.style, 'transform'/*Capabilities.transformMethod*/, "scale(" + sx + ", " + sy + ") rotate(" + r + "deg)");
+			Reflect.setField(_element.style, 'transform'/*Capabilities.transformMethod*/, "translate3D(" + _x + "px, " + _y + "px, " + _z + "px) scale(" + _scaleX + ", " + _scaleY + ") rotate(" + _rotate + "deg)");
 	}
 	
 	private var _bound:Rectangle = new Rectangle();
@@ -400,6 +417,8 @@ class DisplayObject extends DOMExpress
 			addClass(['ice']); // Базовый s класс
 			listenInteractiveEvents();
 		}
+		x = _element.offsetLeft;
+		y = _element.offsetTop;
 	}
 	
 	public function insertChildAt(child:DisplayObject, index:Int) : Void {

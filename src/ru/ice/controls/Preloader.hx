@@ -35,7 +35,7 @@ class Preloader extends IceControl
 	public function new() 
 	{
 		super(new ElementData({
-			'name':'plr',
+			'name':'prd',
 			'interactive':false
 		}));
 		_imgContainer = new IceControl(new ElementData({

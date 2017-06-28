@@ -16,12 +16,18 @@ import ru.ice.display.Stage;
  */
 class Ice
 {
-	public static inline var VERSION : String = '0.3.1';
+	public static inline var VERSION : String = '0.3.0.2';
 	
 	public static var isDragging:Bool = false;
 	
 	public static var globalPressed:Bool = false;
 	
+	
+	private static var _serializer:IceSerializer;
+	public static var serializer(get, never):IceSerializer;
+	private static function get_serializer():IceSerializer {
+		return _serializer;
+	}
 	
 	private static var _focusObjects:Array<DisplayObject> = [];
 	public static var focusObjects(get, set):Array<DisplayObject>;
@@ -68,8 +74,9 @@ class Ice
 	
 	public var stage:Stage;
 	
-	public function new(main:IceControl, ?name:String='stage', ?style:Dynamic) 
+	public function new(main:IceControl, ?name:String='stage', ?style:Dynamic, ?serializer:IceSerializer) 
 	{
+		_serializer = serializer != null ? serializer : new IceSerializer();
 		Capabilities.initialize();
 		stage = new Stage(new ElementData({name:name, style:Dynamic}));
 		stage.fps = 100;

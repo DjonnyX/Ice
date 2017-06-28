@@ -24,6 +24,7 @@ import ru.ice.controls.Scroller;
 //import ru.ice.controls.Preloader;
 import ru.ice.controls.ScrollBar;
 import ru.ice.controls.ScrollPlane;
+import ru.ice.controls.VideoPlayer;
 
 /**
  * ...
@@ -50,6 +51,14 @@ class Theme extends BaseTheme
 		setStyle(IScrollBar, ScrollBar.DEFAULT_VERTICAL_STYLE, setDefaultVerticalScrollbarStyle);
 		setStyle(IScrollBar, ScrollBar.DEFAULT_HORIZONTAL_STYLE, setDefaultHorizontalScrollbarStyle);
 		setStyle(DelayedBuilder, DelayedBuilder.DEFAULT_STYLE, setDefaultDelayedBuilderStyle);
+		setStyle(VideoPlayer, VideoPlayer.DEFAULT_STYLE, setDefaultVideoPlayerStyle);
+	}
+	
+	private function setDefaultVideoPlayerStyle(videoPlayer:VideoPlayer) : Void {
+		videoPlayer.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_CONTENT);
+		videoPlayer.videoContainerStyleFactory = function(renderer:IceControl) : Void {
+			renderer.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_HTML_CONTENT);
+		}
 	}
 	
 	/*private function setDefaultHeaderStyle(header:Header) : Void {
@@ -245,7 +254,7 @@ class Theme extends BaseTheme
 	 */
 	private function setDefaultDelayedBuilderStyle(renderer:DelayedBuilder) : Void {
 		renderer.delay = .1;
-		renderer.transitionFactory = function(object:DisplayObject) : Void {
+		renderer.postFactory = function(object:DisplayObject) : Void {
 			object.addClass(['i-delayed-builder']);
 		}
 	}
@@ -429,7 +438,7 @@ class Theme extends BaseTheme
 		
 		renderer.delayedBuilderStyleFactory = function(delayedBuilder:DelayedBuilder) : Void {
 			delayedBuilder.delay = .01;
-			delayedBuilder.transitionFactory = function(object:DisplayObject) : Void {
+			delayedBuilder.postFactory = function(object:DisplayObject) : Void {
 				object.addClass(['i-delayed-builder']);
 			}
 		}

@@ -70,7 +70,7 @@ class VerticalLayout extends BaseLayout
 			sort();
 		
 		#if debug
-			trace('update layout', _owner.elementName, _owner.width, _owner.height);
+			trace('update layout', _owner.elementName, _owner.width, _owner.height, _paddingLeft, _paddingRight);
 		#end
 		
 		_needResize = false;
@@ -124,6 +124,10 @@ class VerticalLayout extends BaseLayout
 				fullHeight += stageHeight + (i < _objects.length - 1 ? _paddingTop + _paddingBottom : 0);
 			else 
 				fullHeight += child.height + (i < _objects.length - 1 ? _verticalGap : 0);
+			
+			/*if (child.elementName == 'pre-img') {
+				trace('repos', 'pre-img', child.width, child.height);
+			}*/
 			
 			fullWidth = Math.max(fullWidth, child.width);
 			i ++;

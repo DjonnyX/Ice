@@ -91,8 +91,10 @@ class IceControl extends Sprite
 		return _includeInLayout;
 	}
 	private function set_includeInLayout(v:Bool) : Bool {
-		_includeInLayout = v;
-		dispatchEventWith(v ? Event.INCLUDE_IN_LAYOUT : Event.EXCLUDE_FROM_LAYOUT, true);
+		if (_includeInLayout != v) {
+			_includeInLayout = v;
+			dispatchEventWith(v ? Event.INCLUDE_IN_LAYOUT : Event.EXCLUDE_FROM_LAYOUT, true);
+		}
 		return _includeInLayout;
 	}
 	/**
@@ -185,6 +187,16 @@ class IceControl extends Sprite
 			updateLayout();
 		}
 		return _layoutParams;
+	}
+	
+	public var actualWidth(get, never):Float;
+	private function get_actualWidth() : Float {
+		return width - commonPaddingLeft - commonPaddingRight;
+	}
+	
+	public var actualHeight(get, never):Float;
+	private function get_actualHeight() : Float {
+		return width - commonPaddingTop - commonPaddingBottom;
 	}
 	
 	public var commonPaddingLeft(get, never) : Float;
@@ -386,16 +398,18 @@ class IceControl extends Sprite
 					width = totalContentWidth + commonPaddingRight;
 				else if (_snapWidth == SNAP_TO_HTML_CONTENT)
 					width = htmlContentWidth;
-				else if (tw != null)
+				else if (tw != null) {
 					width = tw.width;
+				}
 			}
 			if (invalidData.invalidateHeight) {
 				if (_snapHeight == SNAP_TO_CONTENT)
 					height = totalContentHeight + commonPaddingBottom;
 				else if (_snapHeight == SNAP_TO_HTML_CONTENT)
 					height = htmlContentHeight;
-				else if (th != null)
+				else if (th != null) {
 					height = th.height;
+				}
 			}
 			//trace('--- ', _elementName,  width, height);
 			// Апдейт лэйаута.

@@ -54,17 +54,17 @@ class DelayedBuilder
 		return null;
 	}
 	
-	private var _lastTransitionFactory : Function;
+	private var _lastpostFactory : Function;
 	
-	private var _transitionFactory : Function;
-	public var transitionFactory(get, set) : Function;
-	private function set_transitionFactory(v:Function) : Function {
-		if (_transitionFactory != v)
-			_transitionFactory = v;
-		return get_transitionFactory();
+	private var _postFactory : Function;
+	public var postFactory(get, set) : Function;
+	private function set_postFactory(v:Function) : Function {
+		if (_postFactory != v)
+			_postFactory = v;
+		return get_postFactory();
 	}
-	private function get_transitionFactory() : Function {
-		return _transitionFactory;
+	private function get_postFactory() : Function {
+		return _postFactory;
 	}
 	
 	public function new(owner:IceControl, content:DisplayObject) {
@@ -123,8 +123,8 @@ class DelayedBuilder
 			var factory:Function = _factories.shift();
 			if (factory != null) {
 				var object:DisplayObject = factory();
-				if (_transitionFactory != null)
-					_transitionFactory(object);
+				if (_postFactory != null)
+					_postFactory(object);
 			}
 			factory = null;
 			_delayedCall = cast Ice.animator.delayCall(start, delay);
@@ -144,6 +144,6 @@ class DelayedBuilder
 		stop();
 		removeAll();
 		_factories = null;
-		_transitionFactory = null;
+		_postFactory = null;
 	}
 }

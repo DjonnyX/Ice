@@ -96,8 +96,16 @@ class RockRowsLayout extends BaseLayout
 			return 2;
 		} else if (width < 1200) {
 			return 3;
+		} else if (width < 1500) {
+			return 4;
+		} else if (width < 1900) {
+			return 5;
+		} else if (width < 2300) {
+			return 6;
+		} else if (width < 2600) {
+			return 7;
 		}
-		return 9;
+		return 8;
 	}
 	public static var defaultColumnsCountFactory(get, set) : Function;
 	private static function get_defaultColumnsCountFactory() : Function {

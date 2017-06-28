@@ -330,8 +330,8 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _paddingLeft;
 	}
 	private function set_paddingLeft(v:Float) : Float {
-		if (Math.isNaN(v))
-			v = 0;
+		/*if (Math.isNaN(v))
+			v = 0;*/
 		if (_paddingLeft != v)
 			_paddingLeft = v;
 		return get_paddingLeft();
@@ -346,8 +346,8 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _paddingRight;
 	}
 	private function set_paddingRight(v:Float) : Float {
-		if (Math.isNaN(v))
-			v = 0;
+		/*if (Math.isNaN(v))
+			v = 0;*/
 		if (_paddingRight != v)
 			_paddingRight = v;
 		return get_paddingRight();
@@ -362,8 +362,8 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _paddingTop;
 	}
 	private function set_paddingTop(v:Float) : Float {
-		if (Math.isNaN(v))
-			v = 0;
+		/*if (Math.isNaN(v))
+			v = 0;*/
 		if (_paddingTop != v)
 			_paddingTop = v;
 		return get_paddingTop();
@@ -378,8 +378,8 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _paddingBottom;
 	}
 	private function set_paddingBottom(v:Float) : Float {
-		if (Math.isNaN(v))
-			v = 0;
+		/*if (Math.isNaN(v))
+			v = 0;*/
 		if (_paddingBottom != v)
 			_paddingBottom = v;
 		return get_paddingBottom();

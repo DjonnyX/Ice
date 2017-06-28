@@ -1,4 +1,4 @@
-package ru.ice.app.controls;
+package ru.ice.controls;
 
 import haxe.Constraints.Function;
 import js.html.DOMElement;

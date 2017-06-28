@@ -1268,7 +1268,6 @@ class Barrier extends IceControl
 		v.y1 = v.y3 = _height;
 		v.x2 = _width * .5;
 		v.x3 = _width;
-		trace('_barrierBottomColor = ' + _barrierBottomColor);
 		applyVertex(_bottom, v, _barrierBottomColor);
 	}
 	
