@@ -34,6 +34,10 @@ class Scroller extends BaseStatesControl
 	
 	private static inline var PAGGINATION_NONE:String = 'none';
 	
+	private static inline var PAGGINATION_HORIZONTAL:String = 'paggination-horizontal';
+	
+	private static inline var PAGGINATION_VERTICAL:String = 'paggination-vertical';
+	
 	private static inline var MAX_ACTION_BOUND_SIZE:Int = 20;
 	
 	private static inline var MAX_WHEEL_ZERO_OPERATIONS:Int = 40;
@@ -143,6 +147,17 @@ class Scroller extends BaseStatesControl
 	private function set_paggination(v:String) : String {
 		if (_paggination != v) {
 			_paggination = v;
+			switch (v) {
+				case PAGGINATION_HORIZONTAL: {
+					
+				}
+				case PAGGINATION_VERTICAL: {
+					
+				}
+				default: {
+					
+				}
+			}
 		}
 		return get_paggination();
 	}
@@ -157,18 +172,6 @@ class Scroller extends BaseStatesControl
 	public var verticalPages(get, never):Int;
 	private function get_verticalPages():Int {
 		return _verticalPages;
-	}
-	
-	private var _currentHorizontalPage:Int;
-	public var currentHorizontalPage(get, never):Int;
-	private function get_currentHorizontalPage():Int {
-		return _currentHorizontalPage;
-	}
-	
-	private var _currentVerticalPages:Int;
-	public var currentVerticalPages(get, never):Int;
-	private function get_currentVerticalPages():Int {
-		return _currentVerticalPages;
 	}
 	
 	public var maxScrollX(get, never):Float;
@@ -535,8 +538,27 @@ class Scroller extends BaseStatesControl
 			
 		_isDragging = false;
 		stopScrolling();
+		trace('horizontalPages', horizontalPages);
+		trace('verticalPages', verticalPages);
+		if (_paggination == PAGGINATION_HORIZONTAL) {
+			var lastX:Float = _content.x;
+			var newX:Float = calcPositionByHorrizontalPaggination(_content.x);
+			if (newX != lastX) {
+				Ice.animator.remove(_xTween);
+				var durationX:Float = calculateDynamicThrowDurationByDistance(Math.abs(Math.abs(newX) - Math.abs(lastX)));
+				_xTween = Ice.animator.tween(_content, durationX, {x:newX, transitionFunc:_throwEase, onUpdate:scrollX});
+			}
+		}
+		if (_paggination == PAGGINATION_VERTICAL) {
+			var lastY:Float = _content.y;
+			var newY:Float = calcPositionByVerticalPaggination(_content.y);
+			if (newY != lastY) {
+				var durationY:Float = calculateDynamicThrowDurationByDistance(Math.abs(Math.abs(newY) - Math.abs(lastY)));
+				Ice.animator.remove(_yTween);
+				_yTween = Ice.animator.tween(_content, 1, {y:newY, transitionFunc:_throwEase, onUpdate:scrollY});
+			}
+		}
 	}
-	
 	
 	private var _isBeginPress:Bool = false;
 	public static var isStopAction:Bool = false;
@@ -641,7 +663,8 @@ class Scroller extends BaseStatesControl
 		}
 		
 		_horizontalPages = Math.ceil(_content.width / _width);
-		_verticalPages = Math.ceil(_content.height / _height);
+		_verticalPages = Math.floor(_content.height / _height);
+		trace(_content.height, _height, _content.height / _height);
 	}
 	
 	/**
@@ -692,9 +715,21 @@ class Scroller extends BaseStatesControl
 			_viewportBound.y = 0;
 			_viewportBound.height = 0;
 		}
-		//_currentHorizontalPage = Math.ceil(_content.contentWidth / _viewportBound.y);
-		//_currentVerticalPages = Math.ceil(_content.contentHeight / contentHeight);
+		_horizontalPages = Math.ceil(_content.width / _width);
+		_verticalPages = Math.floor(_content.height / _height);
 	}
+	
+	/*public function scrollToHorizontalPosition(position:Float) : Void {
+		var sp:Float = horizontalScrollPosition;
+		if (Math.isNaN(position) || horizontalScrollPosition == sp)
+			return;
+		}
+		var distance:Float = sp;
+		var duration:Float = calculateDynamicThrowDurationByDistance();
+		Ice.animator.remove(_xTween);
+		_xTween = Ice.animator.tween(_content, durationX, {x:0, transitionFunc:_throwEase, onUpdate:scrollX});
+		
+	}*/
 	
 	/**
 	 * Очищает все анимации холста
@@ -747,6 +782,7 @@ class Scroller extends BaseStatesControl
 			_barrier.bottomTension = 0;
 		}
 	}
+	
 	/**
 	 * Запускает анимацию возврата вьюпорта в регионы холста или анимацию "инерции".
 	 */
@@ -763,8 +799,9 @@ class Scroller extends BaseStatesControl
 			} else if (rightOffset < 0) {
 				Ice.animator.remove(_xTween);
 				_xTween = Ice.animator.tween(_content, durationX, {x:maxScrollX, transitionFunc:_throwEase, onUpdate:scrollX});
-			} else if (_velocityX != 0 && !Math.isNaN(_velocityX))
+			} else if (_velocityX != 0 && !Math.isNaN(_velocityX)) {
 				throwScrollInertialForceX();
+			}
 		}
 		
 		if (_isDraggingVertically) {
@@ -778,8 +815,9 @@ class Scroller extends BaseStatesControl
 			} else if (bottomOffset < 0) {
 				Ice.animator.remove(_yTween);
 				_yTween = Ice.animator.tween(_content, durationY, {y:maxScrollY, transitionFunc:_throwEase, onUpdate:scrollY});
-			} else if (_velocityY != 0 && !Math.isNaN(_velocityY))
+			} else if (_velocityY != 0 && !Math.isNaN(_velocityY)) {
 				throwScrollInertialForceY();
+			}
 		}
 	}
 	
@@ -840,11 +878,45 @@ class Scroller extends BaseStatesControl
 				duration = calculateDynamicThrowDuration(ppms);
 			
 			if (withoutAnimation) {
-				_content.x = contentPos;
+				if (_paggination == PAGGINATION_HORIZONTAL) {
+					_content.x = calcPositionByHorrizontalPaggination(contentPos);
+				} else 
+					_content.x = contentPos;
 				scrollX();
-			} else
-				_xTween = Ice.animator.tween(_content, duration, {x:contentPos, transitionFunc:_throwEase, onUpdate:scrollX});
+			} else {
+				var newX:Float = 0;
+				if (_paggination == PAGGINATION_HORIZONTAL)
+					newX = calcPositionByHorrizontalPaggination(contentPos);
+				else 
+					newX = contentPos;
+				_xTween = Ice.animator.tween(_content, duration, {x:newX, transitionFunc:_throwEase, onUpdate:scrollX});
+			}
 		}
+	}
+	
+	private function posToHorizontalScrollPosition(pos:Float) : Float {
+		return maxScrollX == 0 ? 0 : pos / maxScrollX;
+	}
+	
+	private function horizontalScrollPositionToPos(pos:Float) : Float {
+		return maxScrollX == 0 ? 0 : maxScrollX * pos;
+	}
+	
+	private function calcPositionByHorrizontalPaggination(pos:Float) : Float {
+		pos = posToHorizontalScrollPosition(pos);
+		var hp:Int = horizontalPages;
+		var pagginationStep:Float = 1 / hp;
+		for (i in 0...hp) {
+			var cellStart:Float = i * pagginationStep;
+			var cellMiddle:Float = cellStart + pagginationStep * .5;
+			var cellEnd:Float = cellStart + pagginationStep;
+			if (pos < cellMiddle)
+				return horizontalScrollPositionToPos(cellStart);
+			else 
+			if (pos >= cellMiddle && pos <= cellEnd)
+				return horizontalScrollPositionToPos(cellEnd);
+		}
+		return horizontalScrollPositionToPos(1);
 	}
 	
 	private function throwScrollInertialForceY(distance:Float = null, withoutAnimation:Bool = false) : Void
@@ -906,9 +978,41 @@ class Scroller extends BaseStatesControl
 			if (withoutAnimation) {
 				_content.y = contentPos;
 				scrollY();
-			} else
-				_yTween = Ice.animator.tween(_content, duration, {y:contentPos, transitionFunc:_throwEase, onUpdate:scrollY});
+			} else {
+				var newY:Float = 0;
+				if (_paggination == PAGGINATION_VERTICAL)
+					newY = calcPositionByVerticalPaggination(contentPos);
+				else 
+					newY = contentPos;
+				_yTween = Ice.animator.tween(_content, duration, {y:newY, transitionFunc:_throwEase, onUpdate:scrollY});
+			}
 		}
+	}
+	
+	private function posToVerticalScrollPosition(pos:Float) : Float {
+		return maxScrollY == 0 ? 0 : pos / maxScrollY;
+	}
+	
+	private function verticalScrollPositionToPos(pos:Float) : Float {
+		return maxScrollY == 0 ? 0 : maxScrollY * pos;
+	}
+	
+	private function calcPositionByVerticalPaggination(pos:Float) : Float {
+		pos = posToVerticalScrollPosition(pos);
+		var vp:Int = verticalPages;
+		//trace(vp);
+		var pagginationStep:Float = 1 / vp;
+		for (i in 0...vp) {
+			var cellStart:Float = i * pagginationStep;
+			var cellMiddle:Float = cellStart + pagginationStep * .5;
+			var cellEnd:Float = cellStart + pagginationStep;
+			if (pos < cellMiddle)
+				return verticalScrollPositionToPos(cellStart);
+			else 
+			if (pos >= cellMiddle && pos <= cellEnd)
+				return verticalScrollPositionToPos(cellEnd);
+		}
+		return verticalScrollPositionToPos(1);
 	}
 	
 	/**

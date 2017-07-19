@@ -10,6 +10,7 @@ import ru.ice.data.ElementData;
 import ru.ice.controls.Image;
 import ru.ice.events.Event;
 import ru.ice.core.Ice;
+import ru.ice.utils.MathUtil;
 
 /**
  * ...
@@ -19,7 +20,7 @@ class PreloadedImage extends IceControl
 {
 	public static inline var DEFAULT_STYLE:String = 'default-preloaded-image-style';
 	
-	private var _preloaderHRatio : Float = 1;
+	private var _preloaderHRatio : Float = MathUtil.INT_MIN_VALUE;
 	public var preloaderHRatio(get, set) : Float;
 	private function get_preloaderHRatio() : Float {
 		return _preloaderHRatio;
@@ -33,7 +34,7 @@ class PreloadedImage extends IceControl
 		return get_preloaderHRatio();
 	}
 	
-	private var _preloaderVRatio : Float = 1;
+	private var _preloaderVRatio : Float = MathUtil.INT_MIN_VALUE;
 	public var preloaderVRatio(get, set) : Float;
 	private function get_preloaderVRatio() : Float {
 		return _preloaderVRatio;
@@ -108,10 +109,36 @@ class PreloadedImage extends IceControl
 		styleName = DEFAULT_STYLE;
 	}
 	
+	/**
+	 * В каждой итерации проверяется изменение размеров и позиции
+	 * объекта. Если они менялись, то происходит перестроение лэйаута (если
+	 * конечно он в этом нуждается).
+	 */
+	public override function update() : Void
+	{
+		super.update();
+	}
+	
+	private override function _resizeHandler(event:Event, ?data:Dynamic):Void 
+	{
+		if (event.target == this)
+			resizeWithRatioIfNeeded();
+		super._resizeHandler(event, data);
+	}
+	
+	private function resizeWithRatioIfNeeded() : Void {
+		if (_preloaderHRatio != MathUtil.INT_MIN_VALUE)
+			this.width = _height * _preloaderHRatio;
+		else 
+		if (_preloaderVRatio != MathUtil.INT_MIN_VALUE)
+			this.height = _width * _preloaderVRatio;
+	}
+	
 	public override function initialize() : Void {
 		super.initialize();
-		if (_image != null)
-			showPreloader();
+		showPreloader();
+		/*if (_image != null)
+			showPreloader();*/
 		//this.dispatchEventWith(Event.RESIZE, true);
 	}
 	
@@ -125,28 +152,18 @@ class PreloadedImage extends IceControl
 	}
 	
 	private function hidePreloader() : Void {
-		//removePreloader();
+		removePreloader();
 	}
 	
 	private function removePreloader() : Void {
 		if (_preloader != null) {
-			_preloader.removeEventListeners();
-			_preloader.removeFromParent(true);
+			//_preloader.removeEventListeners();
+			_preloader.removeFromParent();
+			_preloader.dispose();
 			_preloader = null;
 		}
-		//needResize = true;
+		needResize = true;
 	}
-	
-	/*public override function snapTo(?width:Dynamic, ?height:Dynamic) : Void {
-		if (super.width != null) {
-			if (Std.is(super.width, String)) {
-				_snapWidth = super.width;
-			} else if (Std.is(super.width, DisplayObject)) {
-				_snapWidthObject = cast super.width;
-				_snapWidth = IceControl.SNAP_TO_CUSTOM_OBJECT;
-			}
-		}
-	}*/
 	
 	private function resetImage(src:String) : Void {
 		if (_image != null) {
@@ -158,12 +175,8 @@ class PreloadedImage extends IceControl
 		_image = new Image();
 		_image.addEventListener(Event.LOADED, onLoadImage);
 		_image._styleFactory = _imageStyleFactory;
-		//_image.setSize(super.width, super.height);
 		_image.src = src;
 		addChildAt(_image, 0);
-		
-		if (_isInitialized)
-			showPreloader();
 	}
 	
 	private function removeImage() : Void {
@@ -176,14 +189,9 @@ class PreloadedImage extends IceControl
 	}
 	
 	private function onLoadImage() : Void {
-		trace('cupture loaded');
 		dispatchEventWith(Event.SCREEN_LOADED, true);
 		_image.removeEventListener(Event.LOADED, onLoadImage);
 		hidePreloader();
-	}
-	
-	private override function _resizeHandler(event:Event, ?data:Dynamic) : Void {
-		super._resizeHandler(event, data);
 	}
 	
 	public override function dispose() : Void {

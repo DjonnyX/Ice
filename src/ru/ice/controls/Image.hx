@@ -77,33 +77,6 @@ class Image extends IceControl
 		return get_src();
 	}
 	
-	private var _requestedWidth:Float = 0;
-	private override function set_width(v:Float) : Float {
-		if (_requestedWidth != v) {
-			_requestedWidth = v;
-			resizeImage();
-		}
-		return get_width();
-	}
-	
-	private var _requestedHeight:Float = 0;
-	private override function set_height(v:Float) : Float {
-		if (_requestedHeight != v) {
-			_requestedHeight = v;
-			resizeImage();
-		}
-		return get_height();
-	}
-	
-	public override function setSize(width:Float, height:Float) : Void
-	{
-		if (_requestedWidth != width || _requestedHeight != height) {
-			_requestedWidth = width;
-			_requestedHeight = height;
-			resizeImage();
-		}
-	}
-	
 	private var ratio(get, never) : Float;
 	private function get_ratio() : Float {
 		return originalWidth / originalHeight;
@@ -159,12 +132,14 @@ class Image extends IceControl
 	
 	public override function update() : Void
 	{
-		if (_isLoaded) {
-			if (!_isFirstResizedImg) {
-				_isFirstResizedImg = true;
-				resizeImage();
-			}
-		}
+		super.update();
+	}
+	
+	private override function _resizeHandler(event:Event, ?data:Dynamic):Void 
+	{
+		if (event.target == this)
+			resizeImage();
+		super._resizeHandler(event, data);
 	}
 	
 	private function resizeImage() : Void
@@ -174,16 +149,16 @@ class Image extends IceControl
 		if (originalWidth == 0 && originalHeight == 0)
 			return;
 		
-		_lastRequestedWidth = _requestedWidth;
-		_lastRequestedHeight = _requestedHeight;
+		_lastRequestedWidth = _width;
+		_lastRequestedHeight = _height;
 		_lastOriginalWidth = originalWidth;
 		_lastOriginalHeight = originalHeight;
 		
 		if (_proportional) {
 			var ratioX:Float = 0, ratioY:Float = 0, r:Float = 0, w:Float = 0, h:Float = 0;
 			if (_stretchType == FROM_MAX_RECT) {
-				ratioX = _requestedWidth / _lastOriginalWidth;
-				ratioY = _requestedHeight / _lastOriginalHeight;
+				ratioX = _lastRequestedWidth / _lastOriginalWidth;
+				ratioY = _lastRequestedHeight / _lastOriginalHeight;
 				if (ratioX > ratioY) {
 					removeClass(['i-fit-to-viewport', 'i-fit-to-height', 'i-fit-to-container-size']);
 					addClass(['i-fit-to-width']);
@@ -199,19 +174,17 @@ class Image extends IceControl
 				addClass(['i-fit-to-container-size']);
 			}
 		} else {
-			if (_element.offsetWidth != _requestedWidth)
-				_element.style.width = _requestedWidth + 'px';
-			if (_element.offsetHeight != _requestedHeight)
-				_element.style.height = _requestedHeight + 'px';
+			if (_element.offsetWidth != _lastRequestedWidth)
+				_element.style.width = _lastRequestedWidth + 'px';
+			if (_element.offsetHeight != _lastRequestedHeight)
+				_element.style.height = _lastRequestedHeight + 'px';
 		}
 		_width = _element.offsetWidth;
 		_height = _element.offsetHeight;
 		if (_alignCenter) {
-			x = (_requestedWidth - _width) * .5;
-			y = (_requestedHeight - _height) * .5;
+			x = (_lastRequestedWidth - _width) * .5;
+			y = (_lastRequestedHeight - _height) * .5;
 		}
-		
-		this.dispatchEventWith(Event.RESIZE, true);
 	}
 	
 	public override function dispose() : Void

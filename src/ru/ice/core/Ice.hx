@@ -16,7 +16,7 @@ import ru.ice.display.Stage;
  */
 class Ice
 {
-	public static inline var VERSION : String = '0.3.0.2';
+	public static inline var VERSION : String = '0.3.3';
 	
 	public static var isDragging:Bool = false;
 	

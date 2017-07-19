@@ -91,10 +91,10 @@ class IceSerializer
 					renderer.src = cast propValue;
 				}
 				case 'preloaderHRatio': {
-					//renderer.preloaderHRatio = Std.parseFloat(propValue);
+					renderer.preloaderHRatio = Std.parseFloat(propValue);
 				}
 				case 'preloaderVRatio': {
-					//renderer.preloaderVRatio = Std.parseFloat(propValue);
+					renderer.preloaderVRatio = Std.parseFloat(propValue);
 				}
 			}
 		}
@@ -180,6 +180,7 @@ class IceSerializer
 					renderer.y = cast propValue;
 				}
 				case 'styleName': {
+					trace('styleName = ' + propValue);
 					renderer.styleName = propValue;
 				}
 				case 'visible': {

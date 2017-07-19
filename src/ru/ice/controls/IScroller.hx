@@ -21,8 +21,6 @@ interface IScroller extends IBaseStatesControl
 	public var paggination(get, set):String;
 	public var horizontalPages(get, never):Int;
 	public var verticalPages(get, never):Int;
-	public var currentHorizontalPage(get, never):Int;
-	public var currentVerticalPages(get, never):Int;
 	public var maxScrollX(get, never):Float;
 	public var maxScrollY(get, never):Float;
 	public var horizontalScrollPosition(get, set) : Float;
@@ -36,7 +34,7 @@ interface IScroller extends IBaseStatesControl
 	private function clearAnimations() : Void;
 	private function scrollX() : Void;
 	private function scrollY() : Void;
-	private function throwScroll() : Void;
+	private function throwScroll(checkNullVelocity:Bool) : Void;
 	private function throwScrollInertialForceX(distance:Float = null, withoutAnimation:Bool = false) : Void;
 	private function throwScrollInertialForceY(distance:Float = null, withoutAnimation:Bool = false) : Void;
 	private function calculateDynamicThrowDurationByDistance(distance:Float) : Float;

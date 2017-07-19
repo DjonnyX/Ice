@@ -74,16 +74,6 @@ class ScrollBarWithContainer extends BaseStatesControl implements IScrollBar {
 		return _scrollBar.verticalPages;
 	}
 	
-	public var currentHorizontalPage(get, never):Int;
-	private function get_currentHorizontalPage():Int {
-		return _scrollBar.currentHorizontalPage;
-	}
-	
-	public var currentVerticalPages(get, never):Int;
-	private function get_currentVerticalPages():Int {
-		return _scrollBar.currentVerticalPages;
-	}
-	
 	public var maxScrollX(get, never):Float;
 	private function get_maxScrollX():Float {
 		return _scrollBar.maxScrollX;
