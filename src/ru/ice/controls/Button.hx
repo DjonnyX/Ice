@@ -107,8 +107,11 @@ class Button extends BaseStatesControl
 		return _contentBoxStyleFactory;
 	}
 	
-	private var _label:String;
+	/**
+	 * Лейбл
+	 */
 	public var label(get, set) : String;
+	private var _label:String;
 	private function get_label() : String {
 		return _label;
 	}
@@ -129,9 +132,12 @@ class Button extends BaseStatesControl
 		}
 		return get_label();
 	}
-	
-	private var _icon:Array<String>;
+	/**
+	 * Иконка.
+	 * В качестве ресурса указывается класс стиля для глифа.
+	 */
 	public var icon(get, set) : Array<String>;
+	private var _icon:Array<String>;
 	private function get_icon() : Array<String> {
 		return _icon;
 	}
