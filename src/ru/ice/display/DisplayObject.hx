@@ -392,6 +392,7 @@ class DisplayObject extends DOMExpress
 		for (child in children) {
 			child.checkInitialized();
 		}
+		dispatchEventWith(Event.INITIALIZE);
 	}
 	
 	public function new(?elementData:ElementData, ?initial:Bool = false) 
