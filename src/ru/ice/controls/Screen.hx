@@ -1,7 +1,9 @@
 package ru.ice.controls;
 
+import haxe.io.Error;
 import ru.ice.controls.super.IceControl;
 import ru.ice.controls.super.InteractiveControl;
+import ru.ice.core.Router.Route;
 import ru.ice.data.ElementData;
 import ru.ice.events.Event;
 
@@ -52,6 +54,10 @@ class Screen extends IceControl
 	public function setIndex(index:Int) : Void
 	{
 		this.index = index;
+	}
+	
+	public function transitionToScreen(address:String) : Void {
+		
 	}
 	
 	public override function resize(?data:ResizeData) : Void

@@ -58,10 +58,16 @@ class ScreenNavigator extends IceControl
 	public function addScreen(id:String, screen:ScreenNavigatorItem) : Void
 	{
 		screen.screenNavigator = this;
+		screen.addEventListener(Event.CHANGE_ROUTE, changeRouteHandler);
 		screen.index = index;
 		screen.id = id;
 		Reflect.setField(_screens, id, screen);
 		index ++;
+	}
+	
+	private function changeRouteHandler(event:Event, data:Any) : Void {
+		var address:String = cast data;
+		showScreen(address);
 	}
 	
 	public function showScreen(screenName:String, pre:Bool = false, onScreenLoaded:Function = null) : Screen
@@ -210,6 +216,17 @@ class ScreenNavigator extends IceControl
 			var handler:Event->Void;
 			handler = Reflect.getProperty(_events, eventType);
 			this.removeEventListener(eventType, handler);
+		}
+		if (_screens != null) {
+			/*for (s in Reflect.fields(_screens)) {
+				var screenItem:ScreenNavigatorItem = cast s;
+				if (screenItem != null) {
+					screenItem.removeEventListener(Event.CHANGE_ROUTE, changeRouteHandler);
+					screenItem.dispose();
+					screenItem = null;
+				}
+			}*/
+			_screens = null;
 		}
 		if (_oldScreen != null) {
 			_oldScreen.removeFromParent(true);
