@@ -17,6 +17,33 @@ class Image extends IceControl
 	public static inline var FROM_MIN_RECT:String = 'from-min-rect';
 	public static inline var FIT_TO_CONTAINER_SIZE:String = 'fit-to-container-size';
 	
+    private static var __currentLoadId:Int = 1;
+	
+    private static var __lastId:Int = 0;
+	
+	private static var __dictionary:Dynamic = {};
+	
+	public static function loadNextImageIfNeeded() : Void {
+		var img:Image = null;
+		var id:Int = __currentLoadId;
+		while (img == null && id <= __lastId) {
+			img = getImageById(id);
+			id ++;
+		}
+		if (img != null)
+			img.load();
+	}
+	
+	public static function getImageById(id:Int) : Image {
+		if (Reflect.hasField(__dictionary, Std.string(id)))
+			return Reflect.getProperty(__dictionary, Std.string(id));
+		return null;
+	}
+	
+	private var _instanceId:Int = 0;
+	
+	private var _loadingFromChain:Bool = true;
+	
 	private var _isLoaded:Bool = false;
 	
 	private var _imageElement:Dynamic;
@@ -72,9 +99,20 @@ class Image extends IceControl
 	private function set_src(v:String) : String {
 		if (_src != v) {
 			_src = v;
-			_imageElement.src = v + (_useCache ? '' : '?n=' + Date.now().getTime());
+			if (_loadingFromChain) {
+				if (__currentLoadId == _instanceId)
+					_imageElement.src = formatSrc(v);
+			} else
+				_imageElement.src = formatSrc(v);
 		}
 		return get_src();
+	}
+	private function formatSrc(v:String) : String {
+		return v + (_useCache ? '' : '?n=' + Date.now().getTime());
+	}
+	
+	public function load() : Void {
+		_imageElement.src = formatSrc(_src);
 	}
 	
 	private var ratio(get, never) : Float;
@@ -100,6 +138,9 @@ class Image extends IceControl
 	
 	public function new(?elementData:ElementData, useCache:Bool = true) 
 	{
+		__lastId ++;
+		_instanceId = __lastId;
+		__dictionary[__lastId] = this;
 		_useCache = useCache;
 		if (elementData == null) {
 			elementData = new ElementData({
@@ -128,6 +169,11 @@ class Image extends IceControl
 		visible = true;
 		_isLoaded = true;
 		this.dispatchEventWith(Event.LOADED, false);
+		
+		if (_loadingFromChain) {
+			__currentLoadId ++;
+			loadNextImageIfNeeded();
+		}
 	}
 	
 	public override function update() : Void
@@ -189,7 +235,8 @@ class Image extends IceControl
 	
 	public override function dispose() : Void
 	{
-		_imageElement = null;
+		Reflect.deleteField(__dictionary, Std.string(_instanceId));
 		super.dispose();
+		_imageElement = null;
 	}
 }
