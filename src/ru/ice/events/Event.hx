@@ -91,6 +91,8 @@ class Event
     public static inline var TRANSITION_OUT_START:String = "transitionOutStart";
     public static inline var TRANSITION_OUT_COMPLETE:String = "transitionOutComplete";
 	
+    public static inline var CHANGE_ROUTE:String = "change-route";
+    public static inline var INITIALIZE:String = "initialize";
     public static inline var UPDATE_LAYOUT:String = "update-layout";
     public static inline var LOADED:String = "loaded";
     public static inline var ADDED:String = "added";
