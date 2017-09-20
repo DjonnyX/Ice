@@ -136,6 +136,15 @@ class IceSerializer
 				case 'src': {
 					renderer.src = cast propValue;
 				}
+				case 'poster': {
+					renderer.poster = cast propValue;
+				}
+				case 'posterHRatio': {
+					renderer.posterHRatio = Std.parseFloat(propValue);
+				}
+				case 'posterVRatio': {
+					renderer.posterVRatio = Std.parseFloat(propValue);
+				}
 			}
 		}
 		var attrs:Iterator<String> = data.attributes();
