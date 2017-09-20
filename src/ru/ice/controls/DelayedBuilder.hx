@@ -1,15 +1,15 @@
 package ru.ice.controls;
 
 import haxe.Constraints.Function;
-import ru.ice.controls.super.IceControl;
 
+import ru.ice.controls.super.IceControl;
 import ru.ice.theme.ThemeStyleProvider;
 import ru.ice.animation.Delayer;
 import ru.ice.display.DisplayObject;
 import ru.ice.core.Ice;
 
 /**
- * ...
+ * Предоставляет отложенную инициализацию детей.
  * @author Evgenii Grebennikov
  */
 class DelayedBuilder
@@ -118,18 +118,37 @@ class DelayedBuilder
 	
 	public function start() : Void {
 		stop();
+		trace('D = ' + delay);
 		if (_factories.length > 0) {
 			_isStarted = true;
-			var factory:Function = _factories.shift();
-			if (factory != null) {
-				var object:DisplayObject = factory();
-				if (_postFactory != null)
-					_postFactory(object);
+			if (delay > 0) {
+				var factory:Function = _factories.shift();
+				if (factory != null) {
+					var object:DisplayObject = factory();
+					if (_postFactory != null)
+						_postFactory(object);
+				}
+				factory = null;
+				_delayedCall = cast Ice.animator.delayCall(start, delay);
+			} else {
+				createWithoutDelay();
 			}
-			factory = null;
-			_delayedCall = cast Ice.animator.delayCall(start, delay);
 		}
 		return;
+	}
+	
+	private function createWithoutDelay() : Void {
+		if (_factories.length > 0) {
+			while (_factories.length > 0) {
+				var factory:Function = _factories.shift();
+				if (factory != null) {
+					var object:DisplayObject = factory();
+					if (_postFactory != null)
+						_postFactory(object);
+				}
+				factory = null;
+			}
+		}
 	}
 	
 	private function stop() : Void {
