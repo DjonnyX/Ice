@@ -11,6 +11,7 @@ import js.Browser;
 import ru.ice.controls.super.IceControl;
 import ru.ice.data.ElementData;
 import ru.ice.events.Event;
+import ru.ice.utils.MathUtil;
 
 /**
  * ...
@@ -23,6 +24,77 @@ class VideoPlayer extends IceControl
 	private var _videoElement:VideoElement;
 	
 	private var _videoContainer:IceControl;
+	
+	private var _posterImg:PreloadedImage;
+	
+	private var _poster:String;
+	public var poster(get, set) : String;
+	private function set_poster(v:String) : String {
+		if (_poster != v) {
+			_poster = v;
+			deletePosterImage();
+			if (v != null) {
+				_posterImg = new PreloadedImage();
+				_posterImg.preloaderHRatio = _posterHRatio;
+				_posterImg.preloaderVRatio = _posterVRatio;
+				_posterImg.styleFactory = _posterStyleFactory;
+				_posterImg.src = v;
+				addChild(_posterImg);
+			}
+		}
+		return get_poster();
+	}
+	private function get_poster() : String {
+		return _poster;
+	}
+	private function deletePosterImage() : Void {
+		if (_posterImg != null) {
+			_posterImg.removeFromParent(true);
+			_posterImg = null;
+		}
+	}
+	
+	private var _posterHRatio : Float = MathUtil.INT_MIN_VALUE;
+	public var posterHRatio(get, set) : Float;
+	private function get_posterHRatio() : Float {
+		return _posterHRatio;
+	}
+	private function set_posterHRatio(v:Float) : Float {
+		if (_posterHRatio != v) {
+			_posterHRatio = v;
+			if (_posterImg != null)
+				_posterImg.preloaderHRatio = v;
+		}
+		return get_posterHRatio();
+	}
+	
+	private var _posterVRatio : Float = MathUtil.INT_MIN_VALUE;
+	public var posterVRatio(get, set) : Float;
+	private function get_posterVRatio() : Float {
+		return _posterVRatio;
+	}
+	private function set_posterVRatio(v:Float) : Float {
+		if (_posterVRatio != v) {
+			_posterVRatio = v;
+			if (_posterImg != null)
+				_posterImg.preloaderVRatio = v;
+		}
+		return get_posterVRatio();
+	}
+	
+	private var _posterStyleFactory:Function;
+	public var posterStyleFactory(get, set) : Function;
+	private function set_posterStyleFactory(v:Function) : Function {
+		if (_posterStyleFactory != v) {
+			_posterStyleFactory = v;
+			if (_posterImg != null)
+				_posterImg.styleFactory = v;
+		}
+		return get_posterStyleFactory();
+	}
+	private function get_posterStyleFactory() : Function {
+		return _posterStyleFactory;
+	}
 	
 	private var _videoContainerStyleFactory:Function;
 	public var videoContainerStyleFactory(get, set) : Function;
@@ -138,6 +210,13 @@ class VideoPlayer extends IceControl
 	}
 	
 	public override function dispose() : Void {
+		deletePosterImage();
+		if (_posterStyleFactory != null)
+			_posterStyleFactory = null;
+		if (_videoContainerStyleFactory != null)
+			_videoContainerStyleFactory = null;
+		if (_screenToggleButtonStyleFactory != null)
+			_screenToggleButtonStyleFactory = null;
 		if (_videoContainer != null) {
 			_videoContainer.removeFromParent(true);
 			_videoContainer = null;
