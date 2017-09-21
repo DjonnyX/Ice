@@ -1,16 +1,17 @@
 package ru.ice.controls;
 
 import haxe.Constraints.Function;
+
 import js.html.DOMElement;
 import js.html.ImageElement;
 import js.Browser;
-import ru.ice.data.ElementData;
 
+import ru.ice.data.ElementData;
 import ru.ice.controls.super.IceControl;
 
 /**
  * ...
- * @author test
+ * @author Evgenii Grebennikov
  */
 class SimplePreloader extends IceControl
 {

@@ -538,8 +538,6 @@ class Scroller extends BaseStatesControl
 			
 		_isDragging = false;
 		stopScrolling();
-		trace('horizontalPages', horizontalPages);
-		trace('verticalPages', verticalPages);
 		if (_paggination == PAGGINATION_HORIZONTAL) {
 			var lastX:Float = _content.x;
 			var newX:Float = calcPositionByHorrizontalPaggination(_content.x);
@@ -664,7 +662,6 @@ class Scroller extends BaseStatesControl
 		
 		_horizontalPages = Math.ceil(_content.width / _width);
 		_verticalPages = Math.floor(_content.height / _height);
-		trace(_content.height, _height, _content.height / _height);
 	}
 	
 	/**
@@ -1000,7 +997,6 @@ class Scroller extends BaseStatesControl
 	private function calcPositionByVerticalPaggination(pos:Float) : Float {
 		pos = posToVerticalScrollPosition(pos);
 		var vp:Int = verticalPages;
-		//trace(vp);
 		var pagginationStep:Float = 1 / vp;
 		for (i in 0...vp) {
 			var cellStart:Float = i * pagginationStep;

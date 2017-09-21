@@ -33,14 +33,14 @@ class RootScreen extends Screen
 		}
 		_route = new Route(this, "#");
 		_navigatorItem = new ScreenNavigatorItem(null, null, null, _route);
-		_navigatorItem.addEventListener(Event.CHANGE_ROUTE, routeChangeHandler);
+		_navigatorItem.id = '#';
+		//_navigatorItem.addEventListener(Event.CHANGE_ROUTE, routeChangeHandler);
 		_router = new Router(_route, this);
 	}
 	
-	private function routeChangeHandler(event:Event, data:Any) : Void {
-		var address:String = cast data;
-		routeChange(address);
-	}
+	/*private function routeChangeHandler(event:Event, data:Dynamic) : Void {
+		routeChange(cast data.address);
+	}*/
 	
 	private function routeChange(address:String) : Void {
 		

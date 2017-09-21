@@ -17,6 +17,11 @@ class TabBar extends IceControl
 	public static inline var DEFAULT_STYLE:String = 'default-tabbar-style';
 	
 	private var _itemFactory:Function;
+	/**
+	 * public
+	 * Фабрика для элемета(таба)
+	 * @return Function
+	 */
 	public var itemFactory(get, set) : Function;
 	private function set_itemFactory(v:Function) : Function {
 		if (_itemFactory != v) {
@@ -46,8 +51,14 @@ class TabBar extends IceControl
 		return _accessoryItems;
 	}
 	
-	private var _selectedIndex:Int = -1;
+	/**
+	 * public
+	 * get/set
+	 * Возвращает/устанавливает текущий выбранный элемент(таб) по индексу
+	 * @return Int
+	 */
 	public var selectedIndex(get, set) : Int;
+	private var _selectedIndex:Int = -1;
 	private function set_selectedIndex(v:Int) : Int {
 		if (_selectedIndex != v) {
 			_selectedIndex = v;
@@ -68,6 +79,12 @@ class TabBar extends IceControl
 		return _selectedIndex;
 	}
 	
+	/**
+	 * public
+	 * get/set
+	 * Возвращает/устанавливает текущий выбранный элемент(таб) 
+	 * @return BaseListItemControl
+	 */
 	private var _selectedItem:BaseListItemControl;
 	public var selectedItem(get, set) : BaseListItemControl;
 	private function set_selectedItem(v:BaseListItemControl) : BaseListItemControl {

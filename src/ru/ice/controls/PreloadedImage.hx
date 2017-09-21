@@ -2,8 +2,8 @@ package ru.ice.controls;
 
 import haxe.Constraints.Function;
 
-import ru.ice.controls.SimplePreloader;
 import ru.ice.controls.super.IceControl;
+import ru.ice.controls.SimplePreloader;
 import ru.ice.app.events.EventTypes;
 import ru.ice.display.DisplayObject;
 import ru.ice.data.ElementData;
@@ -28,8 +28,7 @@ class PreloadedImage extends IceControl
 	private function set_preloaderHRatio(v:Float) : Float {
 		if (_preloaderHRatio != v) {
 			_preloaderHRatio = v;
-			/*if (_image != null)
-				_image.preloaderHRatio = _preloaderHRatio;*/
+			this.dispatchEventWith(Event.RESIZE, true);
 		}
 		return get_preloaderHRatio();
 	}
@@ -42,19 +41,10 @@ class PreloadedImage extends IceControl
 	private function set_preloaderVRatio(v:Float) : Float {
 		if (_preloaderVRatio != v) {
 			_preloaderVRatio = v;
-			/*if (_image != null)
-				_image.preloaderHRatio = _preloaderHRatio;*/
+			this.dispatchEventWith(Event.RESIZE, true);
 		}
 		return get_preloaderVRatio();
 	}
-	/*
-	private override function get_width() : Float {
-		return _image == null || !_image.isLoaded ? super.height * _preloaderHRatio : super.height;
-	}
-	
-	private override function get_height() : Float {
-		return _image == null || !_image.isLoaded ? super.width * _preloaderVRatio : super.width;
-	}*/
 	
 	public var src(get, set) : String;
 	private function set_src(v:String) : String {
@@ -121,7 +111,7 @@ class PreloadedImage extends IceControl
 	
 	private override function _resizeHandler(event:Event, ?data:Dynamic):Void 
 	{
-		if (event.target == this)
+		//if (event.target == this)
 			resizeWithRatioIfNeeded();
 		super._resizeHandler(event, data);
 	}
@@ -136,9 +126,6 @@ class PreloadedImage extends IceControl
 	
 	public override function initialize() : Void {
 		super.initialize();
-		showPreloader();
-		/*if (_image != null)
-			showPreloader();*/
 		//this.dispatchEventWith(Event.RESIZE, true);
 	}
 	
@@ -157,7 +144,7 @@ class PreloadedImage extends IceControl
 	
 	private function removePreloader() : Void {
 		if (_preloader != null) {
-			//_preloader.removeEventListeners();
+			_preloader.removeEventListeners();
 			_preloader.removeFromParent();
 			_preloader.dispose();
 			_preloader = null;
@@ -172,6 +159,8 @@ class PreloadedImage extends IceControl
 			removeImage();
 		}
 		
+		showPreloader();
+			
 		_image = new Image();
 		_image.addEventListener(Event.LOADED, onLoadImage);
 		_image._styleFactory = _imageStyleFactory;

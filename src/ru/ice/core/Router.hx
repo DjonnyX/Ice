@@ -16,9 +16,23 @@ import ru.ice.core.Router;
  */
 class Router 
 {
-	public static function setMain(address:String) : Void {
-		Browser.window.history.replaceState('', '', '');
-		Browser.window.history.replaceState('', '', '#/' + address);
+	public static var current:Router;
+	
+	private static var _defaultLinksMap:Array<String> = [];
+	private static var _defaultLinks:Array<{address:String, def:String}> = [];
+	public static function defaultLinks(map:Array<{address:String, def:String}>) : Void {
+		_defaultLinks = map;
+		for (i in map) {
+			_defaultLinksMap.push(i.address);
+		}
+	}
+	
+	public static function replaceToDefaultIfNeeded(address:String) : String {
+		var result:String = address;
+		var ind:Int = _defaultLinksMap.indexOf(address);
+		if (ind >= 0)
+			result = _defaultLinks[ind].def;
+		return result;
 	}
 	
 	public var location(get, never) : Location;
@@ -28,6 +42,7 @@ class Router
 	}
 	
 	public function new(rootRouter:Route, screen:IceControl) {
+		current = this;
 		_location = Browser.window.location;
 		Browser.window.onhashchange = function() {
 			navigateTo(_location.hash);
@@ -42,13 +57,28 @@ class Router
 		navigateTo(_location.hash);
 	}
 	
+	public function change(address:String) : Void {
+		address = replaceToDefaultIfNeeded(address);
+		_location.hash = address;
+	}
+	
 	public function navigateTo(address:String) : Void {
+		address = replaceToDefaultIfNeeded(address);
 		var chain:Array<String> = parseUrl(address);
-		/*if (chain.length == 0)
-			Browser.window.history.replaceState("", "", _location.origin);
-		else*/
 		navigate(chain, ScreenNavigatorItem.getScreenByAddress("#"));
-		//changeAddress(chain);
+	}
+	
+	private function getLocalAddress(address:String) : String {
+		var chain:Array<String> = this.parseUrl(_location.hash);
+		if (chain.length > 0) {
+			chain.splice(chain.length - 1, 1);
+			chain.push(address);
+		}
+		var result:String = '';
+		for (i in chain) {
+			result += i + '/';
+		}
+		return result;
 	}
 	
 	private function changeAddress(chain:Array<String>) : String {
@@ -56,7 +86,6 @@ class Router
 		for (r in chain) {
 			s += r + '/';
 		}
-		//Browser.window.history.replaceState("", "", s);
 		return s;
 	}
 	
@@ -70,11 +99,9 @@ class Router
 			});
 			return;
 		}
+		var i:Int = 0;
 		for (addr in chain) {
-			if (lastScreen != null)
-				lastScreen.dispatchEventWith(Event.CHANGE_ROUTE, true, addr);
-			trace('a - ' + addr);
-			
+			i ++;
 			var nextScreen:ScreenNavigatorItem = ScreenNavigatorItem.getScreenByAddress(addr);
 			if (nextScreen == null)
 				break;
@@ -83,7 +110,8 @@ class Router
 					navigate(chain, nextScreen);
 				});
 				return;
-			}
+			} else
+				nextScreen.dispatchEventWith(Event.CHANGE_ROUTE, true, {address:addr, isEnd: i == chain.length});
 			lastScreen = nextScreen;
 		}
 	}
@@ -173,42 +201,3 @@ class Route {
 		_router.navigateTo(address);
 	}
 }
-
-/*class RootRoute extends Route {
-	
-	private var _screenNavigatorItem:ScreenNavigatorItem;
-
-	private var _screen:Screen;
-	public var screen(get, never) : Screen;
-	private function get_screen() : Screen {
-		return _screen;
-	}
-	
-	public function new(screen:Screen) {
-		super('');
-		_isRoot = true;
-		_screen = screen;
-		Browser.window.onhashchange = function() {
-			navigateTo(_location.hash);
-		};
-	}
-	
-	@:allow(ru.ice.controls.screenNavigatorItem)
-	private function setScreenNavigatorItem(screenNavigatorItem:ScreenNavigatorItem) : Void {
-		_screenNavigatorItem = screenNavigatorItem;
-	}
-	
-	override public function setRouter(router:Router):Void 
-	{
-		if (this._router != null)
-			return;
-		super.setRouter(router);
-		if (!_screen.isInitialized) {
-			_screen.addEventListener(Event.INITIALIZE, function() : Void {
-				navigateTo(_location.hash);
-			});
-			return;
-		}
-		navigateTo(_location.hash);
-	}
-}*/

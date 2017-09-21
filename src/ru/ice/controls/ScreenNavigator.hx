@@ -1,6 +1,7 @@
 package ru.ice.controls;
 
 import haxe.Constraints.Function;
+
 import ru.ice.controls.super.InteractiveControl;
 import ru.ice.controls.super.IceControl;
 import ru.ice.controls.ScreenNavigatorItem;
@@ -65,8 +66,9 @@ class ScreenNavigator extends IceControl
 		index ++;
 	}
 	
-	private function changeRouteHandler(event:Event, data:Any) : Void {
-		var address:String = cast data;
+	private function changeRouteHandler(event:Event, data:Dynamic) : Void {
+		var isEnd:Bool = cast data.isEnd;
+		var address:String = cast data.address;
 		showScreen(address);
 	}
 	
@@ -218,14 +220,14 @@ class ScreenNavigator extends IceControl
 			this.removeEventListener(eventType, handler);
 		}
 		if (_screens != null) {
-			/*for (s in Reflect.fields(_screens)) {
-				var screenItem:ScreenNavigatorItem = cast s;
+			for (s in Reflect.fields(_screens)) {
+				var screenItem:ScreenNavigatorItem = cast Reflect.getProperty(_screens, s);
 				if (screenItem != null) {
 					screenItem.removeEventListener(Event.CHANGE_ROUTE, changeRouteHandler);
 					screenItem.dispose();
 					screenItem = null;
 				}
-			}*/
+			}
 			_screens = null;
 		}
 		if (_oldScreen != null) {

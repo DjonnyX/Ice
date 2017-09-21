@@ -31,7 +31,7 @@ class TabBarTransitionManager
 	
 	private var _newScreen:Screen;
 	
-	private var _tabBar:TabBar;
+	//private var _tabBar:TabBar;
 	
 	private var _isFromLeft:Bool = true;
 	
@@ -45,9 +45,9 @@ class TabBarTransitionManager
 	
 	private var _invertTransition:DisplayObject->DisplayObject->Dynamic->Void;
 	
-	public function new(screenNavigator:ScreenNavigator, tabBar:TabBar, transition:Dynamic = null) 
+	public function new(screenNavigator:ScreenNavigator/*, tabBar:TabBar*/, transition:Dynamic = null) 
 	{
-		_tabBar = tabBar;
+		//_tabBar = tabBar;
 		_screenNavigator = screenNavigator;
 		_screenNavigator.transition = onTransition;
 		_transition = transition;
@@ -108,20 +108,20 @@ class TabBarTransitionManager
 			_normalTransition = null;
 		if (_invertTransition != null)
 			_invertTransition = null;
-		if (_tabBar != null) {
+		/*if (_tabBar != null) {
 			var item:TabBarItemRenderer = cast _tabBar.selectedItem;
 			if (item == null)
 				return;
 			var screenName:String = item.data.screenName;
 			if (_screenNavigator.activeScreenName != screenName)
 				_screenNavigator.showScreen(screenName);
-		}
+		}*/
 	}
 	
 	public function dispose() : Void {
 		onComplete();
-		if (_tabBar != null)
-			_tabBar = null;
+		/*if (_tabBar != null)
+			_tabBar = null;*/
 		if (_screenNavigator != null) {
 			_screenNavigator.transition = null;
 			_screenNavigator = null;

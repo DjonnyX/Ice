@@ -1,1 +1,1 @@
-# Ice - a UI framework based on DOMSprite model
+# Ice - a touch UI framework based on html5

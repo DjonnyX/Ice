@@ -118,7 +118,6 @@ class DelayedBuilder
 	
 	public function start() : Void {
 		stop();
-		trace('D = ' + delay);
 		if (_factories.length > 0) {
 			_isStarted = true;
 			if (delay > 0) {

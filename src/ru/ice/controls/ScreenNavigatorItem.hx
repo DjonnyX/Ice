@@ -22,14 +22,14 @@ class ScreenNavigatorItem extends EventDispatcher
 	public static function removeScreenFromPool(item:ScreenNavigatorItem) : Void
 	{
 		var ind:Int = _items.indexOf(item);
-		if (ind > -1)
-			_items.splice(ind, 0);
+		if (ind >= 0)
+			_items.splice(ind, 1);
 	}
 
 	public static function getScreenFromPool(item:ScreenNavigatorItem) : ScreenNavigatorItem
 	{
 		var ind:Int = _items.indexOf(item);
-		if (ind > -1)
+		if (ind >= 0)
 			return _items[ind];
 		return null;
 	}
@@ -156,9 +156,9 @@ class ScreenNavigatorItem extends EventDispatcher
 	}
 	
 	public function dispose() : Void {
-		if (_route != null)
-			_route = null;
 		removeScreenFromPool(this);
 		removeEventListeners();
+		if (_route != null)
+			_route = null;
 	}
 }
