@@ -291,16 +291,18 @@ class ScrollBar extends Scroller
 		var wheelTime:Float = currentTime - _lastWheelTime;
 		_lastWheelTime = currentTime;
 		
-		var offsetRatio:Float = offsetRatioFunction != null ? offsetRatioFunction(_ownerSize, _ownerContentSize, _ratio) : Math.abs(_ownerSize / _ownerContentSize) * _ratio;
-		var spinX:Float = (e.deltaX > 0 ? -1 : 1) * offsetRatio;
-		var spinY:Float = (e.deltaY > 0 ? -1 : 1) * offsetRatio;
+		if (wheelTime > Scroller.WHEEL_TIME_TRESHOLD || _wheelTreshold == Scroller.WHEEL_TRESHOLD) {
+			var offsetRatio:Float = offsetRatioFunction != null ? offsetRatioFunction(_ownerSize, _ownerContentSize, _ratio) : Math.abs(_ownerSize / _ownerContentSize) * _ratio;
+			var spinX:Float = (e.deltaX > 0 ? -1 : 1) * offsetRatio;
+			var spinY:Float = (e.deltaY > 0 ? -1 : 1) * offsetRatio;
+			
+			throwWheel(spinX, spinY, false);
+		}
 		
-		if (wheelTime < stage.tickLength * 100)
-			_wheelZero ++;
+		if (wheelTime < Scroller.WHEEL_TIME_TRESHOLD)
+			_wheelTreshold += 1;
 		else
-			_wheelZero = 0;
-		
-		throwWheel(spinX, spinY, _wheelZero > Scroller.MAX_WHEEL_ZERO_OPERATIONS);
+			_wheelTreshold = 0;
 	}
 	
 	private var _lastOwnerContentSize:Float = 0;

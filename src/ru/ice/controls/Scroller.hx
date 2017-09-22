@@ -40,11 +40,11 @@ class Scroller extends BaseStatesControl
 	
 	private static inline var MAX_ACTION_BOUND_SIZE:Int = 20;
 	
-	private static inline var MAX_WHEEL_ZERO_OPERATIONS:Int = 40;
+	private static inline var WHEEL_TRESHOLD:Int = 2;
 	
-	private static inline var WEHEEL_ICING:Float = .2;
+	private static inline var WHEEL_TIME_TRESHOLD:Int = 40;
 	
-	public static inline var WHEEL_SCROLL_RATIO:Float = .5;
+	public static inline var WHEEL_SCROLL_RATIO:Float = .75;
 	
 	/**
 	 * Вес одного пикселя холста
@@ -94,8 +94,6 @@ class Scroller extends BaseStatesControl
 	private var _easeBackTimeRatio:Float = 0.550158;
 	
 	private var _throwEase:Float->Float = defaultThrowEase;
-	
-	private var _wheelZero:Int = 0;
 	
 	private var _lastWheelTime:Float = 0;
 	
@@ -417,25 +415,30 @@ class Scroller extends BaseStatesControl
 		_velocityY = 0;
 	}
 	
+	private var _wheelTreshold:Float = 0;
+	
 	private function wheelScrollHandler(e:WheelScrollEvent) : Void
 	{
 		if (e.ctrlKey)
 			return;
 		e.stopImmediatePropagation();
-		
 		var currentTime:Float = Date.now().getTime();
+		if (_lastWheelTime == 0)
+			_lastWheelTime = currentTime;
 		var wheelTime:Float = currentTime - _lastWheelTime;
 		_lastWheelTime = currentTime;
 		
-		var spinX:Float = e.deltaX > 1 ? -1 : 1;
-		var spinY:Float = e.deltaY > 1 ? -1 : 1;
+		if (wheelTime > WHEEL_TIME_TRESHOLD || _wheelTreshold <= WHEEL_TRESHOLD) {
+			var spinX:Float = e.deltaX > 1 ? -1 : 1;
+			var spinY:Float = e.deltaY > 1 ? -1 : 1;
+			
+			throwWheel(spinX, spinY, false);
+		}
 		
-		if (wheelTime < stage.tickLength * 100)
-			_wheelZero ++;
+		if (wheelTime < WHEEL_TIME_TRESHOLD)
+			_wheelTreshold += 1;
 		else
-			_wheelZero = 0;
-		
-		throwWheel(spinX, spinY, _wheelZero > MAX_WHEEL_ZERO_OPERATIONS);
+			_wheelTreshold = 0;
 	}
 	
 	public function simWheelScroll(e:WheelScrollEvent) : Void {

@@ -43,19 +43,22 @@ class Animator implements IAnimatable
     public function remove(object:IAnimatable):Void
     {
 		var o:Dynamic = cast object;
-        if (object == null) return;
+        if (object == null)
+			return;
         
         var dispatcher:EventDispatcher = Std.is(object, EventDispatcher) ? cast object : null;
-        if (dispatcher != null) dispatcher.removeEventListener(Event.REMOVE_FROM_ANIMATOR, onRemove);
+        if (dispatcher != null)
+			dispatcher.removeEventListener(Event.REMOVE_FROM_ANIMATOR, onRemove);
 
         var index:Int = _objects.indexOf(object);
-        if (index != -1) _objects[index] = null;
+        if (index != -1)
+			_objects[index] = null;
     }
     
     public function removeTweens(target:Dynamic):Void
     {
-        if (target == null) return;
-        
+        if (target == null)
+			return;
         var i:Int = _objects.length - 1;
         while (i >= 0) {
             var tween:Tween = Std.is(_objects[i], Tween) ? cast _objects[i] : null;
@@ -72,10 +75,10 @@ class Animator implements IAnimatable
         if (target == null) return false;
         
         var i:Int = _objects.length - 1;
-        while (i >= 0)
-        {
+        while (i >= 0) {
             var tween:Tween = Std.is(_objects[i], Tween) ? cast _objects[i] : null;
-            if (tween != null && tween.target == target) return true;
+            if (tween != null && tween.target == target)
+				return true;
             --i;
         }
         
@@ -85,8 +88,7 @@ class Animator implements IAnimatable
     public function purge():Void
     {
         var i:Int = _objects.length - 1;
-        while (i >= 0)
-        {
+        while (i >= 0) {
             var dispatcher:EventDispatcher = Std.is(_objects[i], EventDispatcher) ? cast _objects[i] : null;
             if (dispatcher != null) dispatcher.removeEventListener(Event.REMOVE_FROM_ANIMATOR, onRemove);
             _objects[i] = null;
@@ -199,20 +201,13 @@ class Animator implements IAnimatable
         var i:Int = 0;
         
         _elapsedTime += time;
-        if (numObjects == 0) return;
+        if (numObjects == 0)
+			return;
         
-        // there is a high probability that the "advanceTime" function modifies the list 
-        // of animatables. we must not process new objects right now (they will be processed
-        // in the next frame), and we need to clean up any empty slots in the list.
-
-        while (i < numObjects)
-        {
+        while (i < numObjects) {
             var object:IAnimatable = _objects[i];
-            if (object != null)
-            {
-                // shift objects into empty slots along the way
-                if (currentIndex != i) 
-                {
+            if (object != null) {
+                if (currentIndex != i) {
                     _objects[currentIndex] = object;
                     _objects[i] = null;
                 }
@@ -220,13 +215,11 @@ class Animator implements IAnimatable
                 object.update(time);
                 ++currentIndex;
             }
-            
             ++i;
         }
         
-        if (currentIndex != i)
-        {
-            numObjects = _objects.length; // count might have changed!
+        if (currentIndex != i) {
+            numObjects = _objects.length;
 
             while (i < numObjects) {
                 _objects[currentIndex++] = _objects[i++];

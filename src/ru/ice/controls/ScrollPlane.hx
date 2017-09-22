@@ -15,7 +15,6 @@ import ru.ice.events.WheelScrollEvent;
 import ru.ice.display.DisplayObject;
 import ru.ice.math.Point;
 import ru.ice.math.Rectangle;
-//import ru.ice.utils.FloatUtil;
 import ru.ice.layout.ILayout;
 import ru.ice.events.LayoutEvent;
 
