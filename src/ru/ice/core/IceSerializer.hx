@@ -3,8 +3,13 @@ package ru.ice.core;
 import haxe.Constraints.Function;
 import haxe.Json;
 import haxe.io.Error;
-import ru.ice.controls.Label;
+import ru.ice.layout.AnchorLayout;
+import ru.ice.layout.BaseLayout;
+import ru.ice.layout.HorizontalLayout;
+import ru.ice.layout.RockRowsLayout;
+import ru.ice.layout.VerticalLayout;
 
+import ru.ice.controls.Label;
 import ru.ice.controls.Image;
 import ru.ice.controls.VideoPlayer;
 import ru.ice.controls.PreloadedImage;
@@ -22,6 +27,10 @@ class IceSerializer
 	public static inline var VIDEO_PLAYER:String = 'videoplayer';
 	public static inline var LABEL:String = 'label';
 	public static inline var PRELOADED_IMAGE:String = 'preloadedimage';
+	public static inline var ANCHOR_LAYOUT:String = 'anchorlayout';
+	public static inline var VERTICAL_LAYOUT:String = 'verticallayout';
+	public static inline var HORIZONTAL_LAYOUT:String = 'horizontallayout';
+	public static inline var ROCK_ROWS_LAYOUT:String = 'rockrowslayout';
 	
 	public function new() {}
 	
@@ -78,6 +87,18 @@ class IceSerializer
 			case PRELOADED_IMAGE: {
 				control = createPreloadedImage(data);
 			}
+			case ANCHOR_LAYOUT: {
+				control = createAnchorLayout(data);
+			}
+			case VERTICAL_LAYOUT: {
+				control = createVerticalLayout(data);
+			}
+			case HORIZONTAL_LAYOUT: {
+				control = createHorizontalLayout(data);
+			}
+			case ROCK_ROWS_LAYOUT: {
+				control = createRockRowsLayout(data);
+			}
 		}
 		return control;
 	}
@@ -108,6 +129,124 @@ class IceSerializer
 	private function createIceControl(data:Xml) : IceControl {
 		var renderer:IceControl = new IceControl();
 		applyIceProps(renderer, data);
+		return renderer;
+	}
+	
+	private function createAnchorLayout(data:Xml) : IceControl {
+		var renderer:IceControl = new IceControl();
+		applyIceProps(renderer, data);
+		var layout:AnchorLayout = new AnchorLayout();
+		applyLayoutProps(layout, data);
+		renderer.layout = layout;
+		return renderer;
+	}
+	
+	private function createHorizontalLayout(data:Xml) : IceControl {
+		var renderer:IceControl = new IceControl();
+		applyIceProps(renderer, data);
+		var layout:HorizontalLayout = new HorizontalLayout();
+		applyLayoutProps(layout, data);
+		var setProps:Function = function(prop:String, propValue:Any) : Void {
+			switch(prop) {
+				case 'horizontalAlign': {
+					layout.horizontalAlign = cast propValue;
+				}
+				case 'verticalAlign': {
+					layout.horizontalAlign = cast propValue;
+				}
+				case 'snapToStageWidth': {
+					layout.snapToStageWidth = propValue == 'true';
+				}
+				case 'snapToStageHeight': {
+					layout.snapToStageHeight = propValue == 'true';
+				}
+				case 'ignoreX': {
+					layout.ignoreX = stringToBool(propValue);
+				}
+				case 'ignoreY': {
+					layout.ignoreY = stringToBool(propValue);
+				}
+			}
+		}
+		renderer.layout = layout;
+		var attrs:Iterator<String> = data.attributes();
+		for (a in attrs) {
+			setProps(a, data.get(a));
+		}
+		return renderer;
+	}
+	
+	private function createVerticalLayout(data:Xml) : IceControl {
+		var renderer:IceControl = new IceControl();
+		applyIceProps(renderer, data);
+		var layout:VerticalLayout = new VerticalLayout();
+		applyLayoutProps(layout, data);
+		var setProps:Function = function(prop:String, propValue:Any) : Void {
+			switch(prop) {
+				case 'horizontalAlign': {
+					layout.horizontalAlign = cast propValue;
+				}
+				case 'verticalAlign': {
+					layout.horizontalAlign = cast propValue;
+				}
+				case 'snapToStageWidth': {
+					layout.snapToStageWidth = propValue == 'true';
+				}
+				case 'snapToStageHeight': {
+					layout.snapToStageHeight = propValue == 'true';
+				}
+				case 'ignoreX': {
+					layout.ignoreX = stringToBool(propValue);
+				}
+				case 'ignoreY': {
+					layout.ignoreY = stringToBool(propValue);
+				}
+			}
+		}
+		renderer.layout = layout;
+		var attrs:Iterator<String> = data.attributes();
+		for (a in attrs) {
+			setProps(a, data.get(a));
+		}
+		return renderer;
+	}
+	
+	private function createRockRowsLayout(data:Xml) : IceControl {
+		var renderer:IceControl = new IceControl();
+		applyIceProps(renderer, data);
+		var layout:RockRowsLayout = new RockRowsLayout();
+		applyLayoutProps(layout, data);
+		var setProps:Function = function(prop:String, propValue:Any) : Void {
+			switch(prop) {
+				case 'countFactory': {
+					var cData:Array<Dynamic> = null;
+					try {
+						cData = Json.parse(propValue);
+					} catch (e:Error) {
+						cData = null;
+						#if debug
+							throw 'Parameter "countFactory" is not Array<Dynamic>.';
+						#end
+					}
+					if (cData != null)
+						layout.setColumnsCountFactory(cast cData);
+				}
+				case 'paggination': {
+					layout.paggination = cast propValue;
+				}
+				case 'horizontalAlign': {
+					layout.horizontalAlign = cast propValue;
+				}
+				case 'verticalAlign': {
+					layout.horizontalAlign = cast propValue;
+				}
+			}
+		}
+		renderer.layout = layout;
+		var attrs:Iterator<String> = data.attributes();
+		for (a in attrs) {
+			setProps(a, data.get(a));
+		}
 		return renderer;
 	}
 	
@@ -175,7 +314,6 @@ class IceSerializer
 			var child = data.firstChild();
 			if (child != null && (child.nodeType == Xml.PCData || child.nodeType == Xml.CData)) {
 				text = child.nodeValue;
-				trace(data, text);
 			}
 			if (text != null)
 				renderer.innerHTML = text;
@@ -189,7 +327,6 @@ class IceSerializer
 					renderer.y = cast propValue;
 				}
 				case 'styleName': {
-					trace('styleName = ' + propValue);
 					renderer.styleName = propValue;
 				}
 				case 'visible': {
@@ -200,6 +337,42 @@ class IceSerializer
 				}
 				case 'style': {
 					renderer.style = stringToArrayDynamic(propValue);
+				}
+			}
+		}
+		var attrs:Iterator<String> = data.attributes();
+		for (a in attrs) {
+			setProps(a, data.get(a));
+		}
+		return renderer;
+	}
+	
+	private function applyLayoutProps(renderer:BaseLayout, data:Xml ) : Any {
+		var setProps:Function = function(prop:String, propValue:Any) : Void {
+			switch(prop) {
+				case 'paddingLeft': {
+					renderer.paddingLeft = Std.parseInt(propValue);
+				}
+				case 'paddingRight': {
+					renderer.paddingRight = Std.parseInt(propValue);
+				}
+				case 'paddingTop': {
+					renderer.paddingTop = Std.parseInt(propValue);
+				}
+				case 'paddingBottom': {
+					renderer.paddingBottom = Std.parseInt(propValue);
+				}
+				case 'padding': {
+					renderer.padding = Std.parseInt(propValue);
+				}
+				case 'gap': {
+					renderer.gap = Std.parseInt(propValue);
+				}
+				case 'verticalGap': {
+					renderer.verticalGap = Std.parseInt(propValue);
+				}
+				case 'horizontalGap': {
+					renderer.horizontalGap = Std.parseInt(propValue);
 				}
 			}
 		}
@@ -228,6 +401,7 @@ class IceSerializer
 	private function stringToBool(v:String) : Bool {
 		if (v == null)
 			return false;
+		v = v.toLowerCase();
 		return v == '1' || v.toLowerCase() == 'true';
 	}
 	

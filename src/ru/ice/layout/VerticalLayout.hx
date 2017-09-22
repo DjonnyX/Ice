@@ -125,10 +125,6 @@ class VerticalLayout extends BaseLayout
 			else 
 				fullHeight += child.height + (i < _objects.length - 1 ? _verticalGap : 0);
 			
-			/*if (child.elementName == 'pre-img') {
-				trace('repos', 'pre-img', child.width, child.height);
-			}*/
-			
 			fullWidth = Math.max(fullWidth, child.width);
 			i ++;
 		}

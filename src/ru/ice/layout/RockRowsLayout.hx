@@ -89,6 +89,9 @@ class RockRowsLayout extends BaseLayout
 		return get_verticalAlign();
 	}
 	
+	/**
+	 * Структура разметки по-умолчанию
+	 */
 	private static var _defaultColumnsCountFactory:Function = function(width:Int, height:Int) : Int {
 		if (width < 500) {
 			return 1;
@@ -129,6 +132,25 @@ class RockRowsLayout extends BaseLayout
 				update();
 		}
 		return get_columnsCountFactory();
+	}
+	
+	/**
+	 * Задает пользовательскую разметку
+	 * Используется в IceSerializer
+	 * @param	data
+	 */
+	public function setColumnsCountFactory(data:Array<Dynamic>) : Void {
+		columnsCountFactory = function(width:Int, height:Int) : Int {
+			for (i in data) {
+				var w:Int = cast i.width;
+				var h:Int = cast i.height;
+				var c:Int = cast i.columns;
+				if ((w > 0 && width < w) || (h > 0 && height < h)) {
+					return c;
+				}
+			}
+			return 1;
+		}
 	}
 	
 	private var _emptyItems:Array<IceControl> = [];

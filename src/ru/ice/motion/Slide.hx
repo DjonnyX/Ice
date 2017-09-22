@@ -3,6 +3,7 @@ package ru.ice.motion;
 import ru.ice.animation.Transitions;
 import ru.ice.display.DisplayObject;
 import ru.ice.motion.SlideTween;
+import ru.ice.animation.Tween;
 import ru.ice.controls.Screen;
 /**
  * ...
@@ -12,11 +13,11 @@ class Slide
 {
 	public function new()  {}
 	
-	public static function createSlideLeftTransition(duration:Float = .5, ease:String = null, tweenProperties:Dynamic = null):DisplayObject->DisplayObject->Dynamic->Void
+	public static function createSlideLeftTransition(duration:Float = .5, ease:String = null, tweenProperties:Dynamic = null):DisplayObject->DisplayObject->Dynamic->Tween
 	{
 		if (ease == null)
 			ease = Transitions.EASE_OUT;
-		return function(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic):Void
+		return function(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic):Tween
 		{
 			#if debug
 				if(oldScreen == null && newScreen == null)
@@ -29,20 +30,21 @@ class Slide
 				}
 				newScreen.x = newScreen.width;
 				newScreen.y = 0;
-				new SlideTween(newScreen, oldScreen, -newScreen.width, 0, duration, ease, onComplete, tweenProperties);
+				return new SlideTween(newScreen, oldScreen, -newScreen.width, 0, duration, ease, onComplete, tweenProperties);
 			} else {
 				oldScreen.x = 0;
 				oldScreen.y = 0;
-				new SlideTween(oldScreen, null, -oldScreen.width, 0, duration, ease, onComplete, tweenProperties);
+				return new SlideTween(oldScreen, null, -oldScreen.width, 0, duration, ease, onComplete, tweenProperties);
 			}
+			return null;
 		}
 	}
 	
-	public static function createSlideRightTransition(duration:Float = 0.5, ease:String = null, tweenProperties:Dynamic = null):DisplayObject->DisplayObject->Dynamic->Void
+	public static function createSlideRightTransition(duration:Float = 0.5, ease:String = null, tweenProperties:Dynamic = null):DisplayObject->DisplayObject->Dynamic->Tween
 	{
 		if (ease == null)
 			ease = Transitions.EASE_OUT;
-		return function(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic):Void
+		return function(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic):Tween
 		{
 			#if debug
 				if(oldScreen == null && newScreen == null)
@@ -55,20 +57,21 @@ class Slide
 				}
 				newScreen.x = -newScreen.width;
 				newScreen.y = 0;
-				new SlideTween(newScreen, oldScreen, newScreen.width, 0, duration, ease, onComplete, tweenProperties);
+				return new SlideTween(newScreen, oldScreen, newScreen.width, 0, duration, ease, onComplete, tweenProperties);
 			} else {
 				oldScreen.x = 0;
 				oldScreen.y = 0;
-				new SlideTween(oldScreen, null, oldScreen.width, 0, duration, ease, onComplete, tweenProperties);
+				return new SlideTween(oldScreen, null, oldScreen.width, 0, duration, ease, onComplete, tweenProperties);
 			}
+			return null;
 		}
 	}
 	
-	public static function createSlideUpTransition(duration:Float = 0.5, ease:String = null, tweenProperties:Dynamic = null):DisplayObject->DisplayObject->Dynamic->Void
+	public static function createSlideUpTransition(duration:Float = 0.5, ease:String = null, tweenProperties:Dynamic = null):DisplayObject->DisplayObject->Dynamic->Tween
 	{
 		if (ease == null)
 			ease = Transitions.EASE_OUT;
-		return function(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic):Void
+		return function(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic):Tween
 		{
 			#if debug
 				if(oldScreen == null && newScreen == null)
@@ -81,20 +84,21 @@ class Slide
 				}
 				newScreen.x = 0;
 				newScreen.y = newScreen.height;
-				new SlideTween(newScreen, oldScreen, 0, -newScreen.height, duration, ease, onComplete, tweenProperties);
+				return new SlideTween(newScreen, oldScreen, 0, -newScreen.height, duration, ease, onComplete, tweenProperties);
 			} else {
 				oldScreen.x = 0;
 				oldScreen.y = 0;
-				new SlideTween(oldScreen, null, 0, -oldScreen.height, duration, ease, onComplete, tweenProperties);
+				return new SlideTween(oldScreen, null, 0, -oldScreen.height, duration, ease, onComplete, tweenProperties);
 			}
+			return null;
 		}
 	}
 	
-	public static function createSlideDownTransition(duration:Float = 0.5, ease:String = null, tweenProperties:Dynamic = null):Screen->Screen->Dynamic->Void
+	public static function createSlideDownTransition(duration:Float = 0.5, ease:String = null, tweenProperties:Dynamic = null):Screen->Screen->Dynamic->Tween
 	{
 		if (ease == null)
 			ease = Transitions.EASE_OUT;
-		return function(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic):Void
+		return function(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic):Tween
 		{
 			#if debug
 				if(oldScreen == null && newScreen == null)
@@ -107,12 +111,13 @@ class Slide
 				}
 				newScreen.x = 0;
 				newScreen.y = -newScreen.height;
-				new SlideTween(newScreen, oldScreen, 0, newScreen.height, duration, ease, onComplete, tweenProperties);
+				return new SlideTween(newScreen, oldScreen, 0, newScreen.height, duration, ease, onComplete, tweenProperties);
 			} else {
 				oldScreen.x = 0;
 				oldScreen.y = 0;
-				new SlideTween(oldScreen, null, 0, oldScreen.height, duration, ease, onComplete, tweenProperties);
+				return new SlideTween(oldScreen, null, 0, oldScreen.height, duration, ease, onComplete, tweenProperties);
 			}
+			return null;
 		}
 	}
 }

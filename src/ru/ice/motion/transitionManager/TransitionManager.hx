@@ -1,9 +1,10 @@
 package ru.ice.motion.transitionManager;
 
 import haxe.Constraints.Function;
+import ru.ice.animation.Tween;
+
 import ru.ice.controls.TabBar;
 import ru.ice.display.DisplayObject;
-
 import ru.ice.controls.itemRenderer.TabBarItemRenderer;
 import ru.ice.controls.ScreenNavigator;
 import ru.ice.animation.Transitions;
@@ -33,17 +34,15 @@ class TransitionManager
 	
 	private var _isFromLeft:Bool = true;
 	
-	public var delay:Float = .135;
-	
 	public var skipNextTransition:Bool = false;
 	
 	public var invertNext:Bool = false;
 	
 	public var isInvert:Bool = false;
 	
-	private var _normalTransition:DisplayObject->DisplayObject->Dynamic->Void;
+	private var _normalTransition:DisplayObject->DisplayObject->Dynamic->Tween;
 	
-	private var _invertTransition:DisplayObject->DisplayObject->Dynamic->Void;
+	private var _invertTransition:DisplayObject->DisplayObject->Dynamic->Tween;
 	
 	public function new(screenNavigator:ScreenNavigator, transition:Dynamic = null) 
 	{
@@ -65,6 +64,7 @@ class TransitionManager
 			onComplete();
 			return;
 		}
+		_oldScreen.deactive();
 		_isFromLeft = _newScreen.index < _oldScreen.index;
 		if (invertNext) {
 			_isFromLeft = false;
