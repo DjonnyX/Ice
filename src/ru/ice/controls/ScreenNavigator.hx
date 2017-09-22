@@ -70,6 +70,7 @@ class ScreenNavigator extends IceControl
 		var isEnd:Bool = cast data.isEnd;
 		var address:String = cast data.address;
 		showScreen(address);
+		dispatchEventWith(Event.CHANGE, true, data);
 	}
 	
 	public function showScreen(screenName:String, pre:Bool = false, onScreenLoaded:Function = null) : Screen
@@ -210,15 +211,7 @@ class ScreenNavigator extends IceControl
 		}
 	}
 	
-	public override function dispose() : Void
-	{
-		if (_onScreenLoaded != null)
-			_onScreenLoaded = null;
-		for (eventType in Reflect.fields(_events)) {
-			var handler:Event->Void;
-			handler = Reflect.getProperty(_events, eventType);
-			this.removeEventListener(eventType, handler);
-		}
+	public function removeItems() : Void {
 		if (_screens != null) {
 			for (s in Reflect.fields(_screens)) {
 				var screenItem:ScreenNavigatorItem = cast Reflect.getProperty(_screens, s);
@@ -230,6 +223,18 @@ class ScreenNavigator extends IceControl
 			}
 			_screens = null;
 		}
+	}
+	
+	public override function dispose() : Void
+	{
+		if (_onScreenLoaded != null)
+			_onScreenLoaded = null;
+		for (eventType in Reflect.fields(_events)) {
+			var handler:Event->Void;
+			handler = Reflect.getProperty(_events, eventType);
+			this.removeEventListener(eventType, handler);
+		}
+		removeItems();
 		if (_oldScreen != null) {
 			_oldScreen.removeFromParent(true);
 			_oldScreen = null;

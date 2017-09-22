@@ -2,6 +2,8 @@ package ru.ice.core;
 
 import js.Browser;
 import js.html.Location;
+import ru.ice.animation.Delayer;
+import ru.ice.animation.IAnimatable;
 import ru.ice.controls.Screen;
 import ru.ice.controls.ScreenNavigatorItem;
 import ru.ice.controls.super.IceControl;
@@ -18,16 +20,19 @@ class Router
 {
 	public static var current:Router;
 	
-	private static var _defaultLinksMap:Array<String> = [];
-	private static var _defaultLinks:Array<{address:String, def:String}> = [];
+	/**
+	 * Задаются переопределения для ссылок
+	 */
 	public static function defaultLinks(map:Array<{address:String, def:String}>) : Void {
 		_defaultLinks = map;
 		for (i in map) {
 			_defaultLinksMap.push(i.address);
 		}
 	}
+	private static var _defaultLinksMap:Array<String> = [];
+	private static var _defaultLinks:Array<{address:String, def:String}> = [];
 	
-	public static function replaceToDefaultIfNeeded(address:String) : String {
+	private static function replaceToDefaultIfNeeded(address:String) : String {
 		var result:String = address;
 		var ind:Int = _defaultLinksMap.indexOf(address);
 		if (ind >= 0)
@@ -89,35 +94,59 @@ class Router
 		return s;
 	}
 	
+	private var _delayer:IAnimatable;
+	
+	private function removeDelayer() :Void {
+		if (_delayer != null) {
+			Ice.animator.remove(_delayer);
+			_delayer = null;
+		}
+	}
+	
+	private function check(chain:Array<String>, screen:ScreenNavigatorItem) : Void {
+		removeDelayer();
+		_delayer = Ice.animator.delayCall(navigate, .001, [chain, screen]);
+	}
+	
 	private function navigate(chain:Array<String>, screen:ScreenNavigatorItem) : Void {
 		var lastScreen:ScreenNavigatorItem = screen;
-		if (lastScreen == null)
+		if (lastScreen == null) {
+			check(chain, screen);
 			return;
+		}
 		if (!lastScreen.route.owner.isInitialized) {
-			lastScreen.route.owner.addEventListener(Event.INITIALIZE, function() : Void {
+			check(chain, screen);
+			/*lastScreen.route.owner.addEventListener(Event.INITIALIZE, function() : Void {
 				navigate(chain, lastScreen);
-			});
+			});*/
 			return;
 		}
 		var i:Int = 0;
 		for (addr in chain) {
 			i ++;
 			var nextScreen:ScreenNavigatorItem = ScreenNavigatorItem.getScreenByAddress(addr);
-			if (nextScreen == null)
-				break;
-			if (!nextScreen.route.owner.isInitialized) {
-				nextScreen.route.owner.addEventListener(Event.INITIALIZE, function() : Void {
-					navigate(chain, nextScreen);
-				});
+			if (nextScreen == null) {
+				check(chain, screen);
 				return;
-			} else
+			}
+			if (!nextScreen.route.owner.isInitialized) {
+				check(chain, screen);
+				/*nextScreen.route.owner.addEventListener(Event.INITIALIZE, function() : Void {
+					navigate(chain, nextScreen);
+				});*/
+				return;
+			} else {
+				removeDelayer();
 				nextScreen.dispatchEventWith(Event.CHANGE_ROUTE, true, {address:addr, isEnd: i == chain.length});
+			}
 			lastScreen = nextScreen;
+			if (i == chain.length)
+				removeDelayer();
 		}
 	}
 	
 	public function parseUrl(url:String) : Array<String> {
-		var str:String = url;// StringTools.replace(url, '#', '');
+		var str:String = url;
 		var result:Array<String> = new Array<String>();
 		while (str.length > 0) {
 			var ind:Int = str.indexOf('/');

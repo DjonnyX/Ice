@@ -1,10 +1,10 @@
 package ru.ice.controls;
 
 import haxe.Constraints.Function;
-import ru.ice.events.Event;
 
 import ru.ice.controls.super.BaseListItemControl;
 import ru.ice.controls.super.IceControl;
+import ru.ice.events.Event;
 import ru.ice.display.DisplayObject;
 import ru.ice.data.ElementData;
 
@@ -147,6 +147,23 @@ class TabBar extends IceControl
 				addChild(item);
 				index ++;
 				_items.push(item);
+			}
+		}
+	}
+	
+	public function hilight(index:Int) : Void {
+		if (_items != null) {
+			if (index >= 0 && index < _items.length) {
+				var ind:Int = 0;
+				for (item in _items) {
+					if (ind == index) {
+						_selectedIndex = ind;
+						_selectedItem = item;
+						item.selected = true;
+					} else
+						item.selected = false;
+					ind ++;
+				}
 			}
 		}
 	}

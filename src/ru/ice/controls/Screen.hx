@@ -1,6 +1,8 @@
 package ru.ice.controls;
 
 import haxe.io.Error;
+import ru.ice.display.DisplayObject;
+
 import ru.ice.controls.super.IceControl;
 import ru.ice.controls.super.InteractiveControl;
 import ru.ice.core.Router.Route;
@@ -30,8 +32,20 @@ class Screen extends IceControl
 		styleName = DEFAULT_STYLE;
 	}
 	
+	/*private function hideScrollBars(children:Array<DisplayObject>) : Void {
+		for (child in children) {
+			if (Std.is(child, ScrollPlane)) {
+				var sPlane:ScrollPlane = cast child;
+				if (sPlane != null)
+					sPlane.hideScrollBars();
+			}
+			hideScrollBars(child.children);
+		}
+	}*/
+	
 	private function transitionInStart(e:Event) : Void {
 		e.stopImmediatePropagation();
+		//hideScrollBars(children);
 	}
 	
 	private function transitionInComplete(e:Event) : Void {
@@ -54,6 +68,10 @@ class Screen extends IceControl
 	public function setIndex(index:Int) : Void
 	{
 		this.index = index;
+	}
+	
+	public function deactive() : Void {
+		
 	}
 	
 	public function transitionToScreen(address:String) : Void {
