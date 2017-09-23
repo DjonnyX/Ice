@@ -429,8 +429,8 @@ class Scroller extends BaseStatesControl
 		_lastWheelTime = currentTime;
 		
 		if (wheelTime > WHEEL_TIME_TRESHOLD || _wheelTreshold <= WHEEL_TRESHOLD) {
-			var spinX:Float = e.deltaX > 1 ? -1 : 1;
-			var spinY:Float = e.deltaY > 1 ? -1 : 1;
+			var spinX:Float = e.deltaX > 0 ? -1 : 1;
+			var spinY:Float = e.deltaY > 0 ? -1 : 1;
 			
 			throwWheel(spinX, spinY, false);
 		}
