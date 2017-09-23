@@ -87,7 +87,7 @@ class ScreenNavigator extends IceControl
 			_preScreen = newScreen;
 			if (_preScreen != null)
 				_preScreen.addEventListener(Event.SCREEN_LOADED, screenLoadedHandler);
-			return newScreen;
+			return _preScreen;
 		}
 		
 		return show(newScreen);
@@ -108,22 +108,20 @@ class ScreenNavigator extends IceControl
 		
 		newScreen.setSize(_width, _height);
 		
+		if (_oldScreen != null) {
+			_oldScreen.dispatchEventWith(Event.TRANSITION_OUT_START, true);
+			_oldScreen.dispatchEventWith(Event.TRANSITION_OUT_COMPLETE, true);
+			_oldScreen.removeFromParent(true);
+			_oldScreen = null;
+		}
 		_oldScreen = _newScreen;
 		_newScreen = newScreen;
 		_activeScreen = _newScreen;
 		if (_transition == null) {
 			if (_oldScreen != _newScreen) {
 				addChild(_newScreen);
-				if (_oldScreen != null) {
-					_oldScreen.dispatchEventWith(Event.TRANSITION_OUT_START, true);
-					_oldScreen.dispatchEventWith(Event.TRANSITION_OUT_COMPLETE, true);
-				}
 				_newScreen.dispatchEventWith(Event.TRANSITION_IN_START, true);
 				_newScreen.dispatchEventWith(Event.TRANSITION_IN_COMPLETE, true);
-				if (_oldScreen != null) {
-					_oldScreen.removeFromParent(true);
-					_oldScreen = null;
-				}
 			}
 		} else {
 			addChild(_newScreen);
@@ -191,7 +189,7 @@ class ScreenNavigator extends IceControl
 			#if debug
 				trace('disposeScreen ' + _oldScreen.elementName);
 			#end
-			var screenItem:ScreenNavigatorItem = Reflect.getProperty(_screens, screen.id);
+			/*var screenItem:ScreenNavigatorItem = Reflect.getProperty(_screens, screen.id);
 			if (screenItem != null) {
 				var events:Dynamic = screenItem.events;
 				for (eventType in Reflect.fields(events)) {
@@ -201,7 +199,7 @@ class ScreenNavigator extends IceControl
 						screen.removeEventListener(eventType, __transition);
 					}
 				}
-			}
+			}*/
 			screen.removeFromParent(true);
 			screen = null;
 		} else {
@@ -236,10 +234,12 @@ class ScreenNavigator extends IceControl
 		}
 		removeItems();
 		if (_oldScreen != null) {
+			_oldScreen.removeEventListeners();
 			_oldScreen.removeFromParent(true);
 			_oldScreen = null;
 		}
 		if (_newScreen != null) {
+			_newScreen.removeEventListeners();
 			_newScreen.removeFromParent(true);
 			_newScreen = null;
 		}

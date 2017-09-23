@@ -52,6 +52,7 @@ class TransitionManager
 	}
 	
 	private function onTransition(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic) : Void {
+		this.onComplete();
 		_onComplete = onComplete;
 		_newScreen = cast newScreen;
 		_oldScreen = cast oldScreen;
@@ -94,12 +95,12 @@ class TransitionManager
 		if (_oldScreen != null) {
 			_oldScreen.dispatchEventWith(Event.TRANSITION_OUT_COMPLETE, true);
 			Ice.animator.removeTweens(_oldScreen);
-			_oldScreen = null;
+			//_oldScreen = null;
 		}
 		if (_newScreen != null) {
 			_newScreen.dispatchEventWith(Event.TRANSITION_IN_COMPLETE, true);
 			Ice.animator.removeTweens(_newScreen);
-			_newScreen = null;
+			//_newScreen = null;
 		}
 		if (_onComplete != null) {
 			_onComplete();
