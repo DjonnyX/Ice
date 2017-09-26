@@ -3,6 +3,8 @@ package ru.ice.core;
 import haxe.Constraints.Function;
 import haxe.Json;
 import haxe.io.Error;
+import ru.ice.controls.HtmlContainer;
+
 import ru.ice.layout.AnchorLayout;
 import ru.ice.layout.BaseLayout;
 import ru.ice.layout.HorizontalLayout;
@@ -20,6 +22,7 @@ import ru.ice.controls.super.IceControl;
  */
 class IceSerializer 
 {
+	private static inline var HTML_TAG:String = 'html';
 	public static inline var DISPLAY_OBJECT:String = 'displayobject';
 	public static inline var SPRITE:String = 'sprite';
 	public static inline var IMAGE:String = 'image';
@@ -36,6 +39,8 @@ class IceSerializer
 	
 	public function serialize(data:String) : Array<IceControl> 
 	{
+		if (data == null)
+			return [];
 		var items:Array<IceControl> = [];
 		var xmlData:Xml;
 		try {
@@ -53,6 +58,7 @@ class IceSerializer
 	}
 	
 	private function parseXmlData(data:Xml) : IceControl {
+		var name:String = data.nodeName.toLowerCase();
 		var control:IceControl = parseXmlElement(data);
 		if (control != null) {
 			var elements:Iterator<Xml> = data.elements();
@@ -72,6 +78,9 @@ class IceSerializer
 		var name:String = data.nodeName.toLowerCase();
 		var control:IceControl = null;
 		switch (name) {
+			case HTML_TAG: {
+				control = createIceHtmlControl(data);
+			}
 			case ICE_CONTROL: {
 				control = createIceControl(data);
 			}
@@ -129,6 +138,21 @@ class IceSerializer
 	private function createIceControl(data:Xml) : IceControl {
 		var renderer:IceControl = new IceControl();
 		applyIceProps(renderer, data);
+		return renderer;
+	}
+	
+	private function createIceHtmlControl(data:Xml) : IceControl {
+		var renderer:HtmlContainer = new HtmlContainer();
+		applyIceProps(renderer, data);
+		
+		var text:String = null;
+		var child = data.firstChild();
+		if (child != null && (child.nodeType == Xml.PCData || child.nodeType == Xml.CData)) {
+			text = child.nodeValue;
+		}
+		if (text != null && text != '')
+			renderer.innerHTML = text;
+		
 		return renderer;
 	}
 	
@@ -239,6 +263,15 @@ class IceSerializer
 				}
 				case 'verticalAlign': {
 					layout.horizontalAlign = cast propValue;
+				}
+				case 'defaultHorizontalRatio': {
+					layout.defaultHorizontalRatio = cast Std.parseFloat(propValue);
+				}
+				case 'defaultVerticalRatio': {
+					layout.defaultVerticalRatio = cast Std.parseFloat(propValue);
+				}
+				case 'uniscale': {
+					layout.uniscale = stringToBool(propValue);
 				}
 			}
 		}
