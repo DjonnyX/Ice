@@ -7,7 +7,7 @@ import ru.ice.data.ElementData;
  * ...
  * @author Evgenii Grebennikov
  */
-class Label extends IceControl
+class Label extends HtmlContainer
 {
 	public static inline var DEFAULT_STYLE:String = 'default-label-style';
 	
@@ -34,30 +34,6 @@ class Label extends IceControl
 		}
 	}
 	
-	private override function get_width() : Float {
-		return _element.getBoundingClientRect().width;
-	}
-	
-	/*private override function set_width(v:Float) : Float {
-		if (_element.offsetWidth != v) {
-			_width = v;
-			_element.style.width = v + 'px';
-		}
-		return super.get_width();
-	}*/
-	
-	private override function get_height() : Float {
-		return _element.getBoundingClientRect().height;
-	}
-	
-	/*private override function set_height(v:Float) : Float {
-		if (_element.offsetHeight != v) {
-			_height = v;
-			_element.style.height = v + 'px';
-		}
-		return super.get_height();
-	}*/
-	
 	public function new(?elementData:ElementData) 
 	{
 		if (elementData == null)
@@ -67,7 +43,6 @@ class Label extends IceControl
 			elementData.interactive = false;
 		}
 		super(elementData);
-		snapTo(IceControl.SNAP_TO_CONTENT, IceControl.SNAP_TO_CONTENT);
 		isClipped = true;
 		setWordWrap(false);
 		styleName = DEFAULT_STYLE;
