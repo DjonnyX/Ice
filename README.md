@@ -1,1 +1,1 @@
-# Ice - a touch UI framework based on html5
+# Ice - high tactile engine for touch interfaces based on html5
