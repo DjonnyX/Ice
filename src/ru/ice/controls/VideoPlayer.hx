@@ -226,6 +226,7 @@ class VideoPlayer extends IceControl
 			_screenToggleButton = null;
 		}
 		if (_videoElement != null) {
+			_videoElement.pause();
 			_videoElement = null;
 		}
 		super.dispose();
