@@ -89,6 +89,48 @@ class RockRowsLayout extends BaseLayout
 		return get_verticalAlign();
 	}
 	
+	private var _defaultHorizontalRatio:Float = 1;
+	public var defaultHorizontalRatio(get, set):Float;
+	private function get_defaultHorizontalRatio() : Float {
+		return _defaultHorizontalRatio;
+	}
+	private function set_defaultHorizontalRatio(v:Float) : Float {
+		if (_defaultHorizontalRatio != v) {
+			_defaultHorizontalRatio = v;
+			if (_owner != null)
+				update();
+		}
+		return get_defaultHorizontalRatio();
+	}
+	
+	private var _defaultVerticalRatio:Float = 1;
+	public var defaultVerticalRatio(get, set):Float;
+	private function get_defaultVerticalRatio() : Float {
+		return _defaultVerticalRatio;
+	}
+	private function set_defaultVerticalRatio(v:Float) : Float {
+		if (_defaultVerticalRatio != v) {
+			_defaultVerticalRatio = v;
+			if (_owner != null)
+				update();
+		}
+		return get_defaultVerticalRatio();
+	}
+	
+	private var _uniscale:Bool = false;
+	public var uniscale(get, set):Bool;
+	private function get_uniscale() : Bool {
+		return _uniscale;
+	}
+	private function set_uniscale(v:Bool) : Bool {
+		if (_uniscale != v) {
+			_uniscale = v;
+			if (_owner != null)
+				update();
+		}
+		return get_uniscale();
+	}
+	
 	/**
 	 * Структура разметки по-умолчанию
 	 */
@@ -233,7 +275,7 @@ class RockRowsLayout extends BaseLayout
 								}
 							}
 							child.x = _paddingLeft + (ci * itemWidth) + (ci * _horizontalGap);
-							child.y = _paddingTop + (ri * itemWidth) + (ri * _verticalGap);
+							child.y = _paddingTop + (ri * (_uniscale ? hRatio : 1) * itemWidth) + (ri * _verticalGap);
 							child.setSize(vRatio * itemWidth + ((hRatio - 1) * _horizontalGap), hRatio * itemWidth + ((vRatio - 1) * _verticalGap));
 							fullHeight = Math.max(fullHeight, _owner.totalContentHeight);
 							return;
@@ -250,14 +292,14 @@ class RockRowsLayout extends BaseLayout
 			}
 			child.x = _paddingLeft;
 			child.y = _paddingTop + (endIndex * itemWidth) + (endIndex * _verticalGap);
-			child.setSize(hRatio * itemWidth + ((hRatio - 1) * _horizontalGap), vRatio * itemWidth + ((vRatio - 1) * _verticalGap));
+			child.setSize(vRatio * itemWidth + ((hRatio - 1) * _horizontalGap), hRatio * itemWidth + ((vRatio - 1) * _verticalGap)); //hr hr vr vr
 			fullHeight = Math.max(fullHeight, child.y + child.height);
 		}
 		
 		fillRowsIfNeeded(1);
 		
 		for (child in _objects) {
-			var hRatio:Float = 1, vRatio:Float = 1;
+			var hRatio:Float = _defaultHorizontalRatio, vRatio:Float = _defaultVerticalRatio;
 			var c:IceControl = cast child;
 			if (c != null) {
 				var p:RockLayoutParams = cast c.layoutParams;
