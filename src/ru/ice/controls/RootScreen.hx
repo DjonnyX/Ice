@@ -42,6 +42,11 @@ class RootScreen extends Screen
 		routeChange(cast data.address);
 	}*/
 	
+	public override function initialize() : Void {
+		Router.isInitialized = true;
+		super.initialize();
+	}
+	
 	private function routeChange(address:String) : Void {
 		
 	}

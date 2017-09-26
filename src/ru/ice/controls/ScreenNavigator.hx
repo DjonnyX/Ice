@@ -15,6 +15,8 @@ import ru.ice.events.Event;
  */
 class ScreenNavigator extends IceControl
 {
+	public var name:String = '';
+	
 	private var _onScreenLoaded:Function;
 	private var _screens:Dynamic = {};
 	private var _oldScreen:Screen;
@@ -69,8 +71,9 @@ class ScreenNavigator extends IceControl
 	private function changeRouteHandler(event:Event, data:Dynamic) : Void {
 		var isEnd:Bool = cast data.isEnd;
 		var address:String = cast data.address;
+		trace('change('+name, address, isEnd +')');
 		showScreen(address);
-		dispatchEventWith(Event.CHANGE, true, data);
+		dispatchEventWith(Event.CHANGE, false, data);
 	}
 	
 	public function showScreen(screenName:String, pre:Bool = false, onScreenLoaded:Function = null) : Screen
@@ -108,7 +111,7 @@ class ScreenNavigator extends IceControl
 		
 		newScreen.setSize(_width, _height);
 		
-		if (_oldScreen != null) {
+		if (_oldScreen != null && _oldScreen != _newScreen) {
 			_oldScreen.dispatchEventWith(Event.TRANSITION_OUT_START, true);
 			_oldScreen.dispatchEventWith(Event.TRANSITION_OUT_COMPLETE, true);
 			_oldScreen.removeFromParent(true);
@@ -135,7 +138,7 @@ class ScreenNavigator extends IceControl
 		return Reflect.hasField(_screens, screenName);
 	}
 	
-	private function existsScreen(screenName:String) : Bool
+	/*private function existsScreen(screenName:String) : Bool
 	{
 		var isExists:Bool = false;
 		if (_oldScreen != null) {
@@ -146,12 +149,12 @@ class ScreenNavigator extends IceControl
 				isExists = true;
 		}
 		return isExists;
-	}
+	}*/
 	
 	private function _createScreenByName(screenName:String) : Screen
 	{
-		var isExists:Bool = existsScreen(screenName);
-		if (!isExists) {
+		//var isExists:Bool = existsScreen(screenName);
+		//if (!isExists) {
 			var screenItem:ScreenNavigatorItem = Reflect.getProperty(_screens, screenName);
 			if (screenItem == null)
 				return null;
@@ -173,8 +176,8 @@ class ScreenNavigator extends IceControl
 				screen.addEventListener(eventType, __transition);
 			}
 			return screen;
-		}
-		return null;
+		//}
+		//return null;
 	}
 	
 	private function _transitionComplete() : Void
@@ -189,7 +192,7 @@ class ScreenNavigator extends IceControl
 			#if debug
 				trace('disposeScreen ' + _oldScreen.elementName);
 			#end
-			/*var screenItem:ScreenNavigatorItem = Reflect.getProperty(_screens, screen.id);
+			var screenItem:ScreenNavigatorItem = Reflect.getProperty(_screens, screen.id);
 			if (screenItem != null) {
 				var events:Dynamic = screenItem.events;
 				for (eventType in Reflect.fields(events)) {
@@ -199,7 +202,7 @@ class ScreenNavigator extends IceControl
 						screen.removeEventListener(eventType, __transition);
 					}
 				}
-			}*/
+			}
 			screen.removeFromParent(true);
 			screen = null;
 		} else {
@@ -209,7 +212,11 @@ class ScreenNavigator extends IceControl
 		}
 	}
 	
-	public function removeItems() : Void {
+	public function deactive() : Void {
+		removeItems();
+	}
+	
+	private function removeItems() : Void {
 		if (_screens != null) {
 			for (s in Reflect.fields(_screens)) {
 				var screenItem:ScreenNavigatorItem = cast Reflect.getProperty(_screens, s);

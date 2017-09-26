@@ -20,6 +20,8 @@ class Router
 {
 	public static var current:Router;
 	
+	public static var isInitialized:Bool = false;
+	
 	/**
 	 * Задаются переопределения для ссылок
 	 */
@@ -35,7 +37,7 @@ class Router
 	private static function replaceToDefaultIfNeeded(address:String) : String {
 		var result:String = address;
 		var ind:Int = _defaultLinksMap.indexOf(address);
-		if (ind >= 0)
+		if (ind >= 0 && address == _defaultLinks[ind].address)
 			result = _defaultLinks[ind].def;
 		return result;
 	}
@@ -46,20 +48,31 @@ class Router
 		return _location;
 	}
 	
+	private var _startAddress:String = '';
+	
 	public function new(rootRouter:Route, screen:IceControl) {
 		current = this;
 		_location = Browser.window.location;
+		_startAddress = _location.hash;
 		Browser.window.onhashchange = function() {
 			navigateTo(_location.hash);
 		};
 		rootRouter.setRouter(this);
 		if (!screen.isInitialized) {
 			screen.addEventListener(Event.INITIALIZE, function() : Void {
-				navigateTo(_location.hash);
+				if (isInitialized)
+					navigateTo(_location.hash);
 			});
 			return;
 		}
-		navigateTo(_location.hash);
+	}
+	
+	public function start(address:String) : Void {
+		var sAddress:String = address;
+		var startChain:Array<String> = parseUrl(_startAddress);
+		if (startChain.length > 0)
+			sAddress = _startAddress;
+		change(sAddress);
 	}
 	
 	public function change(address:String) : Void {
@@ -105,7 +118,7 @@ class Router
 	
 	private function check(chain:Array<String>, screen:ScreenNavigatorItem) : Void {
 		removeDelayer();
-		_delayer = Ice.animator.delayCall(navigate, .001, [chain, screen]);
+		_delayer = Ice.animator.delayCall(navigate, 1, [chain, screen]);
 	}
 	
 	private function navigate(chain:Array<String>, screen:ScreenNavigatorItem) : Void {

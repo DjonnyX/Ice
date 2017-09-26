@@ -1,8 +1,8 @@
 package ru.ice.motion.transitionManager;
 
 import haxe.Constraints.Function;
-import ru.ice.animation.Tween;
 
+import ru.ice.animation.Tween;
 import ru.ice.controls.TabBar;
 import ru.ice.display.DisplayObject;
 import ru.ice.controls.itemRenderer.TabBarItemRenderer;
@@ -52,7 +52,7 @@ class TransitionManager
 	}
 	
 	private function onTransition(oldScreen:DisplayObject, newScreen:DisplayObject, onComplete:Dynamic) : Void {
-		this.onComplete();
+		this.onComplete(false);
 		_onComplete = onComplete;
 		_newScreen = cast newScreen;
 		_oldScreen = cast oldScreen;
@@ -66,7 +66,7 @@ class TransitionManager
 			return;
 		}
 		_oldScreen.deactive();
-		_isFromLeft = _newScreen.index < _oldScreen.index;
+		_isFromLeft = _newScreen.index > _oldScreen.index;
 		if (invertNext) {
 			_isFromLeft = false;
 			invertNext = false;
@@ -75,12 +75,16 @@ class TransitionManager
 			_isFromLeft = !_isFromLeft;
 		if (_isFromLeft) {
 			if (_normalTransition == null) {
-				_normalTransition = Slide.createSlideLeftTransition(.5, null, {onStart:this.onStart});
+				Ice.animator.removeTweens(_oldScreen);
+				Ice.animator.removeTweens(_newScreen);
+				_normalTransition = Slide.createSlideLeftTransition(.5, null, {delay:.05, onStart:this.onStart, transition:Transitions.EASE_OUT});
 				_normalTransition(_oldScreen, _newScreen, this.onComplete);
 			}
 		} else {
 			if (_invertTransition == null) {
-				_invertTransition = Slide.createSlideRightTransition(.5, null, {onStart:this.onStart});
+				Ice.animator.removeTweens(_oldScreen);
+				Ice.animator.removeTweens(_newScreen);
+				_invertTransition = Slide.createSlideRightTransition(.5, null, {delay:.05, onStart:this.onStart, transition:Transitions.EASE_OUT});
 				_invertTransition(_oldScreen, _newScreen, this.onComplete);
 			}
 		}
@@ -91,18 +95,18 @@ class TransitionManager
 		_newScreen.dispatchEventWith(Event.TRANSITION_IN_START, true);
 	}
 	
-	private function onComplete() : Void {
+	private function onComplete(e:Bool = true) : Void {
 		if (_oldScreen != null) {
 			_oldScreen.dispatchEventWith(Event.TRANSITION_OUT_COMPLETE, true);
 			Ice.animator.removeTweens(_oldScreen);
-			//_oldScreen = null;
+			_oldScreen = null;
 		}
 		if (_newScreen != null) {
 			_newScreen.dispatchEventWith(Event.TRANSITION_IN_COMPLETE, true);
 			Ice.animator.removeTweens(_newScreen);
-			//_newScreen = null;
+			_newScreen = null;
 		}
-		if (_onComplete != null) {
+		if (e && _onComplete != null) {
 			_onComplete();
 			_onComplete = null;
 		}

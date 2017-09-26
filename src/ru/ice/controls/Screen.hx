@@ -17,6 +17,12 @@ class Screen extends IceControl
 {
 	public static inline var DEFAULT_STYLE:String = 'default-screen-style';
 	
+	private var _isAnimated:Bool = false;
+	public var isAnimated(get, never):Bool;
+	private function get_isAnimated() : Bool {
+		return _isAnimated;
+	}
+	
 	public var id(default, null):String;
 	public var index(default, null):Int;
 	
@@ -44,19 +50,23 @@ class Screen extends IceControl
 	}*/
 	
 	private function transitionInStart(e:Event) : Void {
+		_isAnimated = true;
 		e.stopImmediatePropagation();
 		//hideScrollBars(children);
 	}
 	
 	private function transitionInComplete(e:Event) : Void {
+		_isAnimated = false;
 		e.stopImmediatePropagation();
 	}
 	
 	private function transitionOutStart(e:Event) : Void {
+		_isAnimated = true;
 		e.stopImmediatePropagation();
 	}
 	
 	private function transitionOutComplete(e:Event) : Void {
+		_isAnimated = false;
 		e.stopImmediatePropagation();
 	}
 	
