@@ -17,38 +17,38 @@ class Image extends IceControl
 	public static inline var FROM_MIN_RECT:String = 'from-min-rect';
 	public static inline var FIT_TO_CONTAINER_SIZE:String = 'fit-to-container-size';
 	
-    private static var __currentLoadId:Int = 1;
+	private static var __imgPool:Array<Image> = [];
 	
-    private static var __lastId:Int = 0;
-	
-	private static var __dictionary:Dynamic = {};
+	public static var nextLoadImage(get, never) : Image;
+	private static function get_nextLoadImage() : Image {
+		for (img in __imgPool) {
+			if (img != null && !img._isLoaded) {
+				return img;
+			}
+		}
+		return null;
+	}
 	
 	public static function loadNextImageIfNeeded() : Void {
-		var img:Image = null;
-		var id:Int = __currentLoadId;
-		while (img == null && id <= __lastId) {
-			img = getImageById(id);
-			id ++;
-		}
+		var img:Image = nextLoadImage;
 		if (img != null)
 			img.load();
 	}
 	
-	public static function getImageById(id:Int) : Image {
-		if (Reflect.hasField(__dictionary, Std.string(id)))
-			return Reflect.getProperty(__dictionary, Std.string(id));
-		return null;
+	public static function removeFromPool(img:Image) : Void {
+		if (img == null)
+			return;
+		
+		var ind:Int = __imgPool.indexOf(img);
+		if (ind >= 0)
+			__imgPool.splice(ind, 1);
 	}
-	
-	private var _instanceId:Int = 0;
-	
-	private var _loadingFromChain:Bool = true;
 	
 	private var _isLoaded:Bool = false;
 	
-	private var _imageElement:Dynamic;
+	private var _loadingFromChain:Bool = false;
 	
-	public var id:Int;
+	private var _imageElement:Dynamic;
 	
 	private var _proportional:Bool = true;
 	public var proportional(get, set):Bool;
@@ -100,7 +100,7 @@ class Image extends IceControl
 		if (_src != v) {
 			_src = v;
 			if (_loadingFromChain) {
-				if (__currentLoadId == _instanceId)
+				if (nextLoadImage == this)
 					_imageElement.src = formatSrc(v);
 			} else
 				_imageElement.src = formatSrc(v);
@@ -138,9 +138,7 @@ class Image extends IceControl
 	
 	public function new(?elementData:ElementData, useCache:Bool = true) 
 	{
-		__lastId ++;
-		_instanceId = __lastId;
-		__dictionary[__lastId] = this;
+		__imgPool.push(this);
 		_useCache = useCache;
 		if (elementData == null) {
 			elementData = new ElementData({
@@ -157,6 +155,7 @@ class Image extends IceControl
 		_imageElement = cast _element;
 		visible = false;
 		_element.onload = __onLoadHandler;
+		_element.onerror = __onLoadHandler;
 		snapTo(IceControl.SNAP_TO_CONTENT, IceControl.SNAP_TO_CONTENT);
 	}
 	
@@ -166,14 +165,13 @@ class Image extends IceControl
 	}
 	
 	private function __onLoadHandler() : Void {
+		removeFromPool(this);
 		visible = true;
 		_isLoaded = true;
 		this.dispatchEventWith(Event.LOADED, false);
 		
-		if (_loadingFromChain) {
-			__currentLoadId ++;
+		if (_loadingFromChain)
 			loadNextImageIfNeeded();
-		}
 	}
 	
 	public override function update() : Void
@@ -235,7 +233,9 @@ class Image extends IceControl
 	
 	public override function dispose() : Void
 	{
-		Reflect.deleteField(__dictionary, Std.string(_instanceId));
+		_element.onload = null;
+		_element.onerror = null;
+		removeFromPool(this);
 		super.dispose();
 		_imageElement = null;
 	}
