@@ -67,7 +67,7 @@ class DelayedBuilder
 		return _postFactory;
 	}
 	
-	public function new(owner:IceControl, content:DisplayObject) {
+	public function new(owner:IceControl, content:IceControl) {
 		_owner = owner;
 		_content = content;
 		styleName = DEFAULT_STYLE;

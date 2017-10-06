@@ -1,6 +1,8 @@
 package ru.ice.controls;
 
 import haxe.Constraints.Function;
+import js.html.Element;
+import js.html.HTMLCollection;
 
 import ru.ice.display.DisplayObject;
 import ru.ice.events.Event;
@@ -31,11 +33,33 @@ class Button extends BaseStatesControl
 	public static inline var STATE_SELECT:String = 'select';
 	public static inline var STATE_DISABLED:String = 'disabled';
 	
+	private var _isHtmlContent:Bool = false;
+	public var isHtmlContent(get, never) : Bool;
+	private function get_isHtmlContent() : Bool {
+		return _isHtmlContent;
+	}
+	
 	private var _labelField:Label;
 	
 	private var _iconField:Label;
 	
+	private var _htmlContent:HtmlContainer;
+	
 	private var _contentBox:IceControl;
+	
+	private var _htmlContentStyleFactory:Function;
+	public var htmlContentStyleFactory(get, set) : Function;
+	private function set_htmlContentStyleFactory(v:Function) : Function {
+		if (_htmlContentStyleFactory != v) {
+			_htmlContentStyleFactory = v;
+			if (_htmlContent != null && v != null)
+				_htmlContentStyleFactory(_htmlContent);
+		}
+		return get_htmlContentStyleFactory();
+	}
+	private function get_htmlContentStyleFactory() : Function {
+		return _htmlContentStyleFactory;
+	}
 	
 	private var _labelInitializedStyleFactory:Function;
 	public var labelInitializedStyleFactory(get, set) : Function;
@@ -118,20 +142,33 @@ class Button extends BaseStatesControl
 	private function set_label(v:String) : String {
 		if (_label != v) {
 			_label = v;
-			if (_labelField == null) {
-				_labelField = new Label();
-				if (_labelInitializedStyleFactory != null)
-					_labelInitializedStyleFactory(_labelField);
-				if (_labelStyleFactory != null)
-					_labelField.styleFactory = _labelStyleFactory;
-				_contentBox.addChild(_labelField);
+			if (_isHtmlContent) {
+				setHtmlLabel(v);
+			} else {
+				if (_labelField == null) {
+					_labelField = new Label();
+					if (_labelInitializedStyleFactory != null)
+						_labelInitializedStyleFactory(_labelField);
+					if (_labelStyleFactory != null)
+						_labelField.styleFactory = _labelStyleFactory;
+					_contentBox.addChild(_labelField);
+				}
+				_labelField.text = _label;
 			}
-			_labelField.text = _label;
 			if (_isInitialized)
 				updateState();
 		}
 		return get_label();
 	}
+	
+	private function setHtmlLabel(v:String) : Void {
+		var c:HTMLCollection = _element.getElementsByTagName("label");
+		for (i in 0...(c.length)) {
+			var e:Element = c.item(i);
+			e.innerHTML = v;
+		}
+	}
+	
 	/**
 	 * Иконка.
 	 * В качестве ресурса указывается класс стиля для глифа.
@@ -143,34 +180,48 @@ class Button extends BaseStatesControl
 	}
 	private function set_icon(v:Array<String>) : Array<String> {
 		if (_icon != v) {
-			if (_iconField != null)
-				_iconField.removeClass(_icon);
 			_icon = v;
-			if (_iconField == null) {
-				_iconField = new Label();
-				if (_iconInitializedStyleFactory != null)
-					_iconInitializedStyleFactory(_iconField);
-				if (_iconStyleFactory != null)
-					_iconField.styleFactory = _iconStyleFactory;
-				_contentBox.addChild(_iconField);
+			if (!_isHtmlContent) {
+				if (_iconField != null)
+					_iconField.removeClass(_icon);
+				if (_iconField == null) {
+					_iconField = new Label();
+					if (_iconInitializedStyleFactory != null)
+						_iconInitializedStyleFactory(_iconField);
+					if (_iconStyleFactory != null)
+						_iconField.styleFactory = _iconStyleFactory;
+					_contentBox.addChild(_iconField);
+				}
+				_iconField.addClass(_icon);
 			}
-			_iconField.addClass(_icon);
 			if (_isInitialized)
 				updateState();
 		}
 		return get_icon();
 	}
 	
-	public function new(?elementData:ElementData) 
+	public function new(?elementData:ElementData, isHtmlContent:Bool = false) 
 	{
 		if (elementData == null)
 			elementData = new ElementData({'name':'btn'});
 		super(elementData);
-		_contentBox = new IceControl(new ElementData({'name':'c', 'interactive':false}));
-		addChild(_contentBox);
-		
+		_isHtmlContent = isHtmlContent;
+		if (_isHtmlContent) {
+			_htmlContent = new HtmlContainer();
+			addChild(_htmlContent);
+		} else {
+			_contentBox = new IceControl(new ElementData({'interactive':false}));
+			addChild(_contentBox);
+		}
 		styleName = DEFAULT_STYLE;
 		state = STATE_UP;
+	}
+	
+	override public function initialize() : Void 
+	{
+		super.initialize();
+		if (_htmlContent != null)
+			setHtmlLabel(_label);
 	}
 	
 	override public function dispose() : Void {
@@ -180,6 +231,10 @@ class Button extends BaseStatesControl
 		_contentBoxStyleFactory = null;
 		_labelInitializedStyleFactory = null;
 		_iconInitializedStyleFactory = null;
+		if (_htmlContent != null) {
+			_htmlContent.removeFromParent(true);
+			_htmlContent = null;
+		}
 		if (_labelField != null) {
 			_labelField.removeFromParent(true);
 			_labelField = null;

@@ -332,8 +332,10 @@ class BaseLayout extends EventDispatcher implements ILayout
 	private function set_paddingLeft(v:Float) : Float {
 		/*if (Math.isNaN(v))
 			v = 0;*/
-		if (_paddingLeft != v)
+		if (_paddingLeft != v) {
 			_paddingLeft = v;
+			update();
+		}
 		return get_paddingLeft();
 	}
 	
@@ -348,8 +350,10 @@ class BaseLayout extends EventDispatcher implements ILayout
 	private function set_paddingRight(v:Float) : Float {
 		/*if (Math.isNaN(v))
 			v = 0;*/
-		if (_paddingRight != v)
+		if (_paddingRight != v) {
 			_paddingRight = v;
+			update();
+		}
 		return get_paddingRight();
 	}
 	
@@ -364,8 +368,10 @@ class BaseLayout extends EventDispatcher implements ILayout
 	private function set_paddingTop(v:Float) : Float {
 		/*if (Math.isNaN(v))
 			v = 0;*/
-		if (_paddingTop != v)
+		if (_paddingTop != v) {
 			_paddingTop = v;
+			update();
+		}
 		return get_paddingTop();
 	}
 	
@@ -380,8 +386,10 @@ class BaseLayout extends EventDispatcher implements ILayout
 	private function set_paddingBottom(v:Float) : Float {
 		/*if (Math.isNaN(v))
 			v = 0;*/
-		if (_paddingBottom != v)
+		if (_paddingBottom != v) {
 			_paddingBottom = v;
+			update();
+		}
 		return get_paddingBottom();
 	}
 	

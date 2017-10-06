@@ -266,7 +266,7 @@ class DisplayObject extends DOMExpress
 		return height;// * _scaleY;
 	}*/
 	
-	private var _width:Float = 0;
+	public var _width:Float = 0;
 	public var width(get, set):Float;
 	private function get_width() : Float {
 		return _width;
@@ -286,7 +286,7 @@ class DisplayObject extends DOMExpress
 		return _width;
 	}
 	
-	private var _height:Float = 0;
+	public var _height:Float = 0;
 	public var height(get, set):Float;
 	private function get_height() : Float {
 		return _height;
@@ -328,6 +328,16 @@ class DisplayObject extends DOMExpress
 			}
 		}
 		return get_elementName();
+	}
+	
+	public var actualWidth(get, never):Float;
+	private function get_actualWidth() : Float {
+		return _width;
+	}
+	
+	public var actualHeight(get, never):Float;
+	private function get_actualHeight() : Float {
+		return _height;
 	}
 	
 	public var displayState(get, never):String;

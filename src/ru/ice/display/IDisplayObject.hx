@@ -16,6 +16,8 @@ import ru.ice.core.Ice;
  */
 interface IDisplayObject extends IDOMExpress
 {
+	public var actualWidth(get, never):Float;
+	public var actualHeight(get, never):Float;
 	private var _isStage:Bool = false;
 	public var isClipped(get, set):Bool;
 	public var visible(get, set):Bool;

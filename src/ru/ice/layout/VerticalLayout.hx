@@ -63,21 +63,24 @@ class VerticalLayout extends BaseLayout
 	
 	public override function update() : Rectangle
 	{
-		if (!(_owner != null && _owner.isInitialized))
+		if (_owner == null || !_owner.isInitialized)
 			return _bound;
 		
 		if (_needSort)
 			sort();
+			
+		var w:Float = _owner._width;
+		var h:Float = _owner._height;
 		
 		#if debug
-			trace('update layout', _owner.elementName, _owner.width, _owner.height, _paddingLeft, _paddingRight);
+			trace('update layout', _owner.elementName, w, h, _paddingLeft, _paddingRight);
 		#end
 		
 		_needResize = false;
-		_bound.setSize(_owner.width, _owner.height);
+		_bound.setSize(w, h);
 		
-		var stageWidth:Float = _owner.width - (_paddingLeft + _paddingRight),
-		stageHeight:Float = _owner.height - (_paddingTop + _paddingBottom),
+		var stageWidth:Float = w - (_paddingLeft + _paddingRight),
+		stageHeight:Float = h - (_paddingTop + _paddingBottom),
 		fullWidth:Float = 0, fullHeight:Float = 0, y:Float = null, itemHeight:Float = 0;
 		
 		var heights:Array<Float> = [];

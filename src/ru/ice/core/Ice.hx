@@ -1,5 +1,7 @@
 package ru.ice.core;
 
+import js.Browser;
+
 import ru.ice.controls.super.BaseStatesControl;
 import ru.ice.controls.super.IceControl;
 import ru.ice.data.ElementData;
@@ -16,12 +18,21 @@ import ru.ice.display.Stage;
  */
 class Ice
 {
-	public static inline var VERSION : String = '0.3.3';
+	public static inline var VERSION : String = '0.3.4';
 	
 	public static var isDragging:Bool = false;
 	
 	public static var globalPressed:Bool = false;
 	
+	public static var screenWidth(get, never):Float;
+	private static function get_screenWidth():Float {
+		return Browser.window.innerWidth;
+	}
+	
+	public static var screenHeight(get, never):Float;
+	private static function get_screenHeight():Float {
+		return Browser.window.innerHeight;
+	}
 	
 	private static var _serializer:IceSerializer;
 	public static var serializer(get, never):IceSerializer;

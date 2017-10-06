@@ -19,7 +19,7 @@ class AnchorLayout extends BaseLayout
 	
 	public override function update() : Rectangle
 	{
-		if (!(_owner != null && _owner.isInitialized))
+		if (_owner == null || !_owner.isInitialized)
 			return _bound;
 		
 		if (_needSort)

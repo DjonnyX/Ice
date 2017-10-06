@@ -53,10 +53,17 @@ class BaseListItemControl extends IceControl
 		if (elementData == null)
 			elementData = new ElementData({'name':'li'});
 		super(elementData);
+		style = {'display':'block'};
 	}
 	
 	public function select() : Void {
 		_selected = true;
+		dispatchEventWith(Event.CHANGE, true);
+		return;
+	}
+	
+	public function deselect() : Void {
+		_selected = false;
 		dispatchEventWith(Event.CHANGE, true);
 		return;
 	}

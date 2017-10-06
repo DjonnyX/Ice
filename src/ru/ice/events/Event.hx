@@ -124,4 +124,7 @@ class Event
 	
     public static inline var SCREEN_LOADED:String = "screenLoaded";
     public static inline var HOVER:String = "hoverForChain";
+	
+    public static inline var SCROLLBAR_MAXIMIZE:String = "scrollbar-minimize";
+    public static inline var SCROLLBAR_MINIMIZE:String = "scrollbar-maximize";
 }

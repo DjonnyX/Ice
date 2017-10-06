@@ -31,6 +31,74 @@ class IceControl extends Sprite
 	public static inline var SNAP_TO_HTML_CONTENT:String = 'snap-to-html-content';
 	public static inline var SNAP_TO_CUSTOM_OBJECT:String = 'snap-to-custom-object';
 	
+	private var _marginH:Float = 0;
+	public var marginH(get, never) : Float;
+	private function get_marginH() : Float {
+		return _marginH;
+	}
+	
+	private var _marginV:Float = 0;
+	public var marginV(get, never) : Float;
+	private function get_marginV() : Float {
+		return _marginV;
+	}
+	
+	public var marginLeft(get, set) : Float;
+	private var _marginLeft:Float = 0;
+	private function get_marginLeft() : Float {
+		return _marginLeft;
+	}
+	private function set_marginLeft(v:Float) : Float {
+		if (_marginLeft != v) {
+			_marginLeft = v;
+			_marginH = v + _marginRight;
+			update();
+		}
+		return get_marginLeft();
+	}
+	
+	public var marginRight(get, set) : Float;
+	private var _marginRight:Float = 0;
+	private function get_marginRight() : Float {
+		return _marginRight;
+	}
+	private function set_marginRight(v:Float) : Float {
+		if (_marginRight != v) {
+			_marginRight = v;
+			_marginH = v + _marginLeft;
+			update();
+		}
+		return get_marginRight();
+	}
+	
+	public var marginTop(get, set) : Float;
+	private var _marginTop:Float = 0;
+	private function get_marginTop() : Float {
+		return _marginTop;
+	}
+	private function set_marginTop(v:Float) : Float {
+		if (_marginTop != v) {
+			_marginTop = v;
+			_marginV = v + _marginBottom;
+			update();
+		}
+		return get_marginTop();
+	}
+	
+	public var marginBottom(get, set) : Float;
+	private var _marginBottom:Float = 0;
+	private function get_marginBottom() : Float {
+		return _marginBottom;
+	}
+	private function set_marginBottom(v:Float) : Float {
+		if (_marginBottom != v) {
+			_marginBottom = v;
+			_marginV = v + _marginTop;
+			update();
+		}
+		return get_marginBottom();
+	}
+	
 	private var _snapWidth:Dynamic = SNAP_TO_CONTENT;
 	public var snapWidth(get, never) : Dynamic;
 	private function get_snapWidth() : Dynamic {
@@ -189,34 +257,52 @@ class IceControl extends Sprite
 		return _layoutParams;
 	}
 	
-	public var actualWidth(get, never):Float;
-	private function get_actualWidth() : Float {
-		return width - commonPaddingLeft - commonPaddingRight;
+	override private function get_actualWidth() : Float {
+		return _width - paddingLeft - paddingRight - _marginH;
 	}
 	
-	public var actualHeight(get, never):Float;
-	private function get_actualHeight() : Float {
-		return width - commonPaddingTop - commonPaddingBottom;
+	override private function get_actualHeight() : Float {
+		return _height - paddingTop - paddingBottom - _marginV;
 	}
 	
 	public var commonPaddingLeft(get, never) : Float;
 	private function get_commonPaddingLeft() : Float {
-		return _layout != null ? _layout.commonPaddingLeft : 0;
+		return _layout != null ? _layout.paddingLeft : 0;
 	}
 	
 	public var commonPaddingRight(get, never) : Float;
 	private function get_commonPaddingRight() : Float {
-		return _layout != null ? _layout.commonPaddingRight : 0;
+		return _layout != null ? _layout.paddingRight : 0;
 	}
 	
 	public var commonPaddingTop(get, never) : Float;
 	private function get_commonPaddingTop() : Float {
-		return _layout != null ? _layout.commonPaddingTop : 0;
+		return _layout != null ? _layout.paddingTop : 0;
 	}
 	
 	public var commonPaddingBottom(get, never) : Float;
 	private function get_commonPaddingBottom() : Float {
-		return _layout != null ? _layout.commonPaddingBottom : 0;
+		return _layout != null ? _layout.paddingBottom : 0;
+	}
+	
+	public var paddingLeft(get, never) : Float;
+	private function get_paddingLeft() : Float {
+		return _layout != null ? _layout.paddingLeft : 0;
+	}
+	
+	public var paddingRight(get, never) : Float;
+	private function get_paddingRight() : Float {
+		return _layout != null ? _layout.paddingRight : 0;
+	}
+	
+	public var paddingTop(get, never) : Float;
+	private function get_paddingTop() : Float {
+		return _layout != null ? _layout.paddingTop : 0;
+	}
+	
+	public var paddingBottom(get, never) : Float;
+	private function get_paddingBottom() : Float {
+		return _layout != null ? _layout.paddingBottom : 0;
 	}
 	
 	private var _isInvalidChildrenSize:Bool = false;
@@ -327,7 +413,7 @@ class IceControl extends Sprite
 		_childIsReposition = true;
 	}*/
 	
-	private function createDelayedBuilder(owner:IceControl, content:DisplayObject) : Void {
+	private function createDelayedBuilder(owner:IceControl, content:IceControl) : Void {
 		_delayedBuilder = new DelayedBuilder(owner, content);
 		_delayedBuilder.styleFactory = _delayedBuilderStyleFactory;
 		if (_isInitialized) {
@@ -395,29 +481,34 @@ class IceControl extends Sprite
 			//}
 			if (invalidData.invalidateWidth) {
 				if (_snapWidth == SNAP_TO_CONTENT)
-					width = totalContentWidth + commonPaddingRight;
+					width = totalContentWidth + commonPaddingRight - _marginH;
 				else if (_snapWidth == SNAP_TO_HTML_CONTENT)
-					width = htmlContentWidth;
+					width = htmlContentWidth - _marginH;
 				else if (tw != null) {
-					width = tw.width;
+					if (_snapWidth == SNAP_TO_PARENT)
+						width = tw.actualWidth - _marginH;
+					else width = tw._width - _marginH;
 				}
 			}
 			if (invalidData.invalidateHeight) {
 				if (_snapHeight == SNAP_TO_CONTENT)
-					height = totalContentHeight + commonPaddingBottom;
+					height = totalContentHeight + commonPaddingBottom - _marginV;
 				else if (_snapHeight == SNAP_TO_HTML_CONTENT)
-					height = htmlContentHeight;
+					height = htmlContentHeight - _marginV;
 				else if (th != null) {
-					height = th.height;
+					if (_snapHeight == SNAP_TO_PARENT)
+						height = th.actualHeight - _marginV;
+					else height = th._height - _marginV;
 				}
 			}
 			//trace('--- ', _elementName,  width, height);
+			// Апдейт лэйаута.
 			// Апдейт лэйаута.
 			if (_layout != null) {
 				_layout.update();
 				_layoutRegion.copy(_layout.bound);
 			}
-			_propertiesProxy.setSize(width, height);
+			_propertiesProxy.setSize(_width, _height);
 			if (emitResizeEvents) {
 				resize(invalidData);
 				dispatchEventWith(Event.RESIZE, true, invalidData);
@@ -468,7 +559,11 @@ class IceControl extends Sprite
 			if (_propertiesProxy.width != htmlContentWidth)
 				invalidateWidth = true;
 		} else {
-			if (_propertiesProxy.isInvalidWidth(targetForSnapWidth))
+			if (_snapWidth == SNAP_TO_PARENT) {
+				if (targetForSnapWidth != null && _propertiesProxy.width != targetForSnapWidth.actualWidth)
+				invalidateWidth = true;
+			} else
+			if (targetForSnapWidth != null && _propertiesProxy.width != targetForSnapWidth._width)
 				invalidateWidth = true;
 		}
 		
@@ -479,7 +574,11 @@ class IceControl extends Sprite
 			if (_propertiesProxy.height != htmlContentHeight)
 				invalidateHeight = true;
 		} else {
-			if (_propertiesProxy.isInvalidHeight(targetForSnapHeight))
+			if (_snapHeight == SNAP_TO_PARENT) {
+				if (targetForSnapHeight != null && _propertiesProxy.height != targetForSnapHeight.actualHeight)
+				invalidateHeight = true;
+			} else
+			if (targetForSnapHeight != null && _propertiesProxy.height != targetForSnapHeight._height)
 				invalidateHeight = true;
 		}
 		
@@ -507,7 +606,7 @@ class IceControl extends Sprite
 			_layout.update();
 	}
 	
-	public function addDelayedItemFactory(factory:Function, ?owner:IceControl, ?content:DisplayObject) : Void {
+	public function addDelayedItemFactory(factory:Function, ?owner:IceControl, ?content:IceControl) : Void {
 		if (_delayedBuilder == null)
 			createDelayedBuilder(owner != null ? owner : this, content != null ? content : this);
 		_delayedBuilder.add(factory);
@@ -603,16 +702,18 @@ class PropertiesProxy
 		return this;
 	}
 	
-	public function isInvalidSize(?d:DisplayObject) : Bool {
-		return d != null ? !(isInvalidWidth(d) && isInvalidHeight(d)) : false;
+	public function isInvalidWidth(?w:Float) : Bool {
+		var result:Bool = false;
+		if (w != null)
+			result = width != w;
+		return result;
 	}
 	
-	public function isInvalidWidth(?d:DisplayObject) : Bool {
-		return d != null ? width != d.width : false;
-	}
-	
-	public function isInvalidHeight(?d:DisplayObject) : Bool {
-		return d != null ? height != d.height : false;
+	public function isInvalidHeight(?h:Float) : Bool {
+		var result:Bool = false;
+		if (h != null)
+			result = height != h;
+		return result;
 	}
 	
 	public function setSize(w:Float, h:Float) : Void {

@@ -45,6 +45,15 @@ class ScrollBar extends Scroller
 		return get_ratio();
 	}
 	
+	private override function set_isHover(v:Bool) : Bool {
+		if (_isHover != v) {
+			_isHover = v;
+			updateState();
+			dispatchEventWith(v?Event.SCROLLBAR_MAXIMIZE:Event.SCROLLBAR_MINIMIZE, true);
+		}
+		return get_isHover();
+	}
+	
 	/**
 	 * public
 	 * Напрвленность.

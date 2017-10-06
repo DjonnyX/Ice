@@ -13,7 +13,7 @@ class Sprite extends DisplayObject
 	{
 		if (!initial) {
 			if (elementData == null)
-				elementData = new ElementData({'name':'c'});
+				elementData = new ElementData({'name':'div'});
 		}
 		super(elementData);
 	}

@@ -1,6 +1,7 @@
 package ru.ice.controls.itemRenderer;
 
 import haxe.Constraints.Function;
+
 import ru.ice.controls.super.BaseListItemControl;
 import ru.ice.controls.super.IceControl;
 import ru.ice.data.ElementData;
@@ -54,12 +55,17 @@ class TabBarItemRenderer extends BaseListItemControl {
 		super.select();
 	}
 	
+	public override function deselect() : Void {
+		selected = false;
+		super.deselect();
+	}
+	
 	private var _button:Button;
 	
 	public function new(?elementData:ElementData)
 	{
 		if (elementData == null)
-			elementData = new ElementData({'name':'ti'});
+			elementData = new ElementData({'name':'li'});
 		super(elementData);
 		_button = new Button();
 		_button.allowDeselect = false;

@@ -203,7 +203,7 @@ class RockRowsLayout extends BaseLayout
 	
 	public override function update() : Rectangle
 	{
-		if (!(_owner != null && _owner.isInitialized))
+		if (_owner == null || !_owner.isInitialized)
 			return _bound;
 		
 		if (_needSort)
@@ -212,17 +212,20 @@ class RockRowsLayout extends BaseLayout
 		_needResize = false;
 		var e:DOMElement = _owner.element;
 		
+		var w:Float = _owner._width;
+		var h:Float = _owner._height;
+		
 		#if debug
-			trace('update layout', _owner.element, _owner.width, _owner.height);
+			trace('update layout', _owner.element, w, _owner.height);
 		#end
 		
-		_bound.setSize(_owner.width, _owner.height);
+		_bound.setSize(w, h);
 		
-		var stageWidth:Float = _owner.width - (_paddingLeft + _paddingRight),
-		stageHeight:Float = _owner.height - (_paddingTop + _paddingBottom),
+		var stageWidth:Float = w - (_paddingLeft + _paddingRight),
+		stageHeight:Float = h - (_paddingTop + _paddingBottom),
 		fullWidth:Float = 0, fullHeight:Float = 0, x:Float = paddingLeft, y:Float = paddingTop, itemWidth:Float = 0;
-		var columnLength:Int = _columnsCountFactory(_owner.width, _owner.height);
-		fullWidth = _owner.width - (_paddingLeft + _paddingRight);
+		var columnLength:Int = _columnsCountFactory(w, h);
+		fullWidth = w - (_paddingLeft + _paddingRight);
 		itemWidth = (fullWidth - (columnLength - 1) * _horizontalGap) / columnLength;
 		
 		var places:Array<Array<Bool>> = [];

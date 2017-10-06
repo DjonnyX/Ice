@@ -367,7 +367,7 @@ class Scroller extends BaseStatesControl
 		styleName = DEFAULT_STYLE;
 	}
 	
-	public function addToContentDelayedItemFactory(factory:Function, ?owner:IceControl, ?content:DisplayObject) : Void {
+	public function addToContentDelayedItemFactory(factory:Function, ?owner:IceControl, ?content:IceControl) : Void {
 		_content.addDelayedItemFactory(factory, owner != null ? owner : this, content != null ? content : _content);
 	}
 	

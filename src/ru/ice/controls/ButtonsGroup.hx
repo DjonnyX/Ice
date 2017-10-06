@@ -12,9 +12,9 @@ import ru.ice.data.ElementData;
  * ...
  * @author Evgenii Grebennikov
  */
-class TabBar extends IceControl
+class ButtonsGroup extends IceControl
 {
-	public static inline var DEFAULT_STYLE:String = 'default-tabbar-style';
+	public static inline var DEFAULT_STYLE:String = 'default-button-group-style';
 	
 	private var _itemFactory:Function;
 	/**
@@ -57,60 +57,36 @@ class TabBar extends IceControl
 	 * Возвращает/устанавливает текущий выбранный элемент(таб) по индексу
 	 * @return Int
 	 */
-	public var selectedIndex(get, set) : Int;
-	private var _selectedIndex:Int = -1;
-	private function set_selectedIndex(v:Int) : Int {
-		if (_selectedIndex != v) {
-			_selectedIndex = v;
+	public var selectedIndexes(get, set) : Array<Int>;
+	private var _selectedIndexes:Array<Int> = [];
+	private function set_selectedIndexes(v:Array<Int>) : Array<Int> {
+		if (_selectedIndexes != v) {
+			_selectedIndexes = v;
 			if (_items != null) {
 				var index:Int = 0;
 				for (item in _items) {
-					if (index == _selectedIndex) {
+					if (v.indexOf(index) >= 0)
 						item.select();
-						return get_selectedIndex();
-					}
+					else
+						item.deselect();
 					index ++;
 				}
 			}
 		}
-		return get_selectedIndex();
+		return get_selectedIndexes();
 	}
-	private function get_selectedIndex() : Int {
-		return _selectedIndex;
+	private function get_selectedIndexes() : Array<Int> {
+		return _selectedIndexes;
 	}
 	
-	/**
-	 * public
-	 * get/set
-	 * Возвращает/устанавливает текущий выбранный элемент(таб) 
-	 * @return BaseListItemControl
-	 */
-	private var _selectedItem:BaseListItemControl;
-	public var selectedItem(get, set) : BaseListItemControl;
-	private function set_selectedItem(v:BaseListItemControl) : BaseListItemControl {
-		if (_selectedItem != v) {
-			_selectedItem = v;
-			if (_items != null) {
-				var index:Int = 0;
-				for (item in _items) {
-					if (item == _selectedItem) {
-						item.selected = true;
-						_selectedIndex = index;
-					} else {
-						item.selected = false;
-					}
-					index ++;
-				}
-			}
-			if (_selectedItem == null)
-				_selectedIndex = -1;
-			else
-				dispatchEventWith(Event.SELECT, true);
+	public var selectedItems(get, never):Array<BaseListItemControl>;
+	private function get_selectedItems() : Array<BaseListItemControl> {
+		var result:Array<BaseListItemControl> = [];
+		for (ind in _selectedIndexes) {
+			var item:BaseListItemControl = _items[ind];
+			result.push(item);
 		}
-		return get_selectedItem();
-	}
-	private function get_selectedItem() : BaseListItemControl {
-		return _selectedItem;
+		return result;
 	}
 	
 	public function new(?elementData:ElementData) 
@@ -151,26 +127,18 @@ class TabBar extends IceControl
 		}
 	}
 	
-	public function hilight(index:Int) : Void {
-		if (_items != null) {
-			if (index >= 0 && index < _items.length) {
-				var ind:Int = 0;
-				for (item in _items) {
-					if (ind == index) {
-						_selectedIndex = ind;
-						_selectedItem = item;
-						item.selected = true;
-					} else
-						item.selected = false;
-					ind ++;
-				}
-			}
-		}
-	}
-	
 	private function itemTriggeredHandler(e:Event, data:Dynamic) : Void {
 		var item:BaseListItemControl = cast e.target;
-		selectedItem = item;
+		var index:Int = item.index;
+		if (_selectedIndexes.length > index) {
+			if (item.selected) {
+				if (_selectedIndexes.indexOf(item.index) == -1)
+					_selectedIndexes.push(item.index);
+			} else {
+				if (_selectedIndexes.indexOf(item.index) >= 0)
+					_selectedIndexes.splice(item.index, 1);
+			}
+		}
 	}
 	
 	public override function dispose() : Void {

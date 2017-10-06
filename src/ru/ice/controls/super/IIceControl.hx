@@ -16,6 +16,10 @@ import ru.ice.core.Ice;
  */
 interface IIceControl extends IDisplayObject
 {
+	public var marginLeft(get, set) : Float;
+	public var marginRight(get, set) : Float;
+	public var marginTop(get, set) : Float;
+	public var marginBottom(get, set) : Float;
 	public var includeInLayout(get, set) : Bool;
 	public var onReposition(get, set):Function;
 	public var snapWidth(get, never) : Dynamic;
@@ -40,7 +44,7 @@ interface IIceControl extends IDisplayObject
 	private function getInvalidData() : Dynamic;
 	private var _layoutRegion:Rectangle;
 	public function resize(?data:ResizeData) : Void;
-	private function createDelayedBuilder(owner:IceControl, content:DisplayObject) : Void;
-	public function addDelayedItemFactory(factory:Function, ?owner:IceControl, ?content:DisplayObject) : Void;
+	private function createDelayedBuilder(owner:IceControl, content:IceControl) : Void;
+	public function addDelayedItemFactory(factory:Function, ?owner:IceControl, ?content:IceControl) : Void;
 	private function updateLayout() : Void;
 }

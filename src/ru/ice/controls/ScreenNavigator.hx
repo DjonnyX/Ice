@@ -71,7 +71,6 @@ class ScreenNavigator extends IceControl
 	private function changeRouteHandler(event:Event, data:Dynamic) : Void {
 		var isEnd:Bool = cast data.isEnd;
 		var address:String = cast data.address;
-		trace('change('+name, address, isEnd +')');
 		showScreen(address);
 		dispatchEventWith(Event.CHANGE, false, data);
 	}
