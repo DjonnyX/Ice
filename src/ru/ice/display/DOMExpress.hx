@@ -175,7 +175,7 @@ class DOMExpress extends EventDispatcher
 	
 	public var innerHTML(never, set):Dynamic;
 	private function set_innerHTML(v:Dynamic) : Dynamic {
-		_element.innerHTML = '<div>' + v + '</div>';
+		_element.innerHTML = v;
 		return v;
 	}
 	
