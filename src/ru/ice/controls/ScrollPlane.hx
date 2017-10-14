@@ -229,7 +229,7 @@ class ScrollPlane extends Scroller
 	public function new(?elementData:ElementData) 
 	{
 		if (elementData == null)
-			elementData = new ElementData({'name':'sp'});
+			elementData = new ElementData({'name':'scrollplane'});
 		super(elementData);
 		isClipped = true;
 		horizontalScrollPolicy = SCROLL_POLICY_AUTO;
