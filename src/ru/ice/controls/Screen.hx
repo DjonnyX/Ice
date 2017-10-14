@@ -29,7 +29,7 @@ class Screen extends IceControl
 	public function new(?elementData:ElementData) 
 	{
 		if (elementData == null)
-			elementData = new ElementData({'name':'s'});
+			elementData = new ElementData({'name':'screen'});
 		super(elementData);
 		addEventListener(Event.TRANSITION_IN_START, transitionInStart);
 		addEventListener(Event.TRANSITION_IN_COMPLETE, transitionInComplete);
