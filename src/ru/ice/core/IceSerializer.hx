@@ -11,7 +11,6 @@ import ru.ice.layout.HorizontalLayout;
 import ru.ice.layout.RockRowsLayout;
 import ru.ice.layout.VerticalLayout;
 
-import ru.ice.controls.Label;
 import ru.ice.controls.Image;
 import ru.ice.controls.VideoPlayer;
 import ru.ice.controls.PreloadedImage;
@@ -28,7 +27,6 @@ class IceSerializer
 	public static inline var IMAGE:String = 'image';
 	public static inline var ICE_CONTROL:String = 'icecontrol';
 	public static inline var VIDEO_PLAYER:String = 'videoplayer';
-	public static inline var LABEL:String = 'label';
 	public static inline var PRELOADED_IMAGE:String = 'preloadedimage';
 	public static inline var ANCHOR_LAYOUT:String = 'anchorlayout';
 	public static inline var VERTICAL_LAYOUT:String = 'verticallayout';
@@ -89,9 +87,6 @@ class IceSerializer
 			}
 			case IMAGE: {
 				control = createImage(data);
-			}
-			case LABEL: {
-				control = createLabel(data);
 			}
 			case PRELOADED_IMAGE: {
 				control = createPreloadedImage(data);
@@ -323,21 +318,6 @@ class IceSerializer
 		for (a in attrs) {
 			setProps(a, data.get(a));
 		}
-		return renderer;
-	}
-	
-	private function createLabel(data:Xml) : Label {
-		var renderer:Label = new Label();
-		applyIceProps(renderer, data, false);
-		
-		var text:String = null;
-		var child = data.firstChild();
-		if (child != null && (child.nodeType == Xml.PCData || child.nodeType == Xml.CData)) {
-			text = child.nodeValue;
-		}
-		if (text != null && text != '')
-			renderer.text = text;
-		
 		return renderer;
 	}
 	
