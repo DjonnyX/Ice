@@ -53,7 +53,6 @@ class BaseListItemControl extends IceControl
 		if (elementData == null)
 			elementData = new ElementData({'name':'li'});
 		super(elementData);
-		style = {'display':'block'};
 	}
 	
 	public function select() : Void {
