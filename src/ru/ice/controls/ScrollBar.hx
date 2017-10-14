@@ -218,10 +218,10 @@ class ScrollBar extends Scroller
 	public function new(?elementData:ElementData, ?thumbElementData:ElementData, direction:String = 'direction-horizontal') 
 	{
 		if (elementData == null)
-			elementData = new ElementData({'name':'sb'});
+			elementData = new ElementData({'name':'scrollbar'});
 		super(elementData);
 		if (thumbElementData == null)
-			thumbElementData = new ElementData({'name':'tmb'});
+			thumbElementData = new ElementData({'name':'thumb'});
 		
 		_ppmsScale = 1;
 		
