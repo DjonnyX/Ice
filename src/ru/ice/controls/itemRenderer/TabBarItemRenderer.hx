@@ -1,8 +1,11 @@
 package ru.ice.controls.itemRenderer;
 
 import haxe.Constraints.Function;
+import ru.ice.controls.super.BaseStatesControl;
+import ru.ice.events.FingerEvent;
 
-import ru.ice.controls.super.BaseListItemControl;
+import ru.ice.controls.Button;
+import ru.ice.controls.super.IBaseListItemControl;
 import ru.ice.controls.super.IceControl;
 import ru.ice.data.ElementData;
 import ru.ice.events.Event;
@@ -11,53 +14,59 @@ import ru.ice.events.Event;
  * ...
  * @author Evgenii Grebennikov
  */
-class TabBarItemRenderer extends BaseListItemControl {
+class TabBarItemRenderer extends Button implements IBaseListItemControl {
 	
 	public static inline var DEFAULT_STYLE:String = 'default-tabbar-item-renderer-style';
 	
-	private var _buttonFactory:Function;
-	public var buttonFactory(get, set) : Function;
-	private function set_buttonFactory(v:Function) : Function {
-		if (_buttonFactory != v) {
-			_buttonFactory = v;
-			if (_button != null)
-				_button.styleFactory = _buttonFactory;
+	private var _index:Int;
+	public var index(get, set) : Int;
+	private function set_index(v:Int) : Int {
+		if (_index != v) {
+			_index = v;
 		}
-		return get_buttonFactory();
+		return get_index();
 	}
-	private function get_buttonFactory() : Function {
-		return _buttonFactory;
+	private function get_index() : Int {
+		return _index;
 	}
 	
-	private override function set_data(v:Dynamic) : Dynamic {
+	public var data(get, set) : Dynamic;
+	private var _data:Dynamic;
+	private function set_data(v:Dynamic) : Dynamic {
 		if (_data != v) {
 			_data = v;
-			_button.label = _data.label;
-			_button.icon = _data.icon;
+			label = _data.label;
+			icon = _data.icon;
 		}
 		return get_data();
 	}
+	private function get_data() : Dynamic {
+		return _data;
+	}
 	
-	private override function set_selected(v:Bool) : Bool {
+	public var selected(get, set) : Bool;
+	private var _selected:Bool = false;
+	private function set_selected(v:Bool) : Bool {
 		if (_selected != v) {
 			_selected = v;
-			if (_button != null) {
-				_button.isSelect = _selected;
-				_button.state = _selected ? Button.STATE_SELECT : Button.STATE_UP;
-				_button.interactive = !_selected;
-			}
+			isSelect = _selected;
+			state = _selected ? Button.STATE_SELECT : Button.STATE_UP;
+			interactive = !_selected;
 		}
 		return get_selected();
 	}
-	
-	public override function select() : Void {
-		selected = true;
-		super.select();
+	private function get_selected() : Bool {
+		return _selected;
 	}
 	
-	public override function deselect() : Void {
+	public function select() : Void {
+		selected = true;
+		dispatchEventWith(Event.CHANGE, true);
+	}
+	
+	public function deselect() : Void {
 		selected = false;
-		super.deselect();
+		dispatchEventWith(Event.CHANGE, true);
 	}
 	
 	private var _button:Button;
@@ -67,29 +76,32 @@ class TabBarItemRenderer extends BaseListItemControl {
 		if (elementData == null)
 			elementData = new ElementData({'name':'li'});
 		super(elementData);
-		_button = new Button();
-		_button.allowDeselect = false;
-		_button.isToggle = true;
-		_button.isSelect = _selected;
-		_button.addEventListener(Event.TRIGGERED, buttonTriggeredHandler);
+		//style = {'display':'block'};
+		allowDeselect = false;
+		isToggle = true;
+		isSelect = _selected;
 		styleName = DEFAULT_STYLE;
 		addChild(_button);
 	}
 	
-	private function buttonTriggeredHandler(e:Event) : Void {
-		e.stopImmediatePropagation();
-		selected = _button.isSelect;
-		dispatchEventWith(Event.CHANGE, true, this);
+	private override function upHandler(e:FingerEvent) : Void {
+		if (_useTouchableClass)
+			addClass(['i-touchable']);
+		stage.removeEventListener(FingerEvent.MOVE, stageMoveHandler);
+		if (e.isMouse && e.key != FingerEvent.KEY_LEFT)
+			return;
+		if (_isPress) {
+			_isPress = false;
+			if (_isToggle)
+				_isSelect = !_isSelect;
+			state = _isSelect ? BaseStatesControl.STATE_SELECT : BaseStatesControl.STATE_UP;
+			selected = isSelect;
+			dispatchEventWith(Event.CHANGE, true, this);
+		} else
+			state = BaseStatesControl.STATE_UP;
 	}
 	
 	public override function dispose() : Void {
-		_buttonFactory = null;
-		if (_button != null) {
-			_button.removeEventListener(Event.TRIGGERED, buttonTriggeredHandler);
-			_button.removeEventListeners();
-			_button.removeFromParent(true);
-			_button = null;
-		}
 		super.dispose();
 	}
 }
