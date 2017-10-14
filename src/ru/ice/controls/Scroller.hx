@@ -72,9 +72,9 @@ class Scroller extends BaseStatesControl
 	
 	public static inline var MINIMUM_VELOCITY:Float = .05;
 	
-	public static inline var CURRENT_VELOCITY_WEIGHT:Float = 2.33;
+	public static inline var CURRENT_VELOCITY_WEIGHT:Float = 1.33;
 	
-	public static var VELOCITY_WEIGHTS:Array<Float> = [1, 1.33, 1.66, 2];
+	public static var VELOCITY_WEIGHTS:Array<Float> = [0.1, 0.33, 0.66, 1];
 	
 	private static function defaultThrowEase(ratio:Float):Float
 	{
@@ -355,13 +355,13 @@ class Scroller extends BaseStatesControl
 	public function new(?elementData:ElementData) 
 	{
 		if (elementData == null)
-			elementData = new ElementData({'name':'srl'});
+			elementData = new ElementData({'name':'scroller'});
 		super(elementData);
 		addClass(['i-clipped', 'i-draggable']);
-		_content = new IceControl(new ElementData({'name':'c', 'interactive':false}));
+		_content = new IceControl(new ElementData({'name':'content', 'interactive':false}));
 		_content.onResize = resizeContent;
 		addChild(_content);
-		_forelayer = new IceControl(new ElementData({'name':'fl', 'interactive':false}));
+		_forelayer = new IceControl(new ElementData({'name':'fore', 'interactive':false}));
 		addChild(_forelayer);
 		addEventListener(WheelScrollEvent.SCROLL, wheelScrollHandler);
 		styleName = DEFAULT_STYLE;
@@ -617,9 +617,9 @@ class Scroller extends BaseStatesControl
 		stageMoveHandler(e);
 	}
 	
-	public override function update() : Void
+	public override function update(emitResize:Bool = true) : Void
 	{
-		super.update();
+		super.update(emitResize);
 		if (!_isDragging && !_isCalcVelocity)
 			return;
 		calculateVelocity();
