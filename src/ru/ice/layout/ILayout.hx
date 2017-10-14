@@ -2,13 +2,14 @@ package ru.ice.layout;
 
 import ru.ice.controls.super.IceControl;
 import ru.ice.display.DisplayObject;
+import ru.ice.events.IEventDispatcher;
 import ru.ice.math.Rectangle;
 import ru.ice.display.Stage;
 
 /**
  * @author Evgenii Grebennikov
  */
-interface ILayout 
+interface ILayout extends IEventDispatcher
 {
 	public function include(obj:DisplayObject) : Void;
 	public function exclude(obj:DisplayObject) : Void;
@@ -20,6 +21,7 @@ interface ILayout
 	public var owner(get, set) : IceControl;
 	public var bound(get, never) : Rectangle;
 	public var needResize(get, never) : Bool;
+	public var needCalcParams(get, never) : Bool;
 	public var commonPaddingLeft(get, never) : Float;
 	public var commonPaddingRight(get, never) : Float;
 	public var commonPaddingTop(get, never) : Float;
