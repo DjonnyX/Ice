@@ -60,6 +60,18 @@ class DisplayObject extends DOMExpress
 		return _isClipped;
 	}
 	
+	private var _enabled:Bool = true;
+	public var enabled(get, set):Bool;
+	private function get_enabled() : Bool {
+		return _enabled;
+	}
+	private function set_enabled(v:Bool) : Bool {
+		if (_enabled != v) {
+			_enabled = v;
+		}
+		return _enabled;
+	}
+	
 	private var _visible:Bool = true;
 	public var visible(get, set):Bool;
 	private function get_visible() : Bool {
@@ -214,7 +226,7 @@ class DisplayObject extends DOMExpress
 	private function get_totalContentWidth() : Float {
 		var w:Float = 0;
 		for (child in _children) {
-			//if (child.element.style.overflow != 'hidden')
+			//if (child.enabled)
 				w = Math.max(w, child._x + child._width);
 		}
 		return w;
@@ -224,7 +236,7 @@ class DisplayObject extends DOMExpress
 	private function get_totalContentHeight() : Float {
 		var h:Float = 0;
 		for (child in _children) {
-			//if (child.element.style.overflow != 'hidden')
+			//if (child.enabled)
 				h = Math.max(h, child._y + child._height);
 		}
 		return h;
@@ -237,9 +249,11 @@ class DisplayObject extends DOMExpress
 	public var htmlContentWidth(get, never) : Float;
 	private function get_htmlContentWidth() : Float {
 		var w:Float = 0;
-		for (e in _element.children) {
-			w = Math.max(w, e.offsetLeft + e.offsetWidth);
-		}
+		//if (_enabled) {
+			for (e in _element.children) {
+				w = Math.max(w, e.offsetLeft + e.offsetWidth);
+			}
+		//}
 		return w;
 	}
 	
@@ -250,9 +264,11 @@ class DisplayObject extends DOMExpress
 	public var htmlContentHeight(get, never) : Float;
 	private function get_htmlContentHeight() : Float {
 		var h:Float = 0;
-		for (e in _element.children) {
-			h = Math.max(h, e.offsetTop + e.offsetHeight);
-		}
+		//if (_enabled) {
+			for (e in _element.children) {
+				h = Math.max(h, e.offsetTop + e.offsetHeight);
+			}
+		//}
 		return h;
 	}
 	
@@ -669,6 +685,7 @@ class DisplayObject extends DOMExpress
 		insertChildAt(child, _children.length);
 		child._parent = this;
 		child.addedToStage();
+		dispatchEventWith(Event.CHILD_ADDED);
 		return child;
 	}
 	
@@ -697,6 +714,7 @@ class DisplayObject extends DOMExpress
 		_children.splice(index, 1);
 		child._parent = null;
 		child.removeFromStage();
+		dispatchEventWith(Event.CHILD_REMOVED);
 		return child;
 	}
 	
@@ -765,7 +783,7 @@ class DisplayObject extends DOMExpress
 		//resetTransformation(_scaleX, _scaleY, _rotate);
 	}
 	
-	public function update() : Void {}
+	public function update(emitResize:Bool = true) : Void {}
 	
 	@:allow(ru.ice.display.Stage)
 	private function mouseMove(e:FingerEvent) : Void {
