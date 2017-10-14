@@ -302,6 +302,9 @@ class RockRowsLayout extends BaseLayout
 		fillRowsIfNeeded(1);
 		
 		for (child in _objects) {
+			if (!child.enabled)
+				break;
+			
 			var hRatio:Float = _defaultHorizontalRatio, vRatio:Float = _defaultVerticalRatio;
 			var c:IceControl = cast child;
 			if (c != null) {
