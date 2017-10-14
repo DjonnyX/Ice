@@ -1,8 +1,8 @@
 package ru.ice.controls.super;
 
 import haxe.Constraints.Function;
-import ru.ice.display.Stage;
 
+import ru.ice.display.Stage;
 import ru.ice.controls.super.InteractiveControl;
 import ru.ice.controls.super.IceControl;
 import ru.ice.display.DisplayObject;
@@ -27,6 +27,9 @@ class BaseStatesControl extends InteractiveControl
 	public static inline var STATE_HOVER:String = 'hover';
 	public static inline var STATE_SELECT:String = 'select';
 	public static inline var STATE_DISABLED:String = 'disabled';
+	public static inline var STATE_DOWN_SELECTED:String = 'down-selected';
+	public static inline var STATE_HOVER_SELECTED:String = 'hover-selected';
+	public static inline var STATE_DISABLED_SELECTED:String = 'disabled-selected';
 	
 	private var _allowDeselect:Bool = false;
 	public var allowDeselect(get, set) : Bool;
@@ -126,6 +129,45 @@ class BaseStatesControl extends InteractiveControl
 		return get_disabledStyleFactory();
 	}
 	
+	private var _disabledSelectStyleFactory:Function;
+	public var disabledSelectStyleFactory(get, set) : Function;
+	private function get_disabledSelectStyleFactory() : Function {
+		return _disabledSelectStyleFactory;
+	}
+	private function set_disabledSelectStyleFactory(v:Function) : Function {
+		if (_disabledSelectStyleFactory != v)
+			_disabledSelectStyleFactory = v;
+			if (_style != v)
+				updateState();
+		return get_disabledSelectStyleFactory();
+	}
+	
+	private var _downSelectStyleFactory:Function;
+	public var downSelectStyleFactory(get, set) : Function;
+	private function get_downSelectStyleFactory() : Function {
+		return _downSelectStyleFactory;
+	}
+	private function set_downSelectStyleFactory(v:Function) : Function {
+		if (_downSelectStyleFactory != v)
+			_downSelectStyleFactory = v;
+			if (_style != v)
+				updateState();
+		return get_downSelectStyleFactory();
+	}
+	
+	private var _hoverSelectStyleFactory:Function;
+	public var hoverSelectStyleFactory(get, set) : Function;
+	private function get_hoverSelectStyleFactory() : Function {
+		return _hoverSelectStyleFactory;
+	}
+	private function set_hoverSelectStyleFactory(v:Function) : Function {
+		if (_hoverSelectStyleFactory != v)
+			_hoverSelectStyleFactory = v;
+			if (_style != v)
+				updateState();
+		return get_hoverSelectStyleFactory();
+	}
+	
 	private var _state:String;
 	public var state(get, set) : String;
 	private function get_state() : String {
@@ -156,25 +198,40 @@ class BaseStatesControl extends InteractiveControl
 	{
 		switch(_state) {
 			case STATE_UP: {
-				if(_isHover && !Ice.isDragging) {
-					if (_hoverStyleFactory != null)
-						_hoverStyleFactory(this);
+				if (_isHover && !Ice.isDragging) {
+					if (_isSelect) {
+						if (_hoverSelectStyleFactory != null)
+							_hoverSelectStyleFactory(this);
+					} else {
+						if (_hoverStyleFactory != null)
+							_hoverStyleFactory(this);
+					}
 				} else {
 					if (_upStyleFactory != null)
 						_upStyleFactory(this);
 				}
 			}
 			case STATE_DOWN: {
-				if (_downStyleFactory != null)
-					_downStyleFactory(this);
+				if (_isSelect) {
+					if (_downSelectStyleFactory != null)
+						_downSelectStyleFactory(this);
+				} else {
+					if (_downStyleFactory != null)
+						_downStyleFactory(this);
+				}
 			}
 			case STATE_SELECT: {
 				if (_selectStyleFactory != null)
 					_selectStyleFactory(this);
 			}
 			case STATE_DISABLED: {
-				if (_disabledStyleFactory != null)
-					_disabledStyleFactory(this);
+				if (_isSelect) {
+					if (_disabledSelectStyleFactory != null)
+						_disabledSelectStyleFactory(this);
+				} else {
+					if (_disabledStyleFactory != null)
+						_disabledStyleFactory(this);
+				}
 			}
 		}
 	}
@@ -251,6 +308,13 @@ class BaseStatesControl extends InteractiveControl
 	}
 	
 	override public function dispose() :Void {
+		_upStyleFactory = null;
+		_downStyleFactory = null;
+		_downSelectStyleFactory = null;
+		_hoverStyleFactory = null;
+		_hoverSelectStyleFactory = null;
+		_disabledStyleFactory = null;
+		_disabledSelectStyleFactory = null;
 		stage.removeEventListener(FingerEvent.MOVE, stageMoveHandler);
 		stage.removeEventListener(FingerEvent.UP, stageUpHandler);
 		removeEventListener(FingerEvent.DOWN, downHandler);

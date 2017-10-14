@@ -23,9 +23,12 @@ interface IBaseStatesControl extends IIceControl
 	public var isSelect(get, set) : Bool;
 	public var upStyleFactory(get, set) : Function;
 	public var downStyleFactory(get, set) : Function;
+	public var downSelectStyleFactory(get, set) : Function;
 	public var hoverStyleFactory(get, set) : Function;
+	public var hoverSelectStyleFactory(get, set) : Function;
 	public var selectStyleFactory(get, set) : Function;
 	public var disabledStyleFactory(get, set) : Function;
+	public var disabledSelectStyleFactory(get, set) : Function;
 	public var state(get, set) : String;
 	public var isHover(get, set) : Bool;
 	private function updateState() : Void;
