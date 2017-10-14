@@ -24,7 +24,7 @@ class FpsStats extends Sprite
 		super(elementData, true);
 	}
 	
-	public override function update() : Void
+	public override function update(emitResize:Bool = true) : Void
 	{
 		_sumFps += 1 / stage.realPassedTime;
 		_frameCount ++;
