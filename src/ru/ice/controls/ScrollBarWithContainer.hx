@@ -189,7 +189,7 @@ class ScrollBarWithContainer extends BaseStatesControl implements IScrollBar {
 	public function new(namePrefix:String, classPrefix:String, nameSBPrefix:String, direction:String = 'horizontal') {
 		super();
 		addClass([classPrefix + direction + '-container']);
-		_scrollBar = new ScrollBar(new ElementData({'name':'sb', 'interactive':false}), new ElementData({'name':'tmb', 'interactive':false}), 'direction-' + direction);
+		_scrollBar = new ScrollBar(new ElementData({'name':'scrollbar', 'interactive':false}), new ElementData({'name':'thumb', 'interactive':false}), 'direction-' + direction);
 		_scrollBar.addEventListener(Event.SCROLL, scrollHandler);
 		addChild(_scrollBar);
 		addEventListener(WheelScrollEvent.SCROLL, wheelScrollHandler);
