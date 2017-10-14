@@ -18,6 +18,7 @@ interface IDisplayObject extends IDOMExpress
 {
 	public var actualWidth(get, never):Float;
 	public var actualHeight(get, never):Float;
+	public var enabled(get, set):Bool;
 	private var _isStage:Bool = false;
 	public var isClipped(get, set):Bool;
 	public var visible(get, set):Bool;
@@ -57,7 +58,7 @@ interface IDisplayObject extends IDOMExpress
 	public function removeFromParent(dispose:Bool = false) : DisplayObject;
 	public function setSize(width:Float, height:Float) : Void;
 	public function move(x:Float, y:Float) : Void;
-	public function update() : Void;
+	public function update(emitResize:Bool = true) : Void;
 	public var isInitialized(get, never):Bool;
 	public function initialize() : Void;
 	@:allow(ru.ice.display.Stage)
