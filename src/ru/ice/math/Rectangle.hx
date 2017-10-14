@@ -42,28 +42,28 @@ class Rectangle extends Point
 	
 	public function setSize(width:Float, height:Float) : Rectangle
 	{
-		this.width = Math.isNaN(width) ? 0 : width;
-		this.height = Math.isNaN(height) ? 0 : height;
+		_width = width;
+		_height = height;
 		return this;
 	}
 	
 	public function copy(rect:Rectangle) : Rectangle
 	{
-		setSize(rect.width, rect.height);
-		move(rect.x, rect.y);
+		setSize(rect._width, rect._height);
+		move(rect._x, rect._y);
 		return this;
 	}
 	
 	public function compare(rect:Rectangle) : Bool {
-		return x == rect.x && y == rect.y && width == rect.width && height == rect.height;
+		return _x == rect._x && _y == rect._y && _width == rect._width && _height == rect._height;
 	}
 	
 	public override function clone() : Rectangle
 	{
-		return new Rectangle(x, y, width, height);
+		return new Rectangle(_x, _y, _width, _height);
 	}
 	
-	public override function empty() : Void
+	public function empty() : Void
 	{
 		move(0, 0);
 		setSize(0, 0);

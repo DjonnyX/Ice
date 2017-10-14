@@ -35,13 +35,13 @@ class Point
 	
 	public function move(x:Float, y:Float) : Point
 	{
-		this.x = Math.isNaN(x) ? 0 : x;
-		this.y = Math.isNaN(y) ? 0 : y;
+		_x = x;
+		_y = y;
 		return this;
 	}
 	
 	public function clone() : Point {
-		return new Point(x, y);
+		return new Point(_x, _y);
 	}
 
 	public function add(point : Point, isClone:Bool = true) : Point {
@@ -52,8 +52,8 @@ class Point
 			return null;
 		}
 		if (!isClone) {
-			x += point.x;
-			y += point.y;
+			_x += point._x;
+			_y += point._y;
 			return this;
 		}
 		return new Point(x + point.x, y + point.y);
@@ -67,8 +67,8 @@ class Point
 			return null;
 		}
 		if (!isClone) {
-			x -= point.x;
-			y -= point.y;
+			_x -= point._x;
+			_y -= point._y;
 			return this;
 		}
 		return new Point(x - point.x, y - point.y);
@@ -87,11 +87,6 @@ class Point
 	}
 	
 	public function comparePoint(point:Point) : Bool {
-		return x == point.x && y == point.y;
-	}
-	
-	public function empty() : Void
-	{
-		move(0, 0);
+		return _x == point._x && _y == point._y;
 	}
 }
