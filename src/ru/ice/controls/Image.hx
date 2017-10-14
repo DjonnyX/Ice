@@ -174,11 +174,6 @@ class Image extends IceControl
 			loadNextImageIfNeeded();
 	}
 	
-	public override function update() : Void
-	{
-		super.update();
-	}
-	
 	private override function _resizeHandler(event:Event, ?data:Dynamic):Void 
 	{
 		if (event.target == this)

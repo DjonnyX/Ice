@@ -73,6 +73,10 @@ class PreloadedImage extends IceControl
 	}
 	
 	private var _image:Image;
+	public var image(get, never) : Image;
+	private function get_image() : Image {
+		return _image;
+	}
 	
 	private var _preloaderStyleFactory:Function;
 	public var preloaderStyleFactory(get, set) : Function;
@@ -97,16 +101,6 @@ class PreloadedImage extends IceControl
 		super(elementData);
 		snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_SELF);
 		styleName = DEFAULT_STYLE;
-	}
-	
-	/**
-	 * В каждой итерации проверяется изменение размеров и позиции
-	 * объекта. Если они менялись, то происходит перестроение лэйаута (если
-	 * конечно он в этом нуждается).
-	 */
-	public override function update() : Void
-	{
-		super.update();
 	}
 	
 	private override function _resizeHandler(event:Event, ?data:Dynamic):Void 

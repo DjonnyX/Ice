@@ -79,6 +79,9 @@ class ButtonsGroup extends IceControl
 		return _selectedIndexes;
 	}
 	
+	/**
+	 * Возвращает массив выделенных элементов
+	 */
 	public var selectedItems(get, never):Array<BaseListItemControl>;
 	private function get_selectedItems() : Array<BaseListItemControl> {
 		var result:Array<BaseListItemControl> = [];
@@ -128,17 +131,18 @@ class ButtonsGroup extends IceControl
 	}
 	
 	private function itemTriggeredHandler(e:Event, data:Dynamic) : Void {
+		e.stopImmediatePropagation();
 		var item:BaseListItemControl = cast e.target;
 		var index:Int = item.index;
-		if (_selectedIndexes.length > index) {
-			if (item.selected) {
-				if (_selectedIndexes.indexOf(item.index) == -1)
-					_selectedIndexes.push(item.index);
-			} else {
-				if (_selectedIndexes.indexOf(item.index) >= 0)
-					_selectedIndexes.splice(item.index, 1);
-			}
+		if (item.selected) {
+			if (_selectedIndexes.indexOf(item.index) == -1)
+				_selectedIndexes.push(item.index);
+		} else {
+			var ind:Int = _selectedIndexes.indexOf(item.index);
+			if (ind >= 0)
+				_selectedIndexes.splice(ind, 1);
 		}
+		dispatchEventWith(Event.CHANGE, true, selectedItems);
 	}
 	
 	public override function dispose() : Void {
