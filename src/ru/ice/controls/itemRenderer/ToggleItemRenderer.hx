@@ -15,6 +15,8 @@ class ToggleItemRenderer extends TabBarItemRenderer {
 	
 	public static inline var DEFAULT_STYLE:String = 'default-toggle-item-renderer-style';
 	
+	public var tag:String = '';
+	
 	private override function set_selected(v:Bool) : Bool {
 		if (_selected != v) {
 			_selected = v;
