@@ -101,6 +101,7 @@ class Event
     public static inline var REMOVED_FROM_STAGE:String = "removedFromStage";
     public static inline var TRIGGERED:String = "triggered";
     public static inline var RESIZE:String = "resize";
+    public static inline var RESIZE_BEGIN:String = "resize-begin";
     public static inline var COMPLETE:String = "complete";
     public static inline var RENDER:String = "render";
     public static inline var REMOVE_FROM_ANIMATOR:String = "removeFromAnimator";
@@ -127,4 +128,9 @@ class Event
 	
     public static inline var SCROLLBAR_MAXIMIZE:String = "scrollbar-minimize";
     public static inline var SCROLLBAR_MINIMIZE:String = "scrollbar-maximize";
+	
+    public static inline var CHILD_ADDED:String = "child-added";
+    public static inline var CHILD_REMOVED:String = "child-removed";
+	
+    public static inline var CHANGE_PARAMS:String = "change-params";
 }
