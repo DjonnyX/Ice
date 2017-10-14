@@ -31,74 +31,6 @@ class IceControl extends Sprite
 	public static inline var SNAP_TO_HTML_CONTENT:String = 'snap-to-html-content';
 	public static inline var SNAP_TO_CUSTOM_OBJECT:String = 'snap-to-custom-object';
 	
-	private var _marginH:Float = 0;
-	public var marginH(get, never) : Float;
-	private function get_marginH() : Float {
-		return _marginH;
-	}
-	
-	private var _marginV:Float = 0;
-	public var marginV(get, never) : Float;
-	private function get_marginV() : Float {
-		return _marginV;
-	}
-	
-	public var marginLeft(get, set) : Float;
-	private var _marginLeft:Float = 0;
-	private function get_marginLeft() : Float {
-		return _marginLeft;
-	}
-	private function set_marginLeft(v:Float) : Float {
-		if (_marginLeft != v) {
-			_marginLeft = v;
-			_marginH = v + _marginRight;
-			update();
-		}
-		return get_marginLeft();
-	}
-	
-	public var marginRight(get, set) : Float;
-	private var _marginRight:Float = 0;
-	private function get_marginRight() : Float {
-		return _marginRight;
-	}
-	private function set_marginRight(v:Float) : Float {
-		if (_marginRight != v) {
-			_marginRight = v;
-			_marginH = v + _marginLeft;
-			update();
-		}
-		return get_marginRight();
-	}
-	
-	public var marginTop(get, set) : Float;
-	private var _marginTop:Float = 0;
-	private function get_marginTop() : Float {
-		return _marginTop;
-	}
-	private function set_marginTop(v:Float) : Float {
-		if (_marginTop != v) {
-			_marginTop = v;
-			_marginV = v + _marginBottom;
-			update();
-		}
-		return get_marginTop();
-	}
-	
-	public var marginBottom(get, set) : Float;
-	private var _marginBottom:Float = 0;
-	private function get_marginBottom() : Float {
-		return _marginBottom;
-	}
-	private function set_marginBottom(v:Float) : Float {
-		if (_marginBottom != v) {
-			_marginBottom = v;
-			_marginV = v + _marginTop;
-			update();
-		}
-		return get_marginBottom();
-	}
-	
 	private var _snapWidth:Dynamic = SNAP_TO_CONTENT;
 	public var snapWidth(get, never) : Dynamic;
 	private function get_snapWidth() : Dynamic {
@@ -229,17 +161,40 @@ class IceControl extends Sprite
 		if (_layout != v) {
 			if (v == null) {
 				if (_layout != null) {
+					_layout.removeEventListener(Event.CHANGE_PARAMS, changeLayoutParamsHandler);
 					_layout.dispose();
 					_layout = null;
 				}
 			} else {
 				_layout = v;
+				_layout.addEventListener(Event.CHANGE_PARAMS, changeLayoutParamsHandler);
 				_layout.owner = this;
+				calcPaddings();
 				if (_isInitialized)
 					_layout.update();
 			}
 		}
 		return _layout;
+	}
+	
+	private function changeLayoutParamsHandler(e:Event) : Void {
+		e.stopImmediatePropagation();
+		calcPaddings();
+	}
+	
+	private function calcPaddings() : Void {
+		_paddingLeft = _layout.paddingLeft;
+		_paddingRight = _layout.paddingRight;
+		_paddingTop = _layout.paddingTop;
+		_paddingBottom = _layout.paddingBottom;
+		
+		_paddingH = _paddingLeft + _paddingRight;
+		_paddingV = _paddingTop + _paddingBottom;
+		
+		_commonPaddingLeft = _layout.commonPaddingLeft;
+		_commonPaddingRight = _layout.commonPaddingRight;
+		_commonPaddingTop = _layout.commonPaddingTop;
+		_commonPaddingBottom = _layout.commonPaddingBottom;
 	}
 	
 	private var _layoutParams:ILayoutParams;
@@ -258,57 +213,62 @@ class IceControl extends Sprite
 	}
 	
 	override private function get_actualWidth() : Float {
-		return _width - paddingLeft - paddingRight - _marginH;
+		return _width - _paddingH;
 	}
 	
 	override private function get_actualHeight() : Float {
-		return _height - paddingTop - paddingBottom - _marginV;
+		return _height - _paddingV;
 	}
 	
+	private var _commonPaddingLeft:Float = 0;
 	public var commonPaddingLeft(get, never) : Float;
 	private function get_commonPaddingLeft() : Float {
-		return _layout != null ? _layout.paddingLeft : 0;
+		return _commonPaddingLeft;
 	}
 	
+	private var _commonPaddingRight:Float = 0;
 	public var commonPaddingRight(get, never) : Float;
 	private function get_commonPaddingRight() : Float {
-		return _layout != null ? _layout.paddingRight : 0;
+		return _commonPaddingRight;
 	}
 	
+	private var _commonPaddingTop:Float = 0;
 	public var commonPaddingTop(get, never) : Float;
 	private function get_commonPaddingTop() : Float {
-		return _layout != null ? _layout.paddingTop : 0;
+		return _commonPaddingTop;
 	}
 	
+	private var _commonPaddingBottom:Float = 0;
 	public var commonPaddingBottom(get, never) : Float;
 	private function get_commonPaddingBottom() : Float {
-		return _layout != null ? _layout.paddingBottom : 0;
+		return _commonPaddingBottom;
 	}
 	
+	private var _paddingH:Float = 0;
+	private var _paddingV:Float = 0;
+	
+	private var _paddingLeft : Float = 0;
 	public var paddingLeft(get, never) : Float;
 	private function get_paddingLeft() : Float {
-		return _layout != null ? _layout.paddingLeft : 0;
+		return _paddingLeft;
 	}
 	
+	private var _paddingRight : Float = 0;
 	public var paddingRight(get, never) : Float;
 	private function get_paddingRight() : Float {
-		return _layout != null ? _layout.paddingRight : 0;
+		return _paddingRight;
 	}
 	
+	private var _paddingTop : Float = 0;
 	public var paddingTop(get, never) : Float;
 	private function get_paddingTop() : Float {
-		return _layout != null ? _layout.paddingTop : 0;
+		return _paddingTop;
 	}
 	
+	private var _paddingBottom : Float = 0;
 	public var paddingBottom(get, never) : Float;
 	private function get_paddingBottom() : Float {
-		return _layout != null ? _layout.paddingBottom : 0;
-	}
-	
-	private var _isInvalidChildrenSize:Bool = false;
-	public var isInvalidChildrenSize(get, never):Bool;
-	private function get_isInvalidChildrenSize():Bool {
-		return _isInvalidChildrenSize;
+		return _paddingBottom;
 	}
 	
 	private var _isComplexControl:Bool = false;
@@ -441,15 +401,20 @@ class IceControl extends Sprite
 	 * объекта. Если они менялись, то происходит перестроение лэйаута (если
 	 * конечно он в этом нуждается).
 	 */
-	public override function update() : Void
+	public override function update(emitResize:Bool = true) : Void
 	{
 		super.update();
 		
 		if (!_isInitialized)
 			return;
 		
-		var invalidChildren:Bool = _isInvalidChildrenSize;
-		_isInvalidChildrenSize = false;
+		/*var invalidChildren:Bool = _isInvalidChildrenSize;
+		_isInvalidChildrenSize = false;*/
+		
+		if (_layout != null) {
+			if (_layout.needCalcParams)
+				calcPaddings();
+		}
 		
 		var invalidData:ResizeData = getInvalidData();
 		
@@ -467,12 +432,15 @@ class IceControl extends Sprite
 		if (invalidData == null) {
 			if (_layout != null) {
 				if (_layout.needResize || !_layoutRegion.compare(_layout.bound)) {
+					if (emitResize && emitResizeEvents)
+						dispatchEventWith(Event.RESIZE_BEGIN);
 					_layout.update();
 					_layoutRegion.copy(_layout.bound);
 					dispatchEventWith(Event.UPDATE_LAYOUT, true);
 				}
 			}
 		} else {
+			dispatchEventWith(Event.RESIZE_BEGIN);
 			var tw:DisplayObject = invalidData.targetForSnapWidth;
 			var th:DisplayObject = invalidData.targetForSnapHeight;
 			
@@ -481,24 +449,24 @@ class IceControl extends Sprite
 			//}
 			if (invalidData.invalidateWidth) {
 				if (_snapWidth == SNAP_TO_CONTENT)
-					width = totalContentWidth + commonPaddingRight - _marginH;
+					width = totalContentWidth + _commonPaddingRight;
 				else if (_snapWidth == SNAP_TO_HTML_CONTENT)
-					width = htmlContentWidth - _marginH;
+					width = htmlContentWidth;
 				else if (tw != null) {
 					if (_snapWidth == SNAP_TO_PARENT)
-						width = tw.actualWidth - _marginH;
-					else width = tw._width - _marginH;
+						width = tw.actualWidth;
+					else width = tw._width;
 				}
 			}
 			if (invalidData.invalidateHeight) {
 				if (_snapHeight == SNAP_TO_CONTENT)
-					height = totalContentHeight + commonPaddingBottom - _marginV;
+					height = totalContentHeight + _commonPaddingBottom;
 				else if (_snapHeight == SNAP_TO_HTML_CONTENT)
-					height = htmlContentHeight - _marginV;
+					height = htmlContentHeight;
 				else if (th != null) {
 					if (_snapHeight == SNAP_TO_PARENT)
-						height = th.actualHeight - _marginV;
-					else height = th._height - _marginV;
+						height = th.actualHeight;
+					else height = th._height;
 				}
 			}
 			//trace('--- ', _elementName,  width, height);
@@ -509,9 +477,21 @@ class IceControl extends Sprite
 				_layoutRegion.copy(_layout.bound);
 			}
 			_propertiesProxy.setSize(_width, _height);
-			if (emitResizeEvents) {
+			if (emitResize && emitResizeEvents) {
 				resize(invalidData);
 				dispatchEventWith(Event.RESIZE, true, invalidData);
+			}
+		}
+	}
+	
+	public function validateChildren(?obj:DisplayObject) : Void
+	{
+		var owner:DisplayObject = obj != null ? obj : this;
+		for (child in owner.children) {
+			var iceChild:IceControl = cast child;
+			if (iceChild != null) {
+				iceChild.update(false);
+				iceChild.validateChildren();
 			}
 		}
 	}
@@ -553,7 +533,7 @@ class IceControl extends Sprite
 		var invalidateSize:Bool = false;
 		
 		if (_snapWidth == SNAP_TO_CONTENT) {
-			if (_propertiesProxy.width != totalContentWidth + commonPaddingRight)
+			if (_propertiesProxy.width != totalContentWidth + _commonPaddingRight)
 				invalidateWidth = true;
 		} else if (_snapWidth == SNAP_TO_HTML_CONTENT) {
 			if (_propertiesProxy.width != htmlContentWidth)
@@ -568,7 +548,7 @@ class IceControl extends Sprite
 		}
 		
 		if (_snapHeight == SNAP_TO_CONTENT) {
-			if (_propertiesProxy.height != totalContentHeight + commonPaddingBottom)
+			if (_propertiesProxy.height != totalContentHeight + _commonPaddingBottom)
 				invalidateHeight = true;
 		} else if (_snapHeight == SNAP_TO_HTML_CONTENT) {
 			if (_propertiesProxy.height != htmlContentHeight)
@@ -627,6 +607,7 @@ class IceControl extends Sprite
 		_styleFactory = null;
 		onResize = null;
 		if (_layout != null) {
+			_layout.removeEventListener(Event.CHANGE_PARAMS, changeLayoutParamsHandler);
 			_layout.dispose();
 			_layout = null;
 		}

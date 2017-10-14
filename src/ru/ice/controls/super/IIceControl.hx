@@ -16,10 +16,6 @@ import ru.ice.core.Ice;
  */
 interface IIceControl extends IDisplayObject
 {
-	public var marginLeft(get, set) : Float;
-	public var marginRight(get, set) : Float;
-	public var marginTop(get, set) : Float;
-	public var marginBottom(get, set) : Float;
 	public var includeInLayout(get, set) : Bool;
 	public var onReposition(get, set):Function;
 	public var snapWidth(get, never) : Dynamic;
@@ -38,7 +34,6 @@ interface IIceControl extends IDisplayObject
 	private function updateStyleFactory() : Void;
 	public var layout(get,set):ILayout;
 	public var layoutParams(get,set):ILayoutParams;
-	public var isInvalidChildrenSize(get, never):Bool;
 	public var isComplexControl(get, set):Bool;
 	private var _propertiesProxy:PropertiesProxy;
 	private function getInvalidData() : Dynamic;

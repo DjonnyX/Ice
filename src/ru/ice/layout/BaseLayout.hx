@@ -63,6 +63,8 @@ class BaseLayout extends EventDispatcher implements ILayout
 	private function set_owner(v:IceControl) : IceControl {
 		if (_owner != v) {
 			if (_owner != null) {
+				_owner.removeEventListener(Event.CHILD_ADDED, childAddedHandler);
+				_owner.removeEventListener(Event.CHILD_REMOVED, childRemovedHandler);
 				_owner.removeEventListener(Event.RESIZE, resizeHandler);
 				_owner.removeEventListener(Event.ADDED_TO_STAGE, addChildToStageHandler);
 				_owner.removeEventListener(Event.REMOVED_FROM_STAGE, removeChildFromStageHandler);
@@ -74,26 +76,32 @@ class BaseLayout extends EventDispatcher implements ILayout
 				// Если лэйаут добавили к контролу, то он не является пост-лэйаутом
 				_isPost = false;
 				
+				_owner.addEventListener(Event.CHILD_ADDED, childAddedHandler);
+				_owner.addEventListener(Event.CHILD_REMOVED, childRemovedHandler);
 				_owner.addEventListener(Event.RESIZE, resizeHandler);
 				_owner.addEventListener(Event.ADDED_TO_STAGE, addChildToStageHandler);
 				_owner.addEventListener(Event.REMOVED_FROM_STAGE, removeChildFromStageHandler);
-				_objects = [];
-				for (child in _owner.children) {
-					var iceObj:IceControl = cast child;
-					if (iceObj != null) {
-						if (iceObj.includeInLayout) {
-							_objects.push(iceObj);
-							needChange();
-						}
-					} else {
-						// Добавляются все DisplayObject
-						_objects.push(child);
-						needChange();
-					}
-				}
+				updateObjects();
 			}
 		}
 		return get_owner();
+	}
+	
+	private function updateObjects() : Void {
+		_objects = [];
+		for (child in _owner.children) {
+			var iceObj:IceControl = cast child;
+			if (iceObj != null) {
+				if (iceObj.includeInLayout) {
+					_objects.push(iceObj);
+					needChange();
+				}
+			} else {
+				// Добавляются все DisplayObject
+				_objects.push(child);
+				needChange();
+			}
+		}
 	}
 	
 	/**
@@ -201,8 +209,13 @@ class BaseLayout extends EventDispatcher implements ILayout
 	}
 	private function set_postLayout(v:ILayout) : ILayout {
 		if (_postLayout != v) {
-			_postLayout = v;
-			_postLayout.ownerLayout = this;
+			if (v == null) {
+				_postLayout.dispose();
+				_postLayout = null;
+			} else {
+				_postLayout = v;
+				_postLayout.ownerLayout = this;
+			}
 		}
 		return get_postLayout();
 	}
@@ -214,6 +227,12 @@ class BaseLayout extends EventDispatcher implements ILayout
 	private var _needResize:Bool = false;
 	private function get_needResize() : Bool {
 		return _needResize;
+	}
+	
+	public var needCalcParams(get, never) : Bool;
+	private var _needCalcParams:Bool = false;
+	private function get_needCalcParams() : Bool {
+		return _needCalcParams;
 	}
 	
 	/**
@@ -251,11 +270,9 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _width;
 	}
 	private function set_width(v:Float) : Float {
-		if (Math.isNaN(v))
-			v = 0;
 		if (_width != v)
 			_width = v;
-		return get_width();
+		return _width;
 	}
 	
 	/**
@@ -267,43 +284,50 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _height;
 	}
 	private function set_height(v:Float) : Float {
-		if (Math.isNaN(v))
-			v = 0;
 		if (_height != v)
 			_height = v;
-		return get_height();
+		return _height;
 	}
+	
+	private var _postLayoutPaddingLeft:Float = 0;
+	private var _postLayoutPaddingRight:Float = 0;
+	private var _postLayoutPaddingTop:Float = 0;
+	private var _postLayoutPaddingBottom:Float = 0;
 	
 	/**
 	 * Суммарный отступ слева
 	 */
+	private var _commonPaddingLeft:Float = 0;
 	public var commonPaddingLeft(get, never) : Float;
 	private function get_commonPaddingLeft() : Float {
-		return _paddingLeft + (_postLayout != null ? _postLayout.paddingLeft : 0);
+		return _commonPaddingLeft;
 	}
 	
 	/**
 	 * Суммарный отступ справа
 	 */
+	private var _commonPaddingRight:Float = 0;
 	public var commonPaddingRight(get, never) : Float;
 	private function get_commonPaddingRight() : Float {
-		return _paddingRight + (_postLayout != null ? _postLayout.paddingRight : 0);
+		return _commonPaddingRight;
 	}
 	
 	/**
 	 * Суммарный отступ сверху
 	 */
+	private var _commonPaddingTop:Float = 0;
 	public var commonPaddingTop(get, never) : Float;
 	private function get_commonPaddingTop() : Float {
-		return _paddingTop + (_postLayout != null ? _postLayout.paddingTop : 0);
+		return _commonPaddingTop;
 	}
 	
 	/**
 	 * Суммарный отступ снизу
 	 */
+	private var _commonPaddingBottom:Float = 0;
 	public var commonPaddingBottom(get, never) : Float;
 	private function get_commonPaddingBottom() : Float {
-		return _paddingBottom + (_postLayout != null ? _postLayout.paddingBottom : 0);
+		return _commonPaddingBottom;
 	}
 	
 	/**
@@ -315,10 +339,13 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _padding;
 	}
 	private function set_padding(v:Float) : Float {
-		if (Math.isNaN(v))
-			v = 0;
-		_padding = paddingLeft = paddingRight = paddingTop = paddingBottom = v;
-		return get_padding();
+		_padding = _paddingLeft = _paddingRight = _paddingTop = _paddingBottom = v;
+		_commonPaddingLeft = _paddingLeft + _postLayoutPaddingLeft;
+		_commonPaddingRight = _paddingRight + _postLayoutPaddingRight;
+		_commonPaddingTop = _paddingTop + _postLayoutPaddingTop;
+		_commonPaddingBottom = _paddingBottom + _postLayoutPaddingBottom;
+		updateParams();
+		return _padding;
 	}
 	
 	/**
@@ -330,13 +357,12 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _paddingLeft;
 	}
 	private function set_paddingLeft(v:Float) : Float {
-		/*if (Math.isNaN(v))
-			v = 0;*/
 		if (_paddingLeft != v) {
 			_paddingLeft = v;
-			update();
+			_commonPaddingLeft = v + _postLayoutPaddingLeft;
+			updateParams();
 		}
-		return get_paddingLeft();
+		return _paddingLeft;
 	}
 	
 	/**
@@ -348,13 +374,12 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _paddingRight;
 	}
 	private function set_paddingRight(v:Float) : Float {
-		/*if (Math.isNaN(v))
-			v = 0;*/
 		if (_paddingRight != v) {
 			_paddingRight = v;
-			update();
+			_commonPaddingRight = v + _postLayoutPaddingRight;
+			updateParams();
 		}
-		return get_paddingRight();
+		return _paddingRight;
 	}
 	
 	/**
@@ -366,13 +391,12 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _paddingTop;
 	}
 	private function set_paddingTop(v:Float) : Float {
-		/*if (Math.isNaN(v))
-			v = 0;*/
 		if (_paddingTop != v) {
 			_paddingTop = v;
-			update();
+			_commonPaddingTop = v + _postLayoutPaddingTop;
+			updateParams();
 		}
-		return get_paddingTop();
+		return _paddingTop;
 	}
 	
 	/**
@@ -384,13 +408,12 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _paddingBottom;
 	}
 	private function set_paddingBottom(v:Float) : Float {
-		/*if (Math.isNaN(v))
-			v = 0;*/
 		if (_paddingBottom != v) {
 			_paddingBottom = v;
-			update();
+			_commonPaddingBottom = v + _postLayoutPaddingBottom;
+			updateParams();
 		}
-		return get_paddingBottom();
+		return _paddingBottom;
 	}
 	
 	/**
@@ -399,9 +422,15 @@ class BaseLayout extends EventDispatcher implements ILayout
 	 */
 	public var gap(never, set) : Float;
 	private function set_gap(v:Float) : Float {
-		horizontalGap = v;
-		verticalGap = v;
+		_horizontalGap = v;
+		_verticalGap = v;
+		updateParams();
 		return v;
+	}
+	
+	private function updateParams() : Void {
+		_needResize = true;
+		_needCalcParams = true;
 	}
 	
 	/**
@@ -413,11 +442,11 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _horizontalGap;
 	}
 	private function set_horizontalGap(v:Float) : Float {
-		if (Math.isNaN(v))
-			v = 0;
-		if (_horizontalGap != v)
+		if (_horizontalGap != v) {
 			_horizontalGap = v;
-		return get_horizontalGap();
+			updateParams();
+		}
+		return _horizontalGap;
 	}
 	
 	/**
@@ -429,11 +458,11 @@ class BaseLayout extends EventDispatcher implements ILayout
 		return _verticalGap;
 	}
 	private function set_verticalGap(v:Float) : Float {
-		if (Math.isNaN(v))
-			v = 0;
-		if (_verticalGap != v)
+		if (_verticalGap != v) {
 			_verticalGap = v;
-		return get_verticalGap();
+			updateParams();
+		}
+		return _verticalGap;
 	}
 	
 	/**
@@ -447,6 +476,16 @@ class BaseLayout extends EventDispatcher implements ILayout
 	private function resizeHandler(e:Event) : Void {
 		if (e.target != _owner)
 			_needResize = true;
+	}
+	
+	private function childAddedHandler(e:Event) : Void {
+		e.stopImmediatePropagation();
+		updateObjects();
+	}
+	
+	private function childRemovedHandler(e:Event) : Void {
+		e.stopImmediatePropagation();
+		updateObjects();
 	}
 	
 	/**
@@ -468,7 +507,14 @@ class BaseLayout extends EventDispatcher implements ILayout
 	 * Деструктор
 	 */
 	public function dispose() : Void {
+		if (_postLayout != null) {
+			//_postLayout.removeEventListener(Event.CHANGE_PARAMS, changeParamsHandler);
+			_postLayout.dispose();
+			_postLayout = null;
+		}
 		if (_owner != null) {
+			_owner.removeEventListener(Event.CHILD_ADDED, childAddedHandler);
+			_owner.removeEventListener(Event.CHILD_REMOVED, childRemovedHandler);
 			_owner.removeEventListener(Event.RESIZE, resizeHandler);
 			_owner.removeEventListener(Event.ADDED_TO_STAGE, addChildToStageHandler);
 			_owner.removeEventListener(Event.REMOVED_FROM_STAGE, removeChildFromStageHandler);
