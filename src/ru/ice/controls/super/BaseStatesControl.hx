@@ -10,7 +10,6 @@ import ru.ice.events.FingerEvent;
 import ru.ice.data.ElementData;
 import ru.ice.theme.BaseTheme;
 import ru.ice.math.Rectangle;
-import ru.ice.controls.Label;
 import ru.ice.layout.ILayout;
 import ru.ice.events.Event;
 import ru.ice.theme.Theme;
