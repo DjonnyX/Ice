@@ -22,14 +22,14 @@ import ru.ice.core.Ice;
  */
 class BaseStatesControl extends InteractiveControl
 {
-	public static inline var STATE_UP:String = 'up';
-	public static inline var STATE_DOWN:String = 'down';
-	public static inline var STATE_HOVER:String = 'hover';
-	public static inline var STATE_SELECT:String = 'select';
-	public static inline var STATE_DISABLED:String = 'disabled';
-	public static inline var STATE_DOWN_SELECTED:String = 'down-selected';
-	public static inline var STATE_HOVER_SELECTED:String = 'hover-selected';
-	public static inline var STATE_DISABLED_SELECTED:String = 'disabled-selected';
+	public static inline var STATE_UP:String = 'state-up';
+	public static inline var STATE_DOWN:String = 'state-down';
+	public static inline var STATE_HOVER:String = 'state-hover';
+	public static inline var STATE_SELECT:String = 'state-select';
+	public static inline var STATE_DISABLED:String = 'state-disabled';
+	public static inline var STATE_DOWN_SELECTED:String = 'state-down-selected';
+	public static inline var STATE_HOVER_SELECTED:String = 'state-hover-selected';
+	public static inline var STATE_DISABLED_SELECTED:String = 'state-disabled-selected';
 	
 	private var _allowDeselect:Bool = false;
 	public var allowDeselect(get, set) : Bool;
@@ -59,8 +59,9 @@ class BaseStatesControl extends InteractiveControl
 		return _isSelect;
 	}
 	private function set_isSelect(v:Bool) : Bool {
-		if (_isSelect != v)
+		if (_isSelect != v) {
 			_isSelect = v;
+		}
 		return get_isSelect();
 	}
 	
@@ -199,13 +200,8 @@ class BaseStatesControl extends InteractiveControl
 		switch(_state) {
 			case STATE_UP: {
 				if (_isHover && !Ice.isDragging) {
-					if (_isSelect) {
-						if (_hoverSelectStyleFactory != null)
-							_hoverSelectStyleFactory(this);
-					} else {
-						if (_hoverStyleFactory != null)
-							_hoverStyleFactory(this);
-					}
+					if (_hoverStyleFactory != null)
+						_hoverStyleFactory(this);
 				} else {
 					if (_upStyleFactory != null)
 						_upStyleFactory(this);
@@ -221,8 +217,13 @@ class BaseStatesControl extends InteractiveControl
 				}
 			}
 			case STATE_SELECT: {
-				if (_selectStyleFactory != null)
-					_selectStyleFactory(this);
+				if (_isHover) {
+					if (_hoverSelectStyleFactory != null)
+						_hoverSelectStyleFactory(this);
+				} else {
+					if (_selectStyleFactory != null)
+						_selectStyleFactory(this);
+				}
 			}
 			case STATE_DISABLED: {
 				if (_isSelect) {
@@ -240,7 +241,7 @@ class BaseStatesControl extends InteractiveControl
 	{
 		_useTouchableClass = useTouchableClass;
 		if (elementData == null)
-			elementData = new ElementData({'name':'so'});
+			elementData = new ElementData({'name':'states-control'});
 		super(elementData, initial);
 		state = STATE_UP;
 		stage.addEventListener(FingerEvent.UP, stageUpHandler);

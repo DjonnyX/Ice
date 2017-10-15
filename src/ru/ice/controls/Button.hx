@@ -10,6 +10,7 @@ import ru.ice.display.DisplayObject;
 import ru.ice.events.Event;
 import ru.ice.controls.super.IceControl;
 import ru.ice.controls.super.BaseStatesControl;
+import ru.ice.controls.super.IBaseStatesControl;
 import ru.ice.events.FingerEvent;
 import ru.ice.data.ElementData;
 import ru.ice.core.Ice;
@@ -18,15 +19,17 @@ import ru.ice.core.Ice;
  * ...
  * @author Evgenii Grebennikov
  */
-class Button extends BaseStatesControl
+class Button extends BaseStatesControl implements IBaseStatesControl
 {
 	public static inline var DEFAULT_STYLE:String = 'default-simple-button-style';
 	
-	public static inline var STATE_UP:String = 'up';
-	public static inline var STATE_DOWN:String = 'down';
-	public static inline var STATE_HOVER:String = 'hover';
-	public static inline var STATE_SELECT:String = 'select';
-	public static inline var STATE_DISABLED:String = 'disabled';
+	public static inline var STATE_UP:String = BaseStatesControl.STATE_UP;
+	public static inline var STATE_DOWN:String = BaseStatesControl.STATE_DOWN;
+	public static inline var STATE_DOWN_SELECTED:String = BaseStatesControl.STATE_DOWN_SELECTED;
+	public static inline var STATE_HOVER:String = BaseStatesControl.STATE_HOVER;
+	public static inline var STATE_HOVER_SELECTED:String = BaseStatesControl.STATE_HOVER_SELECTED;
+	public static inline var STATE_SELECT:String = BaseStatesControl.STATE_SELECT;
+	public static inline var STATE_DISABLED:String = BaseStatesControl.STATE_DISABLED;
 	
 	private override function get_width() : Float {
 		return _element.getBoundingClientRect().width;
@@ -127,12 +130,6 @@ class Button extends BaseStatesControl
 		_iconElement = cast DOMExpress.createElement('div');
 		_element.appendChild(_iconElement);
 		styleName = DEFAULT_STYLE;
-		state = STATE_UP;
-	}
-	
-	override public function initialize() : Void 
-	{
-		super.initialize();
 	}
 	
 	override public function dispose() : Void {

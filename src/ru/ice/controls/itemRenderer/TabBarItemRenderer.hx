@@ -76,12 +76,10 @@ class TabBarItemRenderer extends Button implements IBaseListItemControl {
 		if (elementData == null)
 			elementData = new ElementData({'name':'li'});
 		super(elementData);
-		//style = {'display':'block'};
 		allowDeselect = false;
 		isToggle = true;
 		isSelect = _selected;
 		styleName = DEFAULT_STYLE;
-		addChild(_button);
 	}
 	
 	private override function upHandler(e:FingerEvent) : Void {

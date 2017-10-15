@@ -469,8 +469,6 @@ class IceControl extends Sprite
 					else height = th._height;
 				}
 			}
-			//trace('--- ', _elementName,  width, height);
-			// Апдейт лэйаута.
 			// Апдейт лэйаута.
 			if (_layout != null) {
 				_layout.update();

@@ -26,6 +26,6 @@ class InteractiveControl extends IceControl
 	
 	@:allow(ru.ice.controls)
 	private function resetState(target:DisplayObject) : Void {
-		this.dispatchEventWith(Event.RESET_STATE, true, {tartget:target});
+		dispatchEventWith(Event.RESET_STATE, true, {tartget:target});
 	}
 }

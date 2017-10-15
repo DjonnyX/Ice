@@ -20,10 +20,9 @@ class ToggleItemRenderer extends TabBarItemRenderer {
 	private override function set_selected(v:Bool) : Bool {
 		if (_selected != v) {
 			_selected = v;
-			if (_button != null) {
-				_button.isSelect = _selected;
-				_button.state = _selected ? Button.STATE_SELECT : Button.STATE_UP;
-			}
+			isSelect = _selected;
+			state = _selected ? Button.STATE_SELECT : Button.STATE_UP;
+			updateState();
 		}
 		return get_selected();
 	}
