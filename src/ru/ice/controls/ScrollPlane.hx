@@ -354,51 +354,14 @@ class ScrollPlane extends Scroller
 	public override function resize(?data:Dynamic) : Void
 	{
 		super.resize(data);
-		resizeScrollBars();
-		if (_horizontalScrollbar != null && !_horizontalScrollbar.isDragging && !_horizontalScrollbar.isOutScrollPosition)
-			scrollX();
-		if (_verticalScrollbar != null && !_verticalScrollbar.isDragging && !_verticalScrollbar.isOutScrollPosition)
-			scrollY();
-	}
-	
-	private var _delayedCall_contentResized:IAnimatable;
-	
-	private function dispose_delayedCall_contentResized() : Void {
-		if (_delayedCall_contentResized != null) {
-			Ice.animator.remove(_delayedCall_contentResized);
-			_delayedCall_contentResized = null;
-		}
-	}
-	
-	private function needDelayed_contentResized(data:Dynamic) : Void 
-	{
-		dispose_delayedCall_contentResized();
-		//_delayedCall_contentResized = Ice.animator.delayCall(_resizeC, 1, [data]);
+		resetScrollBars();
 	}
 	
 	public override function resizeContent(?data:Dynamic) : Void
 	{
-		/*if (!isDragging) {
-			super.resizeContent(data);
-		} else
-			needDelayed_contentResized(data);
-			*/
 		super.resizeContent(data);
-		resizeScrollBars();
-		if (_horizontalScrollbar != null && !_horizontalScrollbar.isDragging && !_horizontalScrollbar.isOutScrollPosition)
-			scrollX();
-		if (_verticalScrollbar != null && !_verticalScrollbar.isDragging && !_verticalScrollbar.isOutScrollPosition)
-			scrollY();
+		resetScrollBars();
 	}
-	
-	/*private function _resizeC(?data:Dynamic) : Void {
-		super.resizeContent(data);
-		resizeScrollBars();
-		if (_horizontalScrollbar != null && !_horizontalScrollbar.isDragging && !_horizontalScrollbar.isOutScrollPosition)
-			scrollX();
-		if (_verticalScrollbar != null && !_verticalScrollbar.isDragging && !_verticalScrollbar.isOutScrollPosition)
-			scrollY();
-	}*/
 	
 	private function resizeScrollBars() : Void
 	{
@@ -406,21 +369,39 @@ class ScrollPlane extends Scroller
 		resizeVerticalScrollBar();
 	}
 	
+	private function resetScrollBars() : Void {
+		resizeScrollBars();
+		if (_horizontalScrollbar != null && !_horizontalScrollbar.isDragging && !_horizontalScrollbar.isOutScrollPosition)
+			scrollX();
+		if (_verticalScrollbar != null && !_verticalScrollbar.isDragging && !_verticalScrollbar.isOutScrollPosition)
+			scrollY();
+	}
+	
 	private function resizeHorizontalScrollBar() : Void
 	{
 		if (_horizontalScrollbar != null) {
+			//var isNaN:Bool = _horizontalScrollbar.width == 0;
 			_horizontalScrollbar.x = _horizontalScrollbarOffsetLeft;
 			_horizontalScrollbar.width = _width - _horizontalScrollbarOffsetLeft - _horizontalScrollbarOffsetRight;
 			_horizontalScrollbar.y = _height - _horizontalScrollbar.height;
+			// Необходимо мгновенное обновление параметров трансформации
+			// Т.к. следом последует расчет позиций
+			//if (isNaN)
+				_horizontalScrollbar.update(false);
 		}
 	}
 	
 	private function resizeVerticalScrollBar() : Void
 	{
 		if (_verticalScrollbar != null) {
+			//var isNaN:Bool = _verticalScrollbar.height == 0;
 			_verticalScrollbar.y = _verticalScrollbarOffsetTop;
 			_verticalScrollbar.height = _height - _verticalScrollbarOffsetTop - _verticalScrollbarOffsetBottom;
 			_verticalScrollbar.x = _width - _verticalScrollbar.width;
+			// Необходимо мгновенное обновление параметров трансформации
+			// Т.к. следом последует расчет позиций
+			//if (isNaN)
+				_verticalScrollbar.update(false);
 		}
 	}
 	
@@ -436,11 +417,6 @@ class ScrollPlane extends Scroller
 			_verticalScrollbar.setScrollPosition(verticalScrollPosition);
 		updateVerticalBarriers();
 		dispatchEventWith(Event.SCROLL, true, {direction:'vertical'});
-	}
-	
-	private override function clearAnimations() : Void {
-		dispose_delayedCall_contentResized();
-		super.clearAnimations();
 	}
 	
 	override public function dispose() : Void

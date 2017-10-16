@@ -258,8 +258,8 @@ class ScrollBar extends Scroller
 	}
 	
 	private function getThumbActualSize(size:Float) : Float {
-		if (Math.isNaN(size))
-			return 0;
+		/*if (Math.isNaN(size))
+			return 0;*/
 		if (size < _minThumbSize)
 			size = _minThumbSize;
 		return size;

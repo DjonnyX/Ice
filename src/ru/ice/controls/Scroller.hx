@@ -377,8 +377,10 @@ class Scroller extends BaseStatesControl
 		if (!_isDragging && _isTweensComplete)
 			clearAnimations();
 		resetScrollParams();
-		throwScroll();
-		layoutBarriers();
+		if (!_isPress) {
+			throwScroll();
+			layoutBarriers();
+		}
 	}
 	
 	public function resizeContent(?data:ResizeData) : Void
@@ -386,7 +388,8 @@ class Scroller extends BaseStatesControl
 		if (!_isDragging && _isTweensComplete)
 			clearAnimations();
 		resetScrollParams();
-		throwScroll();
+		if (!_isPress)
+			throwScroll();
 	}
 	
 	private function layoutBarriers() : Void {
