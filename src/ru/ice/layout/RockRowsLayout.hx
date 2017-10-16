@@ -252,6 +252,7 @@ class RockRowsLayout extends BaseLayout
 			var endIndex:Int = places.length;
 			var w:Int = Math.ceil(hRatio);
 			var h:Int = Math.ceil(vRatio);
+			var cx:Float = 0, cy:Float = 0;
 			for (ri in 0...places.length) {
 				var columns:Array<Bool> = places[ri];
 				for (ci in 0...columns.length) {
@@ -277,10 +278,12 @@ class RockRowsLayout extends BaseLayout
 									places[hi][wi] = false;
 								}
 							}
-							child.x = _paddingLeft + (ci * itemWidth) + (ci * _horizontalGap);
-							child.y = _paddingTop + (ri * (_uniscale ? hRatio : 1) * itemWidth) + (ri * _verticalGap);
+							cx = _paddingLeft + (ci * itemWidth) + (ci * _horizontalGap);
+							cy = _paddingTop + (ri * (_uniscale ? hRatio : 1) * itemWidth) + (ri * _verticalGap);
+							child.x = cx;
+							child.y = cy;
 							child.setSize(vRatio * itemWidth + ((hRatio - 1) * _horizontalGap), hRatio * itemWidth + ((vRatio - 1) * _verticalGap));
-							fullHeight = Math.max(fullHeight, _owner.totalContentHeight);
+							fullHeight = Math.max(fullHeight, cy + child.height);
 							return;
 						}
 					}
@@ -293,10 +296,12 @@ class RockRowsLayout extends BaseLayout
 					places[ar][ac] = !(ac < w && ar < pl);
 				}
 			}
-			child.x = _paddingLeft;
-			child.y = _paddingTop + (endIndex * itemWidth) + (endIndex * _verticalGap);
+			cx = _paddingLeft;
+			cy = _paddingTop + (endIndex * itemWidth) + (endIndex * _verticalGap);
+			child.x = cx;
+			child.y = cy;
 			child.setSize(vRatio * itemWidth + ((hRatio - 1) * _horizontalGap), hRatio * itemWidth + ((vRatio - 1) * _verticalGap)); //hr hr vr vr
-			fullHeight = Math.max(fullHeight, child.y + child.height);
+			fullHeight = Math.max(fullHeight, cy + child.height);
 		}
 		
 		fillRowsIfNeeded(1);
@@ -350,8 +355,7 @@ class RockRowsLayout extends BaseLayout
 		return _bound;
 	}
 	
-	override public function dispose():Void 
-	{
+	override public function dispose() : Void {
 		_columnsCountFactory = null;
 		super.dispose();
 	}
