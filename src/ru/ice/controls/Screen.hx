@@ -80,18 +80,9 @@ class Screen extends IceControl
 		this.index = index;
 	}
 	
-	public function deactive() : Void {
-		
-	}
+	public function deactive() : Void {}
 	
-	public function transitionToScreen(address:String) : Void {
-		
-	}
-	
-	public override function resize(?data:ResizeData) : Void
-	{
-		super.resize(data);
-	}
+	public function transitionToScreen(address:String) : Void {}
 	
 	public override function dispose() : Void
 	{
