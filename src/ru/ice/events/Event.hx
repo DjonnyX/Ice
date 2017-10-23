@@ -101,6 +101,7 @@ class Event
     public static inline var REMOVED_FROM_STAGE:String = "removedFromStage";
     public static inline var TRIGGERED:String = "triggered";
     public static inline var RESIZE:String = "resize";
+	public static inline var ELEMENT_RESIZE:String = "element-resize";
     public static inline var RESIZE_BEGIN:String = "resize-begin";
     public static inline var COMPLETE:String = "complete";
     public static inline var RENDER:String = "render";

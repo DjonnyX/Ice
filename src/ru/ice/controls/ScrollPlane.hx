@@ -16,7 +16,6 @@ import ru.ice.display.DisplayObject;
 import ru.ice.math.Point;
 import ru.ice.math.Rectangle;
 import ru.ice.layout.ILayout;
-import ru.ice.events.LayoutEvent;
 
 /**
  * ...
@@ -242,6 +241,13 @@ class ScrollPlane extends Scroller
 			_horizontalScrollbar.visible = false;
 		if (_verticalScrollbar != null)
 			_verticalScrollbar.visible = false;
+	}
+	
+	public function showScrollBars() : Void {
+		if (_horizontalScrollbar != null)
+			_horizontalScrollbar.visible = true;
+		if (_verticalScrollbar != null)
+			_verticalScrollbar.visible = true;
 	}
 	
 	private override function calculateViewportOffset() : Void

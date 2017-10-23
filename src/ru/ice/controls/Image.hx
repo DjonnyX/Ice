@@ -4,7 +4,6 @@ import js.html.Image;
 
 import ru.ice.events.Event;
 import ru.ice.data.ElementData;
-import ru.ice.events.LayoutEvent;
 import ru.ice.controls.super.IceControl;
 
 /**

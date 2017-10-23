@@ -11,6 +11,7 @@ import ru.ice.display.Stage;
  */
 interface ILayout extends IEventDispatcher
 {
+	public var roundToInt(get, set):Bool;
 	public function include(obj:DisplayObject) : Void;
 	public function exclude(obj:DisplayObject) : Void;
 	public var objects(get, never) : Array<DisplayObject>;

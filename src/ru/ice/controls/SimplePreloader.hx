@@ -31,7 +31,7 @@ class SimplePreloader extends IceControl
 	
 	public function new() 
 	{
-		super(new ElementData({'name':'c', 'interactive':false}));
+		super(new ElementData({'interactive':false}));
 		_pContainer = Browser.document.createElement('div');
 		_img = Browser.document.createImageElement();
 		_pContainer.appendChild(_img);

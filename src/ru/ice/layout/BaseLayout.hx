@@ -4,7 +4,6 @@ import ru.ice.controls.super.IceControl;
 import ru.ice.layout.params.ILayoutParams;
 import ru.ice.events.EventDispatcher;
 import ru.ice.display.DisplayObject;
-import ru.ice.events.LayoutEvent;
 import ru.ice.data.ElementData;
 import ru.ice.layout.ILayout;
 import ru.ice.math.Rectangle;
@@ -16,6 +15,23 @@ import ru.ice.events.Event;
  */
 class BaseLayout extends EventDispatcher implements ILayout
 {
+	/**
+	 * Включает округление координат и размеров
+	 */
+	private var _roundToInt:Bool = true;
+	public var roundToInt(get, set):Bool;
+	private function get_roundToInt() : Bool {
+		return _roundToInt;
+	}
+	private function set_roundToInt(v:Bool) : Bool {
+		if (_roundToInt != v) {
+			_roundToInt = v;
+			if (_owner != null)
+				update();
+		}
+		return _roundToInt;
+	}
+	
 	/**
 	 * Указывает является ли данный лэйаут, пост-лэйаутом
 	 */

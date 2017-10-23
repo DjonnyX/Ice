@@ -135,15 +135,15 @@ class RockRowsLayout extends BaseLayout
 	 * Структура разметки по-умолчанию
 	 */
 	private static var _defaultColumnsCountFactory:Function = function(width:Int, height:Int) : Int {
-		if (width < 500) {
+		if (width < 1000) {
 			return 1;
-		} else if (width < 900) {
+		} else if (width < 1280) {
 			return 4;
-		} else if (width < 1200) {
+		} else if (width < 1440) {
 			return 5;
-		} else if (width < 1500) {
+		} else if (width < 1800) {
 			return 6;
-		} else if (width < 1900) {
+		} else if (width < 1920) {
 			return 7;
 		} else if (width < 2300) {
 			return 8;
@@ -216,7 +216,7 @@ class RockRowsLayout extends BaseLayout
 		var h:Float = _owner._height;
 		
 		#if debug
-			trace('update layout', _owner.element, w, _owner.height);
+			trace('update layout', _owner.element, w, h);
 		#end
 		
 		_bound.setSize(w, h);
@@ -252,7 +252,7 @@ class RockRowsLayout extends BaseLayout
 			var endIndex:Int = places.length;
 			var w:Int = Math.ceil(hRatio);
 			var h:Int = Math.ceil(vRatio);
-			var cx:Float = 0, cy:Float = 0;
+			var cx:Float = 0, cy:Float = 0, cw:Float = 0, ch:Float = 0;
 			for (ri in 0...places.length) {
 				var columns:Array<Bool> = places[ri];
 				for (ci in 0...columns.length) {
@@ -280,10 +280,18 @@ class RockRowsLayout extends BaseLayout
 							}
 							cx = _paddingLeft + (ci * itemWidth) + (ci * _horizontalGap);
 							cy = _paddingTop + (ri * (_uniscale ? hRatio : 1) * itemWidth) + (ri * _verticalGap);
+							cw = vRatio * itemWidth + ((hRatio - 1) * _horizontalGap);
+							ch = hRatio * itemWidth + ((vRatio - 1) * _verticalGap);
+							if (_roundToInt) {
+								cx = Math.round(cx);
+								cy = Math.round(cy);
+								cw = Math.round(cw);
+								ch = Math.round(ch);
+							}
 							child.x = cx;
 							child.y = cy;
-							child.setSize(vRatio * itemWidth + ((hRatio - 1) * _horizontalGap), hRatio * itemWidth + ((vRatio - 1) * _verticalGap));
-							fullHeight = Math.max(fullHeight, cy + child.height);
+							child.setSize(cw, ch);
+							fullHeight = Math.max(fullHeight, cy + child._height);
 							return;
 						}
 					}
@@ -298,10 +306,18 @@ class RockRowsLayout extends BaseLayout
 			}
 			cx = _paddingLeft;
 			cy = _paddingTop + (endIndex * itemWidth) + (endIndex * _verticalGap);
+			cw = vRatio * itemWidth + ((hRatio - 1) * _horizontalGap);
+			ch = hRatio * itemWidth + ((vRatio - 1) * _verticalGap);
+			if (_roundToInt) {
+				cx = Math.round(cx);
+				cy = Math.round(cy);
+				cw = Math.round(cw);
+				ch = Math.round(ch);
+			}
 			child.x = cx;
 			child.y = cy;
-			child.setSize(vRatio * itemWidth + ((hRatio - 1) * _horizontalGap), hRatio * itemWidth + ((vRatio - 1) * _verticalGap)); //hr hr vr vr
-			fullHeight = Math.max(fullHeight, cy + child.height);
+			child.setSize(cw, ch);
+			fullHeight = Math.max(fullHeight, cy + child._height);
 		}
 		
 		fillRowsIfNeeded(1);

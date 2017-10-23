@@ -1,9 +1,12 @@
 package ru.ice.theme;
 
+import js.html.Element;
 import ru.ice.animation.IAnimatable;
 import ru.ice.animation.Tween;
 import ru.ice.controls.DelayedBuilder;
 import ru.ice.controls.Image;
+import ru.ice.controls.super.BaseStatesControl;
+import ru.ice.controls.super.IBaseStatesControl;
 import ru.ice.display.DisplayObject;
 import ru.ice.events.Event;
 import ru.ice.layout.HorizontalLayout;
@@ -15,8 +18,6 @@ import ru.ice.layout.AnchorLayout;
 import ru.ice.controls.itemRenderer.TabBarItemRenderer;
 import ru.ice.controls.IScrollBar;
 import ru.ice.core.Ice;
-import ru.ice.controls.Label;
-import ru.ice.controls.Header;
 import ru.ice.controls.TabBar;
 import ru.ice.controls.Button;
 import ru.ice.controls.Screen;
@@ -39,27 +40,27 @@ class Theme extends BaseTheme
 	}
 	
 	private function setStyles() : Void {
-		setStyle(Label, Label.DEFAULT_STYLE, setDefaultLabelStyle);
+		//setStyle(Label, Label.DEFAULT_STYLE, setDefaultLabelStyle);
 		//setStyle(Header, Header.DEFAULT_STYLE, setDefaultHeaderStyle);
-		setStyle(Button, Button.DEFAULT_STYLE, setDefaultSimpleButtonStyle);
-		setStyle(Screen, Screen.DEFAULT_STYLE, setDefaultScreenStyle);
+		//setStyle(Button, Button.DEFAULT_STYLE, setDefaultSimpleButtonStyle);
+		//setStyle(Screen, Screen.DEFAULT_STYLE, setDefaultScreenStyle);
 		//setStyle(TabBar, TabBar.DEFAULT_STYLE, setDefaultTabBarStyle);
 		//setStyle(TabBarItemRenderer, TabBarItemRenderer.DEFAULT_STYLE, setDefaultTabBarItemRendererStyle);
 		//setStyle(Preloader, Preloader.DEFAULT_STYLE, setPreloaderStyle);
-		setStyle(Scroller, Scroller.DEFAULT_STYLE, setDefaultScrollerStyle);
+		/*setStyle(Scroller, Scroller.DEFAULT_STYLE, setDefaultScrollerStyle);
 		setStyle(ScrollPlane, ScrollPlane.DEFAULT_STYLE, setDefaultScrollPlaneStyle);
 		setStyle(IScrollBar, ScrollBar.DEFAULT_VERTICAL_STYLE, setDefaultVerticalScrollbarStyle);
 		setStyle(IScrollBar, ScrollBar.DEFAULT_HORIZONTAL_STYLE, setDefaultHorizontalScrollbarStyle);
 		setStyle(DelayedBuilder, DelayedBuilder.DEFAULT_STYLE, setDefaultDelayedBuilderStyle);
-		setStyle(VideoPlayer, VideoPlayer.DEFAULT_STYLE, setDefaultVideoPlayerStyle);
+		setStyle(VideoPlayer, VideoPlayer.DEFAULT_STYLE, setDefaultVideoPlayerStyle);*/
 	}
 	
-	private function setDefaultVideoPlayerStyle(videoPlayer:VideoPlayer) : Void {
+	/*private function setDefaultVideoPlayerStyle(videoPlayer:VideoPlayer) : Void {
 		videoPlayer.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_CONTENT);
 		videoPlayer.videoContainerStyleFactory = function(renderer:IceControl) : Void {
 			renderer.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_HTML_CONTENT);
 		}
-	}
+	}*/
 	
 	/*private function setDefaultHeaderStyle(header:Header) : Void {
 		header.snapTo(IceControl.SNAP_TO_SELF, IceControl.SNAP_TO_SELF);
@@ -112,13 +113,13 @@ class Theme extends BaseTheme
 	}
 	*/
 	
-	private function setDefaultScreenStyle(screen:Screen) : Void {
+	/*private function setDefaultScreenStyle(screen:Screen) : Void {
 		screen.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_PARENT);
-	}
+	}*/
 	/**
 	 * Стиль обычной кнопки по-умолчанию
 	 */
-	private function setDefaultSimpleButtonStyle(renderer:Button) : Void {
+	/*private function setDefaultSimpleButtonStyle(renderer:Button) : Void {
 		renderer.addClass(['i-button']);
 		renderer.snapTo(IceControl.SNAP_TO_CONTENT, IceControl.SNAP_TO_CONTENT);
 		var hLayout:HorizontalLayout = new HorizontalLayout();
@@ -154,7 +155,7 @@ class Theme extends BaseTheme
 			button.removeClass(['i-button-up', 'i-button-down', 'i-button-hover']);
 			button.addClass(['i-button-disabled']);
 		}
-	}
+	}*/
 	
 	/**
 	 * Стиль таббара по-умолчанию
@@ -252,17 +253,17 @@ class Theme extends BaseTheme
 	/**
 	 * Стиль "замедленного" строителя по-умолчанию
 	 */
-	private function setDefaultDelayedBuilderStyle(renderer:DelayedBuilder) : Void {
+	/*private function setDefaultDelayedBuilderStyle(renderer:DelayedBuilder) : Void {
 		renderer.delay = .1;
 		renderer.postFactory = function(object:DisplayObject) : Void {
 			object.addClass(['i-delayed-builder']);
 		}
-	}
+	}*/
 	
 	/**
 	 * Стиль скроллера по-умолчанию
 	 */
-	private function setDefaultScrollerStyle(renderer:Scroller) : Void {
+	/*private function setDefaultScrollerStyle(renderer:Scroller) : Void {
 		renderer.addClass(['i-scroller']);
 		
 		renderer.contentStyleFactory = function(content:IceControl) : Void {
@@ -275,20 +276,20 @@ class Theme extends BaseTheme
 			vLayout.gap = 10;
 			content.layout = vLayout;
 		}
-	}
+	}*/
 	
 	/**
 	 * Стиль лейбела по-умолчанию
 	 */
-	private function setDefaultLabelStyle(label:Label) : Void {
+	/*private function setDefaultLabelStyle(label:Label) : Void {
 		label.addClass(['i-label']);
 		label.wordwap = true;
-	}
+	}*/
 	
 	/**
 	 * Стиль горизонтального скроллбара по-умолчанию
 	 */
-	private function setDefaultHorizontalScrollbarStyle(renderer:IScrollBar) : Void {
+	/*private function setDefaultHorizontalScrollbarStyle(renderer:IScrollBar) : Void {
 		
 		var renderer:ScrollBar = cast renderer;
 		renderer.snapTo(IceControl.SNAP_TO_SELF, IceControl.SNAP_TO_CONTENT);
@@ -349,12 +350,12 @@ class Theme extends BaseTheme
 			renderer.thumb.removeClass(['i-scrollbar-horizontal-thumb-up-state', 'i-scrollbar-horizontal-thumb-down-state', 'i-scrollbar-horizontal-thumb-hover-state']);
 			renderer.thumb.addClass(['i-scrollbar-horizontal-thumb-disabled-state']);
 		}
-	}
+	}*/
 	
 	/**
 	 * Стиль вертикального скроллбара по-умолчанию
 	 */
-	private function setDefaultVerticalScrollbarStyle(renderer:IScrollBar) : Void {
+	/*private function setDefaultVerticalScrollbarStyle(renderer:IScrollBar) : Void {
 		
 		var renderer:ScrollBar = cast renderer;
 		
@@ -416,12 +417,12 @@ class Theme extends BaseTheme
 			renderer.thumb.removeClass(['i-scrollbar-vertical-thumb-up-state', 'i-scrollbar-vertical-thumb-down-state', 'i-scrollbar-vertical-thumb-hover-state']);
 			renderer.thumb.addClass(['i-scrollbar-vertical-thumb-disabled-state']);
 		}
-	}
+	}*/
 	
 	/**
 	 * Стиль скроллплейна по-умолчанию
 	 */
-	private function setDefaultScrollPlaneStyle(renderer:Scroller) : Void {
+	/*private function setDefaultScrollPlaneStyle(renderer:Scroller) : Void {
 		renderer.addClass(['i-scroller']);
 		renderer.snapTo(IceControl.SNAP_TO_PARENT, IceControl.SNAP_TO_PARENT);
 		
@@ -442,5 +443,5 @@ class Theme extends BaseTheme
 				object.addClass(['i-delayed-builder']);
 			}
 		}
-	}
+	}*/
 }

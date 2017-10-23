@@ -202,7 +202,7 @@ class DisplayObject extends DOMExpress
 	private function resetTransformation() : Void
 	{
 		if (_element != null) 
-			Reflect.setField(_element.style, 'transform'/*Capabilities.transformMethod*/, "translate3D(" + _x + "px, " + _y + "px, " + _z + "px) scale(" + _scaleX + ", " + _scaleY + ") rotate(" + _rotate + "deg)");
+			Reflect.setField(_element.style, Capabilities.transformMethod, "translate3D(" + _x + "px, " + _y + "px, " + _z + "px) scale(" + _scaleX + ", " + _scaleY + ") rotate(" + _rotate + "deg)");
 	}
 	
 	private var _bound:Rectangle = new Rectangle();
@@ -386,7 +386,24 @@ class DisplayObject extends DOMExpress
 		return _touchY;
 	}
 	
-	private var _interactive:Bool = true;
+	
+	private var _disableInput:Bool = false;
+	public var disableInput(get, set):Bool;
+	private function get_disableInput() : Bool {
+		return _disableInput;
+	}
+	private function set_disableInput(v:Bool) : Bool {
+		if (_disableInput != v) {
+			_disableInput = v;
+			if (_interactive)
+				removeClass(['not-interactive']);
+			else
+				addClass(['not-interactive']);
+		}
+		return _interactive;
+	}
+	
+	private var _interactive:Bool = false;
 	public var interactive(get, set):Bool;
 	private function get_interactive() : Bool {
 		return _interactive;
@@ -394,10 +411,13 @@ class DisplayObject extends DOMExpress
 	private function set_interactive(v:Bool) : Bool {
 		if (_interactive != v) {
 			_interactive = v;
-			if (v)
+			if (v) {
+				if (_disableInput) removeClass(['not-interactive']);
 				listenInteractiveEvents();
-			else
+			} else {
+				if (_disableInput) addClass(['not-interactive']);
 				removeListenInteractiveEvents();
+			}
 		}
 		return _interactive;
 	}
@@ -430,11 +450,8 @@ class DisplayObject extends DOMExpress
 			elementName = elementData.name != null ? elementData.name : DEFAULT_NAME;
 			addClass(['ice']); // Базовый s класс
 			style = elementData.style;
-			_interactive = elementData.interactive;
-			if (_interactive)
-				listenInteractiveEvents();
-			else
-				removeListenInteractiveEvents();
+			_disableInput = elementData.disableInput;
+			interactive = elementData.interactive;
 			if (elementData.id != null)
 				setID(elementData.id);
 			if (elementData.classes != null)
@@ -442,8 +459,12 @@ class DisplayObject extends DOMExpress
 		} else {
 			elementName = DEFAULT_NAME;
 			addClass(['ice']); // Базовый s класс
-			listenInteractiveEvents();
+			interactive = true;
 		}
+		
+		if (!_interactive && _disableInput)
+			addClass(['not-interactive']);
+		
 		x = _element.offsetLeft;
 		y = _element.offsetTop;
 	}

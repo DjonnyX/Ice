@@ -8,6 +8,7 @@ class ElementData
 {
 	public var name:String = 'div';
 	public var interactive:Bool = true;
+	public var disableInput:Bool = false;
 	public var style:Dynamic = null;
 	public var classes:Array<String> = null;
 	public var id:String = null;

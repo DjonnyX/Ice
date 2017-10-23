@@ -114,7 +114,7 @@ class EventDispatcher
         if (previousTarget != null) event.setTarget(previousTarget);
 		
 		#if debug
-			//traceNumListeners();
+			traceNumListeners();
 		#end
     }
     
@@ -176,7 +176,7 @@ class EventDispatcher
         __bubbleChains[__bubbleChains.length] = chain;
 		
 		#if debug
-			//traceBubleChains();
+			traceBubleChains();
 		#end
     }
     

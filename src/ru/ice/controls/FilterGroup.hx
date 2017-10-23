@@ -164,7 +164,6 @@ class FilterGroup extends IceControl
 		super.initialize();
 		
 		// start pos
-		_buttonsGroup.x = Ice.screenWidth;
 		_buttonsGroup.visible = _collapsed;
 	}
 	
@@ -182,12 +181,12 @@ class FilterGroup extends IceControl
 		if (_tbTween != null)
 			resetAnimation();
 		else
-			_buttonsGroup.x = _collapsed ? 0 : _buttonsGroup.width;
+			_buttonsGroup.x = _collapsed ? _container._width - _buttonsGroup._width : _container._width;
 	}
 	
 	private function resetAnimation() : Void {
 		removeAnimation();
-		_tbTween = Ice.animator.tween(_buttonsGroup, .35, {x:_collapsed ? 0 : _buttonsGroup.width, transition:Transitions.EASE_OUT, onComplete:animationComplete});
+		_tbTween = Ice.animator.tween(_buttonsGroup, .55, {x:_collapsed ? _container._width - _buttonsGroup._width : _container._width, transition:Transitions.EASE_OUT, onComplete:animationComplete});
 	}
 	
 	private function animationComplete() : Void {

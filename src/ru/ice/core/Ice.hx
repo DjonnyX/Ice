@@ -18,7 +18,7 @@ import ru.ice.display.Stage;
  */
 class Ice
 {
-	public static inline var VERSION : String = '0.3.4';
+	public static inline var VERSION : String = '0.3.5';
 	
 	public static var isDragging:Bool = false;
 	
@@ -90,7 +90,7 @@ class Ice
 		_serializer = serializer != null ? serializer : new IceSerializer();
 		Capabilities.initialize();
 		stage = new Stage(new ElementData({name:name, style:Dynamic}));
-		stage.fps = 100;
+		stage.fps = 60;
 		stage.add(main);
 	}
 	

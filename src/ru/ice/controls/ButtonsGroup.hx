@@ -120,12 +120,17 @@ class ButtonsGroup extends IceControl
 			var index:Int = 0;
 			_items = new Array<BaseListItemControl>();
 			for (accessoryItem in _accessoryItems) {
-				var item:BaseListItemControl = cast _itemFactory(accessoryItem);
+				var item:BaseListItemControl = cast _itemFactory();
 				item.index = index;
 				item.addEventListener(Event.CHANGE, itemTriggeredHandler);
 				addChild(item);
 				index ++;
 				_items.push(item);
+			}
+			var i:Int = 0;
+			while (i < _items.length) {
+				_items[i].data = _accessoryItems[i];
+				i ++;
 			}
 		}
 	}

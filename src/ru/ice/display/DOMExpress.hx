@@ -106,7 +106,7 @@ class DOMExpress extends EventDispatcher
 	public function setID(v:String) : Void {
 		if (_element != null)
 			_element.id = v;
-		updateCSSStyles();
+		//updateCSSStyles();
 	}
 	
 	public function hasClass(args:Array<String>) : Bool {
@@ -143,23 +143,25 @@ class DOMExpress extends EventDispatcher
 				}
 			}
 		}
-		updateCSSStyles();
+		//updateCSSStyles();
 	}
 	
 	public function removeClass(args:Array<String>) : Void {
 		if (_classes == null)
 			return;
 		for (arg in args) {
-			var index = _classes.indexOf(cast arg);
-			if (index > -1) {
-				_classes.splice(index, 1);
-				_element.classList.remove(cast arg);
-			}
+			//while (_classes.indexOf(cast arg) > -1) {
+				var index = _classes.indexOf(cast arg);
+				if (index > -1) {
+					_classes.splice(index, 1);
+					_element.classList.remove(cast arg);
+				}
+			//}
 		}
-		updateCSSStyles();
+		//updateCSSStyles();
 	}
 	
-	private function updateCSSStyles() : Void {}
+	//private function updateCSSStyles() : Void {}
 	
 	public static function createElement(name:String) : DOMElement {
 		return cast Browser.document.createElement(name);

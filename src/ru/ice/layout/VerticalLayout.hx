@@ -111,6 +111,8 @@ class VerticalLayout extends BaseLayout
 			if (nfl < 0)
 				nfl = 0;
 			itemHeight = (stageHeight - fixedHeights - (nfl * _verticalGap)) / (ol - fixedL);
+			if (_roundToInt)
+				itemHeight = Math.round(itemHeight);
 		}
 		var i:Int = 0;
 		
@@ -126,7 +128,7 @@ class VerticalLayout extends BaseLayout
 			if (_verticalAlign == VERTICAL_ALIGN_JUSTIFY)
 				fullHeight += stageHeight + (i < _objects.length - 1 ? _paddingTop + _paddingBottom : 0);
 			else 
-				fullHeight += child.height + (i < _objects.length - 1 ? _verticalGap : 0);
+				fullHeight += child._height + (i < _objects.length - 1 ? _verticalGap : 0);
 			
 			fullWidth = Math.max(fullWidth, child.width);
 			i ++;
@@ -139,21 +141,25 @@ class VerticalLayout extends BaseLayout
 				y = stageHeight + _paddingTop + _paddingBottom - fullHeight;
 			else
 				y = _paddingTop;
+			if (_roundToInt)
+				y = Math.round(y);
 		}
 		
 		for (child in _objects) {
 			if (!ignoreX) {
 				if (_horizontalAlign == HORIZONTAL_ALIGN_CENTER) {
-					child.x = _paddingLeft + (stageWidth - child.width) * .5;
+					child.x = _paddingLeft + (stageWidth - child._width) * .5;
 				}
 				else if (_horizontalAlign == HORIZONTAL_ALIGN_RIGHT)
-					child.x = stageWidth + _paddingLeft - child.width;
+					child.x = stageWidth + _paddingLeft - child._width;
 				else
 					child.x = _paddingLeft;
 			}
 			if (!ignoreY) {
 				child.y = y;
-				y += child.height + (_verticalAlign == VERTICAL_ALIGN_JUSTIFY ? _paddingTop + _paddingBottom : _verticalGap);
+				y += child._height + (_verticalAlign == VERTICAL_ALIGN_JUSTIFY ? _paddingTop + _paddingBottom : _verticalGap);
+				if (_roundToInt)
+					y = Math.round(y);
 			}
 		}
 		

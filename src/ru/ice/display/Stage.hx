@@ -115,6 +115,12 @@ class Stage extends Sprite
 		return get_fps();
 	}
 	
+	private var _currentTime:Float = 0;
+	public var currentTime(get, never):Float;
+	private function get_currentTime():Float {
+		return _currentTime;
+	}
+	
 	private var _lastFramePassedTime:Float = 0;
 	
 	public var viewport(get, never):Rectangle;
@@ -143,6 +149,7 @@ class Stage extends Sprite
 		_contentLayer = new Sprite(new ElementData(
 				{
 					'name':'native',
+					'disableInput':false,
 					'interactive':false
 				}
 			)
@@ -234,6 +241,7 @@ class Stage extends Sprite
 	
 	private function updateFrame(?t:Float) : Void
 	{
+		_currentTime = Date.now().getTime();
 		if (sleep == 0) {
 			var now:Float = t / 1000;
 			_passedTime = now - _lastFramePassedTime;
@@ -282,9 +290,9 @@ class Stage extends Sprite
 			for (child in obj.children) {
 				updateChildren(child);
 			}
+			obj.update();
 			if (m != null)
 				obj.mouseMove(m);
-			obj.update();
 		}
 		if (obj == this)
 			_mouseEvent = null;

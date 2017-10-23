@@ -12,7 +12,7 @@ class Main
 {
 	static function main() 
 	{
-		var iceUI:Ice = new Ice(new App(), 'stage', null, new AppSerializer());
+		var iceUI:Ice = new Ice(new App(), 'ice', null, new AppSerializer());
 		//iceUI.useStats = true;
 	}
 }

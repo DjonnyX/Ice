@@ -89,4 +89,8 @@ class Point
 	public function comparePoint(point:Point) : Bool {
 		return _x == point._x && _y == point._y;
 	}
+	
+	public function empty() : Void {
+		_x = _y = 0;
+	}
 }

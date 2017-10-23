@@ -22,10 +22,10 @@ class HtmlContainer extends IceControl
 	public function new(?elementData:ElementData) 
 	{
 		if (elementData == null)
-			elementData = new ElementData({'name':'div', 'interactive':false});
+			elementData = new ElementData({'name':'div', 'interactive':true});
 		else {
 			elementData.name = 'div';
-			elementData.interactive = false;
+			elementData.interactive = true;
 		}
 		super(elementData);
 		snapTo(IceControl.SNAP_TO_HTML_CONTENT, IceControl.SNAP_TO_HTML_CONTENT);

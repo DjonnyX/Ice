@@ -26,7 +26,7 @@ interface IDOMExpress extends IEventDispatcher
 	public function hasClass(args:Array<String>) : Bool;
 	public function addClass(args:Array<String>) : Void;
 	public function removeClass(args:Array<String>) : Void;
-	private function updateCSSStyles() : Void;
+	//private function updateCSSStyles() : Void;
 	public function addNode(node:Node) : Node;
 	public function removeNode(node:Node) : Node;
 	public function dispose() : Void;

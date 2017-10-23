@@ -63,9 +63,9 @@ class Rectangle extends Point
 		return new Rectangle(_x, _y, _width, _height);
 	}
 	
-	public function empty() : Void
+	public override function empty() : Void
 	{
-		move(0, 0);
+		super.empty();
 		setSize(0, 0);
 	}
 }

@@ -4,8 +4,6 @@ import js.html.ButtonElement;
 import js.html.Element;
 import js.html.TouchEvent;
 import js.html.svg.SVGElement;
-import ru.ice.controls.super.BaseStatesControl;
-import ru.ice.display.SvgSprite;
 
 import haxe.Constraints.Function;
 
@@ -23,6 +21,8 @@ import ru.ice.display.DisplayObject;
 import ru.ice.math.Point;
 import ru.ice.math.Rectangle;
 import ru.ice.layout.ILayout;
+import ru.ice.controls.super.BaseStatesControl;
+import ru.ice.display.SvgSprite;
 
 /**
  * ...
@@ -495,7 +495,7 @@ class Scroller extends BaseStatesControl
 		
 		_startTP = _curTP = _prevTP = e.touchPoint.clone();
 		_startPos.move(_content.x, _content.y);
-		_tmpLocStartTP = _locStartTP = _locCurTP = globalToLocal(e.touchPoint);
+		_tmpLocStartTP = _locStartTP = _locCurTP = globalToLocal(_startTP); //e.touchPoint.clone();
 		
 		calculateViewportOffset();
 		
@@ -572,7 +572,7 @@ class Scroller extends BaseStatesControl
 		if (_isPress) {
 			e.stopImmediatePropagation();
 			
-			var tp:Point = e.touchPoint;
+			var tp:Point = e.touchPoint.clone();
 			var ltp:Point = globalToLocal(tp);
 			
 			if (_isBeginPress && _iTarget != null && _iTarget != this) {

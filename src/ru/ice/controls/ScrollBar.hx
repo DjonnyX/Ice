@@ -7,7 +7,6 @@ import ru.ice.controls.super.IceControl;
 import ru.ice.animation.Transitions;
 import ru.ice.animation.IAnimatable;
 import ru.ice.events.FingerEvent;
-import ru.ice.events.LayoutEvent;
 import ru.ice.controls.Scroller;
 import ru.ice.controls.Button;
 import ru.ice.data.ElementData;
@@ -49,7 +48,7 @@ class ScrollBar extends Scroller
 		if (_isHover != v) {
 			_isHover = v;
 			updateState();
-			dispatchEventWith(v?Event.SCROLLBAR_MAXIMIZE:Event.SCROLLBAR_MINIMIZE, true);
+			dispatchEventWith(v||_isPress?Event.SCROLLBAR_MAXIMIZE:Event.SCROLLBAR_MINIMIZE, true);
 		}
 		return get_isHover();
 	}
@@ -272,7 +271,7 @@ class ScrollBar extends Scroller
 			_isDragging = true;
 			
 			_prevTP = _curTP;
-			_curTP = e.touchPoint;
+			_curTP = e.touchPoint.clone();
 			_locCurTP = globalToLocal(_curTP);
 			
 			calculateViewportBound();
@@ -288,6 +287,12 @@ class ScrollBar extends Scroller
 				scrollY();
 			}
 		}
+	}
+	
+	private override function stageUpHandler(e:FingerEvent) : Void
+	{
+		super.stageUpHandler(e);
+		if (!_isHover) dispatchEventWith(Event.SCROLLBAR_MINIMIZE, true);
 	}
 	
 	private override function wheelScrollHandler(e:WheelScrollEvent) : Void

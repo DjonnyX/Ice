@@ -14,6 +14,9 @@ import ru.ice.utils.MathUtil;
  */
 class HorizontalLayout extends BaseLayout
 {
+	public static inline var JUSTIFY_ALIGN_LEFT:String = 'justify-align-left';
+	public static inline var JUSTIFY_ALIGN_CENTER:String = 'justify-align-center';
+	public static inline var JUSTIFY_ALIGN_RIGHT:String = 'justify-align-right';
 	public static inline var HORIZONTAL_ALIGN_LEFT:String = 'horizontal-align-left';
 	public static inline var HORIZONTAL_ALIGN_CENTER:String = 'horizontal-align-center';
 	public static inline var HORIZONTAL_ALIGN_RIGHT:String = 'horizontal-align-right';
@@ -58,6 +61,34 @@ class HorizontalLayout extends BaseLayout
 		return _verticalAlign;
 	}
 	
+	private var _justifyAlign:String = JUSTIFY_ALIGN_LEFT;
+	public var justifyAlign(get, set):String;
+	private function get_justifyAlign() : String {
+		return _justifyAlign;
+	}
+	private function set_justifyAlign(v:String) : String {
+		if (_justifyAlign != v) {
+			_justifyAlign = v;
+			if (_owner != null)
+				update();
+		}
+		return _justifyAlign;
+	}
+	
+	private var _maxWidth:Float = 0;
+	public var maxWidth(get, set):Float;
+	private function get_maxWidth() : Float {
+		return _maxWidth;
+	}
+	private function set_maxWidth(v:Float) : Float {
+		if (_maxWidth != v) {
+			_maxWidth = v;
+			if (_owner != null)
+				update();
+		}
+		return _maxWidth;
+	}
+	
 	public function new() {
 		super();
 	}
@@ -72,6 +103,10 @@ class HorizontalLayout extends BaseLayout
 		
 		var w:Float = _owner._width;
 		var h:Float = _owner._height;
+		var fw:Float = w;
+		
+		if (_maxWidth != 0 && _maxWidth < w)
+			w = _maxWidth;
 		
 		#if debug
 			trace('update layout', _owner.elementName, w, h);
@@ -112,6 +147,8 @@ class HorizontalLayout extends BaseLayout
 			if (nfl < 0)
 				nfl = 0;
 			itemWidth = (stageWidth - fixedWidths - (nfl * _horizontalGap)) / (ol - fixedL);
+			if (_roundToInt)
+				itemWidth = Math.round(itemWidth);
 		}
 		var i:Int = 0;
 		
@@ -127,39 +164,54 @@ class HorizontalLayout extends BaseLayout
 			if (_horizontalAlign == HORIZONTAL_ALIGN_JUSTIFY)
 				fullWidth += stageWidth + (i < _objects.length - 1 ? _paddingLeft + _paddingRight : 0);
 			else 
-				fullWidth += child.width + (i < _objects.length - 1 ? _horizontalGap : 0);
+				fullWidth += child._width + (i < _objects.length - 1 ? _horizontalGap : 0);
 			
-			fullHeight = Math.max(fullHeight, child.height);
+			fullHeight = Math.max(fullHeight, child._height);
 			i ++;
 		}
 		
 		if (!ignoreX) {
-			if (_horizontalAlign == HORIZONTAL_ALIGN_CENTER)
-				x = _paddingLeft + (stageWidth - fullWidth) * .5;
-			else if (_horizontalAlign == HORIZONTAL_ALIGN_RIGHT)
-				x = stageWidth + _paddingLeft - fullWidth;
-			else
-				x = _paddingLeft;
+			if (_maxWidth > 0) {
+				if (_justifyAlign == JUSTIFY_ALIGN_CENTER)
+					x = _paddingLeft + (fw - fullWidth) * .5;
+				else if (_justifyAlign == JUSTIFY_ALIGN_RIGHT)
+					x = fw - _paddingRight - fullWidth;
+				else
+					x = _paddingLeft;
+				if (_roundToInt)
+					x = Math.round(x);
+			} else {
+				if (_horizontalAlign == HORIZONTAL_ALIGN_CENTER)
+					x = _paddingLeft + (stageWidth - fullWidth) * .5;
+				else if (_horizontalAlign == HORIZONTAL_ALIGN_RIGHT)
+					x = stageWidth + _paddingLeft - fullWidth;
+				else
+					x = _paddingLeft;
+				if (_roundToInt)
+					x = Math.round(x);
+			}
 		}
 		
 		for (child in _objects) {
 			if (!ignoreY) {
 				if (_verticalAlign == VERTICAL_ALIGN_MIDDLE)
-					child.y = _paddingTop + (stageHeight - child.height) * .5;
+					child.y = _paddingTop + (stageHeight - child._height) * .5;
 				
 				else if (_verticalAlign == VERTICAL_ALIGN_BOTTOM)
-					child.y = stageHeight + _paddingTop - child.height;
+					child.y = stageHeight + _paddingTop - child._height;
 				else
 					child.y = _paddingTop;
 			}
 			if (!ignoreX) {
 				child.x = x;
-				x += child.width + (_horizontalAlign == HORIZONTAL_ALIGN_JUSTIFY ? _paddingLeft + _paddingRight : _horizontalGap);
+				x += child._width + (_horizontalAlign == HORIZONTAL_ALIGN_JUSTIFY ? _paddingLeft + _paddingRight : _horizontalGap);
+				if (_roundToInt)
+					x = Math.round(x);
 			}
 		}
 		
 		if (_owner.snapWidth == IceControl.SNAP_TO_PARENT || _owner.snapWidth == IceControl.SNAP_TO_CUSTOM_OBJECT || snapToStageWidth)
-			fullWidth = stageWidth;
+			fullWidth = fw;
 		
 		if (_owner.snapHeight == IceControl.SNAP_TO_PARENT || _owner.snapHeight == IceControl.SNAP_TO_CUSTOM_OBJECT || snapToStageHeight)
 			fullHeight = stageHeight;

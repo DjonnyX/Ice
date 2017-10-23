@@ -54,7 +54,7 @@ class QueueLoader extends EventDispatcher
 			var res:Dynamic = _resources[0];
 			_resources.splice(0, 1);
 			removeLoader();
-			_loader = new Loader(res.resource, {onComplete:function(data:String) : Void {
+			_loader = new Loader(res.resource, {'onComplete':function(data:String) : Void {
 					_contents.push({id:res.id, url:res.resource, content:data});
 					Reflect.setField(_dictionary, res.id, data);
 					next();

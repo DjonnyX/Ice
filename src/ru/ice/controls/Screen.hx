@@ -47,12 +47,22 @@ class Screen extends IceControl
 			}
 			hideScrollBars(child.children);
 		}
+	}
+	
+	private function showScrollBars(children:Array<DisplayObject>) : Void {
+		for (child in children) {
+			if (Std.is(child, ScrollPlane)) {
+				var sPlane:ScrollPlane = cast child;
+				if (sPlane != null)
+					sPlane.showScrollBars();
+			}
+			showScrollBars(child.children);
+		}
 	}*/
 	
 	private function transitionInStart(e:Event) : Void {
 		_isAnimated = true;
 		e.stopImmediatePropagation();
-		//hideScrollBars(children);
 	}
 	
 	private function transitionInComplete(e:Event) : Void {
