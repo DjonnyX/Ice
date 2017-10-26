@@ -186,6 +186,19 @@ class DisplayObject extends DOMExpress
 		return _scaleY;
 	}
 	
+	private var _scale:Float = 1;
+	public var scale(get, set):Float;
+	private function get_scale() : Float {
+		return _scale;
+	}
+	private function set_scale(v:Float) : Float {
+		if (_scale != v) {
+			_scale = _scaleX = _scaleY = v;
+			resetTransformation();
+		}
+		return v;
+	}
+	
 	private var _rotate:Float = 0;
 	public var rotate(get, set):Float;
 	private function get_rotate() : Float {
@@ -202,7 +215,7 @@ class DisplayObject extends DOMExpress
 	private function resetTransformation() : Void
 	{
 		if (_element != null) 
-			Reflect.setField(_element.style, Capabilities.transformMethod, "translate3D(" + _x + "px, " + _y + "px, " + _z + "px) scale(" + _scaleX + ", " + _scaleY + ") rotate(" + _rotate + "deg)");
+			Reflect.setField(_element.style, 'transform'/*Capabilities.transformMethod*/, "translate3D(" + _x + "px, " + _y + "px, " + _z + "px) scale(" + _scaleX + ", " + _scaleY + ") rotate(" + _rotate + "deg)");
 	}
 	
 	private var _bound:Rectangle = new Rectangle();
@@ -271,16 +284,6 @@ class DisplayObject extends DOMExpress
 		//}
 		return h;
 	}
-	
-	/*public var contentWidth(get, never):Float;
-	private function get_contentWidth() : Float {
-		return width;// * _scaleX;
-	}*/
-	
-	/*public var contentHeight(get, never):Float;
-	private function get_contentHeight() : Float {
-		return height;// * _scaleY;
-	}*/
 	
 	public var _width:Float = 0;
 	public var width(get, set):Float;
@@ -385,7 +388,6 @@ class DisplayObject extends DOMExpress
 		_touchY = v;
 		return _touchY;
 	}
-	
 	
 	private var _disableInput:Bool = false;
 	public var disableInput(get, set):Bool;
@@ -808,10 +810,8 @@ class DisplayObject extends DOMExpress
 	
 	@:allow(ru.ice.display.Stage)
 	private function mouseMove(e:FingerEvent) : Void {
-		if (e.isMouse && !Stage.current.isMouseLeave && !Ice.globalPressed) {
-			if (e.target == this)
-				dispatchEventWith(Event.HOVER, true, {objects:[]});
-		}
+		if (e.target == this && e.isMouse && !Stage.current.isMouseLeave && !Ice.globalPressed)
+			dispatchEventWith(Event.HOVER, true, {objects:[]});
 	}
 	
 	private function chainToString() : String
