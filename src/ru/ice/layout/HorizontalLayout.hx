@@ -14,18 +14,18 @@ import ru.ice.utils.MathUtil;
  */
 class HorizontalLayout extends BaseLayout
 {
-	public static inline var JUSTIFY_ALIGN_LEFT:String = 'justify-align-left';
-	public static inline var JUSTIFY_ALIGN_CENTER:String = 'justify-align-center';
-	public static inline var JUSTIFY_ALIGN_RIGHT:String = 'justify-align-right';
-	public static inline var HORIZONTAL_ALIGN_LEFT:String = 'horizontal-align-left';
-	public static inline var HORIZONTAL_ALIGN_CENTER:String = 'horizontal-align-center';
-	public static inline var HORIZONTAL_ALIGN_RIGHT:String = 'horizontal-align-right';
-	public static inline var HORIZONTAL_ALIGN_JUSTIFY:String = 'horizontal-align-justify';
-	public static inline var HORIZONTAL_ALIGN_FIT:String = 'horizontal-align-fit';
-	public static inline var VERTICAL_ALIGN_TOP:String = 'vertical-align-top';
-	public static inline var VERTICAL_ALIGN_MIDDLE:String = 'vertical-align-middle';
-	public static inline var VERTICAL_ALIGN_BOTTOM:String = 'vertical-align-bottom';
-	public static inline var VERTICAL_ALIGN_JUSTIFY:String = 'vertical-align-justify';
+	public static inline var JUSTIFY_ALIGN_LEFT:String = 'left';
+	public static inline var JUSTIFY_ALIGN_CENTER:String = 'center';
+	public static inline var JUSTIFY_ALIGN_RIGHT:String = 'right';
+	public static inline var HORIZONTAL_ALIGN_LEFT:String = 'left';
+	public static inline var HORIZONTAL_ALIGN_CENTER:String = 'center';
+	public static inline var HORIZONTAL_ALIGN_RIGHT:String = 'right';
+	public static inline var HORIZONTAL_ALIGN_JUSTIFY:String = 'justify';
+	public static inline var HORIZONTAL_ALIGN_FIT:String = 'fit';
+	public static inline var VERTICAL_ALIGN_TOP:String = 'top';
+	public static inline var VERTICAL_ALIGN_MIDDLE:String = 'middle';
+	public static inline var VERTICAL_ALIGN_BOTTOM:String = 'bottom';
+	public static inline var VERTICAL_ALIGN_JUSTIFY:String = 'justify';
 	
 	public var snapToStageWidth:Bool = false;
 	public var snapToStageHeight:Bool = false;
@@ -209,20 +209,23 @@ class HorizontalLayout extends BaseLayout
 					x = Math.round(x);
 			}
 		}
-		
 		if (_owner.snapWidth == IceControl.SNAP_TO_PARENT || _owner.snapWidth == IceControl.SNAP_TO_CUSTOM_OBJECT || snapToStageWidth)
-			fullWidth = fw;
+			fullWidth = stageWidth;
 		
 		if (_owner.snapHeight == IceControl.SNAP_TO_PARENT || _owner.snapHeight == IceControl.SNAP_TO_CUSTOM_OBJECT || snapToStageHeight)
 			fullHeight = stageHeight;
 		
 		_bound.setSize(fullWidth + _paddingLeft + _paddingRight,
 					   fullHeight + _paddingTop + _paddingBottom);
-		_owner.setSize(_bound.width, _bound.height);
+		
+		if (_owner._width != _bound.width || _owner._height != _bound.height)
+			_owner.setSize(_bound.width, _bound.height);
 		
 		if (_postLayout != null) {
 			_bound = _postLayout.update();
-			_owner.setSize(_bound.width, _bound.height);
+			
+			if (_owner._width != _bound.width || _owner._height != _bound.height)
+				_owner.setSize(_bound.width, _bound.height);
 		}
 		return _bound;
 	}

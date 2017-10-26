@@ -18,17 +18,17 @@ import ru.ice.math.Point;
  */
 class RockRowsLayout extends BaseLayout
 {
-	public static inline var PAGGINATION_HORIZONTAL:String = 'paggination-horizontal';
-	public static inline var PAGGINATION_VERTICAL:String = 'paggination-vertical';
+	public static inline var PAGGINATION_HORIZONTAL:String = 'horizontal';
+	public static inline var PAGGINATION_VERTICAL:String = 'vertical';
 	
-	public static inline var HORIZONTAL_ALIGN_LEFT:String = 'horizontal-align-left';
-	public static inline var HORIZONTAL_ALIGN_CENTER:String = 'horizontal-align-center';
-	public static inline var HORIZONTAL_ALIGN_RIGHT:String = 'horizontal-align-right';
-	public static inline var HORIZONTAL_ALIGN_JUSTIFY:String = 'horizontal-align-justify';
-	public static inline var VERTICAL_ALIGN_TOP:String = 'vertical-align-top';
-	public static inline var VERTICAL_ALIGN_MIDDLE:String = 'vertical-align-middle';
-	public static inline var VERTICAL_ALIGN_BOTTOM:String = 'vertical-align-bottom';
-	public static inline var VERTICAL_ALIGN_JUSTIFY:String = 'vertical-align-justify';
+	public static inline var HORIZONTAL_ALIGN_LEFT:String = 'left';
+	public static inline var HORIZONTAL_ALIGN_CENTER:String = 'center';
+	public static inline var HORIZONTAL_ALIGN_RIGHT:String = 'right';
+	public static inline var HORIZONTAL_ALIGN_JUSTIFY:String = 'justify';
+	public static inline var VERTICAL_ALIGN_TOP:String = 'top';
+	public static inline var VERTICAL_ALIGN_MIDDLE:String = 'middle';
+	public static inline var VERTICAL_ALIGN_BOTTOM:String = 'bottom';
+	public static inline var VERTICAL_ALIGN_JUSTIFY:String = 'justify';
 	
 	public var snapToStageWidth:Bool = false;
 	public var snapToStageHeight:Bool = false;
@@ -362,11 +362,15 @@ class RockRowsLayout extends BaseLayout
 			fullHeight = stageHeight;
 		
 		_bound.setSize(fullWidth + _paddingLeft + _paddingRight, fullHeight + paddingTop + paddingBottom);
-		_owner.setSize(_bound.width, _bound.height);
+		
+		if (_owner._width != _bound.width || _owner._height != _bound.height)
+			_owner.setSize(_bound.width, _bound.height);
 		
 		if (_postLayout != null) {
 			_bound = _postLayout.update();
-			_owner.setSize(_bound.width, _bound.height);
+			
+			if (_owner._width != _bound.width || _owner._height != _bound.height)
+				_owner.setSize(_bound.width, _bound.height);
 		}
 		return _bound;
 	}
