@@ -38,7 +38,7 @@ class Scroller extends BaseStatesControl
 	
 	private static inline var PAGGINATION_VERTICAL:String = 'paggination-vertical';
 	
-	private static inline var MAX_ACTION_BOUND_SIZE:Int = 20;
+	private static inline var MAX_ACTION_BOUND_SIZE:Int = 11;
 	
 	private static inline var WHEEL_TRESHOLD:Int = 2;
 	
@@ -1323,7 +1323,7 @@ class Barrier extends IceControl
 		_element.innerHTML =
 		'<defs>'
 			+'<filter id="f1" x="0" y="0">'
-				+'<feGaussianBlur in="SourceGraphic" stdDeviation="2" />'
+				/*+'<feGaussianBlur in="SourceGraphic" stdDeviation="2" />'*/
 			+'</filter>'
 		+'</defs>';
 		_left = createSvg('path');
