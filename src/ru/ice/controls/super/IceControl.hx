@@ -327,26 +327,9 @@ class IceControl extends Sprite
 		super(elementData, initial);
 		snapTo(SNAP_TO_SELF, SNAP_TO_SELF);
 		addEventListener(Event.RESIZE, _resizeHandler);
-		//addEventListener(Event.REPOSITION, _repositionHandler);
 		addEventListener(Event.INCLUDE_IN_LAYOUT, _includeInHandler);
 		addEventListener(Event.EXCLUDE_FROM_LAYOUT, _excludeFromHandler);
 	}
-	
-	/*private override function addedToStage() : Void {
-		
-		super.addedToStage();
-		var p:IceControl = cast parent;
-		if (p != null)
-			p.needResize = true;
-	}
-	
-	private override function removeFromStage() : Void {
-		
-		super.removeFromStage();
-		var p:IceControl = cast parent;
-		if (p != null)
-			p.needResize = true;
-	}*/
 	
 	private function _includeInHandler(e:Event) : Void {
 		var d:DisplayObject = cast e.target;
@@ -365,11 +348,6 @@ class IceControl extends Sprite
 		if (_layout != null)
 			_layout.exclude(d);
 	}
-	
-	/*private function _repositionHandler(e:Event) : Void {
-		e.stopImmediatePropagation();
-		_childIsReposition = true;
-	}*/
 	
 	private function createDelayedBuilder(owner:IceControl, content:IceControl) : Void {
 		_delayedBuilder = new DelayedBuilder(owner, content);
@@ -406,24 +384,12 @@ class IceControl extends Sprite
 		if (!_isInitialized)
 			return;
 		
-		/*var invalidChildren:Bool = _isInvalidChildrenSize;
-		_isInvalidChildrenSize = false;*/
-		
 		if (_layout != null) {
 			if (_layout.needCalcParams)
 				calcPaddings();
 		}
 		
 		var invalidData:ResizeData = getInvalidData();
-		
-		// Проверяется изменение позиции.
-		// Если позиция поменялась, то вызывается метод reposition, который
-		// отправляет событие родителю и.т.д.
-		/*if (x != _propertiesProxy.x || y != _propertiesProxy.y) {
-			_propertiesProxy.x = x;
-			_propertiesProxy.y = y;
-			reposition();
-		}*/
 		
 		// Если размеры не менялись то при наличии лэйаута, если
 		// он нуждается в обновлении, то обновляется.
@@ -442,31 +408,10 @@ class IceControl extends Sprite
 			var tw:DisplayObject = invalidData.targetForSnapWidth;
 			var th:DisplayObject = invalidData.targetForSnapHeight;
 			
-			//if (this.elementName == 'sp') {
-			//	trace(_elementName, width, height);
-			//}
-			if (invalidData.invalidateWidth) {
-				if (_snapWidth == SNAP_TO_CONTENT)
-					width = totalContentWidth + _commonPaddingRight;
-				else if (_snapWidth == SNAP_TO_HTML_CONTENT)
-					width = htmlContentWidth;
-				else if (tw != null) {
-					if (_snapWidth == SNAP_TO_PARENT)
-						width = tw.actualWidth;
-					else width = tw._width;
-				}
-			}
-			if (invalidData.invalidateHeight) {
-				if (_snapHeight == SNAP_TO_CONTENT)
-					height = totalContentHeight + _commonPaddingBottom;
-				else if (_snapHeight == SNAP_TO_HTML_CONTENT)
-					height = htmlContentHeight;
-				else if (th != null) {
-					if (_snapHeight == SNAP_TO_PARENT)
-						height = th.actualHeight;
-					else height = th._height;
-				}
-			}
+			if (invalidData.invalidateWidth)
+				width = invalidData.width;
+			if (invalidData.invalidateHeight)
+				height = invalidData.height;
 			// Апдейт лэйаута.
 			if (_layout != null) {
 				_layout.update();
@@ -480,7 +425,7 @@ class IceControl extends Sprite
 		}
 	}
 	
-	public function validateChildren(?obj:DisplayObject) : Void
+	/*public function validateChildren(?obj:DisplayObject) : Void
 	{
 		var owner:DisplayObject = obj != null ? obj : this;
 		for (child in owner.children) {
@@ -490,7 +435,7 @@ class IceControl extends Sprite
 				iceChild.validateChildren();
 			}
 		}
-	}
+	}*/
 	
 	/**
 	 * Посылает потомку событие об изменении координат.
@@ -528,34 +473,45 @@ class IceControl extends Sprite
 		var invalidateHeight:Bool = false;
 		var invalidateSize:Bool = false;
 		
+		var tw:Float = 0;
+		var th:Float = 0;
+		
 		if (_snapWidth == SNAP_TO_CONTENT) {
-			if (_propertiesProxy.width != totalContentWidth + _commonPaddingRight)
+			tw = totalContentWidth + _commonPaddingRight;
+			if (_propertiesProxy.width != tw)
 				invalidateWidth = true;
 		} else if (_snapWidth == SNAP_TO_HTML_CONTENT) {
-			if (_propertiesProxy.width != htmlContentWidth)
+			tw = htmlContentWidth;
+			if (_propertiesProxy.width != tw)
 				invalidateWidth = true;
 		} else {
 			if (_snapWidth == SNAP_TO_PARENT) {
-				if (targetForSnapWidth != null && _propertiesProxy.width != targetForSnapWidth.actualWidth)
-				invalidateWidth = true;
+			tw = targetForSnapWidth.actualWidth;
+				if (targetForSnapWidth != null && _propertiesProxy.width != tw) invalidateWidth = true;
 			} else
-			if (targetForSnapWidth != null && _propertiesProxy.width != targetForSnapWidth._width)
+			if (targetForSnapWidth != null && _propertiesProxy.width != targetForSnapWidth._width) {
+				tw = targetForSnapWidth._width;
 				invalidateWidth = true;
+			}
 		}
 		
 		if (_snapHeight == SNAP_TO_CONTENT) {
-			if (_propertiesProxy.height != totalContentHeight + _commonPaddingBottom)
+			th = totalContentHeight + _commonPaddingBottom;
+			if (_propertiesProxy.height != th)
 				invalidateHeight = true;
 		} else if (_snapHeight == SNAP_TO_HTML_CONTENT) {
-			if (_propertiesProxy.height != htmlContentHeight)
+			th = htmlContentHeight;
+			if (_propertiesProxy.height != th)
 				invalidateHeight = true;
 		} else {
 			if (_snapHeight == SNAP_TO_PARENT) {
-				if (targetForSnapHeight != null && _propertiesProxy.height != targetForSnapHeight.actualHeight)
-				invalidateHeight = true;
+				th = targetForSnapHeight.actualHeight;
+				if (targetForSnapHeight != null && _propertiesProxy.height != th) invalidateHeight = true;
 			} else
-			if (targetForSnapHeight != null && _propertiesProxy.height != targetForSnapHeight._height)
+			if (targetForSnapHeight != null && _propertiesProxy.height != targetForSnapHeight._height) {
+				th = targetForSnapHeight._height;
 				invalidateHeight = true;
+			}
 		}
 		
 		if (invalidateWidth || invalidateHeight || _needResize) {
@@ -563,14 +519,13 @@ class IceControl extends Sprite
 			_needResize = false;
 		}
 		if (invalidateSize)
-			return (new ResizeData(targetForSnapWidth, targetForSnapHeight, invalidateSize, invalidateWidth, invalidateHeight));
+			return (new ResizeData(targetForSnapWidth, targetForSnapHeight, invalidateSize, invalidateWidth, invalidateHeight, tw, th));
 		
 		return null;
 	}
 	
 	public function resize(?data:ResizeData) : Void {
-		if (onResize != null)
-			onResize(data);
+		if (onResize != null) onResize(data);
 	}
 	
 	/**
@@ -591,7 +546,6 @@ class IceControl extends Sprite
 	public override function dispose() : Void
 	{
 		removeEventListener(Event.RESIZE, _resizeHandler);
-		//removeEventListener(Event.REPOSITION, _repositionHandler);
 		removeEventListener(Event.INCLUDE_IN_LAYOUT, _includeInHandler);
 		removeEventListener(Event.EXCLUDE_FROM_LAYOUT, _excludeFromHandler);
 		_delayedBuilderStyleFactory = null;
@@ -614,6 +568,24 @@ class IceControl extends Sprite
 
 class ResizeData 
 {
+	private static var __pool:Array<ResizeData> = new Array<ResizeData>();
+	
+	private static function fromPool(targetForSnapWidth:DisplayObject, targetForSnapHeight:DisplayObject, invalidateSize:Bool, invalidateWidth:Bool, invalidateHeight:Bool, width:Float, height:Float):ResizeData
+    {
+		var data:ResizeData = null;
+        if (__pool.length != 0) data = __pool.pop().reset(targetForSnapWidth, targetForSnapHeight, invalidateSize, invalidateWidth, invalidateHeight, width, height);
+        else {
+			data = new ResizeData(targetForSnapWidth, targetForSnapHeight, invalidateSize, invalidateWidth, invalidateHeight, width, height);
+			toPool(data);
+		}
+		return data;
+    }
+	
+    private static function toPool(data:ResizeData):Void
+    {
+        __pool[__pool.length] = data;
+    }
+	
 	private var _targetForSnapWidth:DisplayObject;
 	public var targetForSnapWidth(get, never):DisplayObject;
 	public function get_targetForSnapWidth():DisplayObject {
@@ -644,12 +616,31 @@ class ResizeData
 		return _invalidateHeight;
 	}
 	
-	public function new(targetForSnapWidth:DisplayObject, targetForSnapHeight:DisplayObject, invalidateSize:Bool, invalidateWidth:Bool, invalidateHeight:Bool) {
+	private var _width:Float;
+	public var width(get, never):Float;
+	public function get_width():Float {
+		return _width;
+	}
+	
+	private var _height:Float;
+	public var height(get, never):Float;
+	public function get_height():Float {
+		return _height;
+	}
+	
+	public function new(targetForSnapWidth:DisplayObject, targetForSnapHeight:DisplayObject, invalidateSize:Bool, invalidateWidth:Bool, invalidateHeight:Bool, width:Float, height:Float) {
+		reset(targetForSnapWidth, targetForSnapHeight, invalidateSize, invalidateWidth, invalidateHeight, width, height);
+	}
+	
+	public function reset(targetForSnapWidth:DisplayObject, targetForSnapHeight:DisplayObject, invalidateSize:Bool, invalidateWidth:Bool, invalidateHeight:Bool, width:Float, height:Float) : ResizeData {
 		_targetForSnapWidth = targetForSnapWidth;
 		_targetForSnapHeight = targetForSnapHeight;
 		_invalidateSize = invalidateSize;
 		_invalidateWidth = invalidateWidth;
 		_invalidateHeight = invalidateHeight;
+		_width = width;
+		_height = height;
+		return this;
 	}
 }
 
