@@ -11,12 +11,12 @@ import ru.ice.math.Rectangle;
  */
 class TiledRowsLayout extends BaseLayout
 {
-	public static inline var HORIZONTAL_ALIGN_LEFT:String = 'horizontal-align-left';
-	public static inline var HORIZONTAL_ALIGN_CENTER:String = 'horizontal-align-center';
-	public static inline var HORIZONTAL_ALIGN_RIGHT:String = 'horizontal-align-right';
-	public static inline var VERTICAL_ALIGN_TOP:String = 'vertical-align-top';
-	public static inline var VERTICAL_ALIGN_MIDDLE:String = 'vertical-align-middle';
-	public static inline var VERTICAL_ALIGN_BOTTOM:String = 'vertical-align-bottom';
+	public static inline var HORIZONTAL_ALIGN_LEFT:String = 'left';
+	public static inline var HORIZONTAL_ALIGN_CENTER:String = 'center';
+	public static inline var HORIZONTAL_ALIGN_RIGHT:String = 'right';
+	public static inline var VERTICAL_ALIGN_TOP:String = 'top';
+	public static inline var VERTICAL_ALIGN_MIDDLE:String = 'middle';
+	public static inline var VERTICAL_ALIGN_BOTTOM:String = 'bottom';
 	
 	public var distributeWidth:Bool = false;
 	public var fitToStageHeight:Bool = false;
