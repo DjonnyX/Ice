@@ -81,7 +81,7 @@ class BaseLayout extends EventDispatcher implements ILayout
 			if (_owner != null) {
 				_owner.removeEventListener(Event.CHILD_ADDED, childAddedHandler);
 				_owner.removeEventListener(Event.CHILD_REMOVED, childRemovedHandler);
-				_owner.removeEventListener(Event.RESIZE, resizeHandler);
+				//_owner.removeEventListener(Event.RESIZE, resizeHandler);
 				_owner.removeEventListener(Event.ADDED_TO_STAGE, addChildToStageHandler);
 				_owner.removeEventListener(Event.REMOVED_FROM_STAGE, removeChildFromStageHandler);
 				_owner = null;
@@ -94,7 +94,7 @@ class BaseLayout extends EventDispatcher implements ILayout
 				
 				_owner.addEventListener(Event.CHILD_ADDED, childAddedHandler);
 				_owner.addEventListener(Event.CHILD_REMOVED, childRemovedHandler);
-				_owner.addEventListener(Event.RESIZE, resizeHandler);
+				//_owner.addEventListener(Event.RESIZE, resizeHandler);
 				_owner.addEventListener(Event.ADDED_TO_STAGE, addChildToStageHandler);
 				_owner.addEventListener(Event.REMOVED_FROM_STAGE, removeChildFromStageHandler);
 				updateObjects();
@@ -119,6 +119,43 @@ class BaseLayout extends EventDispatcher implements ILayout
 			}
 		}
 	}
+	
+	/*private function addObject(obj:DisplayObject) : Void {
+		var ind:Int = _objects.indexOf(obj);
+		if (ind == -1) {
+			_objects.
+		}
+		for (child in _owner.children) {
+			var iceObj:IceControl = cast child;
+			if (iceObj != null) {
+				if (iceObj.includeInLayout) {
+					_objects.push(iceObj);
+					needChange();
+				}
+			} else {
+				// Добавляются все DisplayObject
+				_objects.push(child);
+				needChange();
+			}
+		}
+	}
+	
+	private function removeObject(obj:DisplayObject) : Void {
+		_objects = [];
+		for (child in _owner.children) {
+			var iceObj:IceControl = cast child;
+			if (iceObj != null) {
+				if (iceObj.includeInLayout) {
+					_objects.push(iceObj);
+					needChange();
+				}
+			} else {
+				// Добавляются все DisplayObject
+				_objects.push(child);
+				needChange();
+			}
+		}
+	}*/
 	
 	/**
 	 * Сортирует элементы в том же порядке что у родителя
@@ -489,10 +526,10 @@ class BaseLayout extends EventDispatcher implements ILayout
 		_bound = new Rectangle();
 	}
 	
-	private function resizeHandler(e:Event) : Void {
+	/*private function resizeHandler(e:Event) : Void {
 		if (e.target != _owner)
 			_needResize = true;
-	}
+	}*/
 	
 	private function childAddedHandler(e:Event) : Void {
 		e.stopImmediatePropagation();
@@ -531,7 +568,7 @@ class BaseLayout extends EventDispatcher implements ILayout
 		if (_owner != null) {
 			_owner.removeEventListener(Event.CHILD_ADDED, childAddedHandler);
 			_owner.removeEventListener(Event.CHILD_REMOVED, childRemovedHandler);
-			_owner.removeEventListener(Event.RESIZE, resizeHandler);
+			//_owner.removeEventListener(Event.RESIZE, resizeHandler);
 			_owner.removeEventListener(Event.ADDED_TO_STAGE, addChildToStageHandler);
 			_owner.removeEventListener(Event.REMOVED_FROM_STAGE, removeChildFromStageHandler);
 			for (child in _owner.children) {
