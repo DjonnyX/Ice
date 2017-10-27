@@ -155,7 +155,13 @@ class VerticalLayout extends BaseLayout
 				else
 					child.x = _paddingLeft;
 			}
-			if (!ignoreY) {
+			var childIgnoreY:Bool = false;
+			var c:IceControl = cast _objects[i];
+			if (c != null) {
+				var p:VerticalLayoutParams = cast c.layoutParams;
+				if (p != null && p.ignoreY) childIgnoreY = true;
+			}
+			if (!ignoreY && !childIgnoreY) {
 				child.y = y;
 				y += child._height + (_verticalAlign == VERTICAL_ALIGN_JUSTIFY ? _paddingTop + _paddingBottom : _verticalGap);
 				if (_roundToInt)

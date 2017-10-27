@@ -13,6 +13,8 @@ class VerticalLayoutParams implements ILayoutParams
 	public static inline var NO_FIT:String = 'no-fit';
 	public static inline var FIT:String = 'fit';
 	
+	public var ignoreY:Bool = false;
+	
 	private var _fitHeight:String = FIT;
 	/**
 	 * Устанавливает точку опоры по вертикали, указанную процентах
