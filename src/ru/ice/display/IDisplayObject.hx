@@ -58,7 +58,7 @@ interface IDisplayObject extends IDOMExpress
 	public function removeFromParent(dispose:Bool = false) : DisplayObject;
 	public function setSize(width:Float, height:Float) : Void;
 	public function move(x:Float, y:Float) : Void;
-	public function update(emitResize:Bool = true) : Void;
+	public function update(emitResize:Bool = true) : ResizeData;
 	public var isInitialized(get, never):Bool;
 	public function initialize() : Void;
 	@:allow(ru.ice.display.Stage)

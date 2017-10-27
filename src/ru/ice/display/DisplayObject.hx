@@ -1,6 +1,7 @@
 package ru.ice.display;
 
 import haxe.Constraints.Function;
+import ru.ice.controls.super.IceControl.ResizeData;
 
 import js.Browser;
 import js.html.Image;
@@ -806,7 +807,9 @@ class DisplayObject extends DOMExpress
 		//resetTransformation(_scaleX, _scaleY, _rotate);
 	}
 	
-	public function update(emitResize:Bool = true) : Void {}
+	public function update(emitResize:Bool = true) : ResizeData {
+		return null;
+	}
 	
 	@:allow(ru.ice.display.Stage)
 	private function mouseMove(e:FingerEvent) : Void {

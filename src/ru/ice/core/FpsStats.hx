@@ -1,5 +1,6 @@
 package ru.ice.core;
 
+import ru.ice.controls.super.IceControl.ResizeData;
 import ru.ice.data.ElementData;
 import ru.ice.display.Sprite;
 /**
@@ -24,8 +25,9 @@ class FpsStats extends Sprite
 		super(elementData, true);
 	}
 	
-	public override function update(emitResize:Bool = true) : Void
+	public override function update(emitResize:Bool = true) : ResizeData
 	{
+		var data:ResizeData = super.update(emitResize);
 		_sumFps += 1 / stage.realPassedTime;
 		_frameCount ++;
 		if (_frameCount > TOTAL_FRAMES) {
@@ -33,5 +35,6 @@ class FpsStats extends Sprite
 			element.innerHTML = Std.string(Math.round(_fps * 10) / 10);
 			_frameCount = _sumFps = 0;
 		}
+		return data;
 	}
 }

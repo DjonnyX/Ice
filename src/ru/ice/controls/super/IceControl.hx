@@ -377,12 +377,12 @@ class IceControl extends Sprite
 	 * объекта. Если они менялись, то происходит перестроение лэйаута (если
 	 * конечно он в этом нуждается).
 	 */
-	public override function update(emitResize:Bool = true) : Void
+	public override function update(emitResize:Bool = true) : ResizeData
 	{
 		super.update();
 		
 		if (!_isInitialized)
-			return;
+			return null;
 		
 		if (_layout != null) {
 			if (_layout.needCalcParams)
@@ -422,7 +422,9 @@ class IceControl extends Sprite
 				resize(invalidData);
 				dispatchEventWith(Event.RESIZE, true, invalidData);
 			}
+			return invalidData;
 		}
+		return null;
 	}
 	
 	/*public function validateChildren(?obj:DisplayObject) : Void
