@@ -13,6 +13,8 @@ class HorizontalLayoutParams implements ILayoutParams
 	public static inline var NO_FIT:String = 'no-fit';
 	public static inline var FIT:String = 'fit';
 	
+	public var ignoreX:Bool = false;
+	
 	private var _fitWidth:String = FIT;
 	/**
 	 * Устанавливает точку опоры по горизонтали, указанную процентах

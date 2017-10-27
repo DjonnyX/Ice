@@ -202,7 +202,14 @@ class HorizontalLayout extends BaseLayout
 				else
 					child.y = _paddingTop;
 			}
-			if (!ignoreX) {
+			
+			var childIgnoreX:Bool = false;
+			var c:IceControl = cast _objects[i];
+			if (c != null) {
+				var p:HorizontalLayoutParams = cast c.layoutParams;
+				if (p != null && p.ignoreX) childIgnoreX = true;
+			}
+			if (!ignoreX && !childIgnoreX) {
 				child.x = x;
 				x += child._width + (_horizontalAlign == HORIZONTAL_ALIGN_JUSTIFY ? _paddingLeft + _paddingRight : _horizontalGap);
 				if (_roundToInt)
