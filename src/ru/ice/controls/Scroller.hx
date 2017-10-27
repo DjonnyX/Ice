@@ -105,6 +105,20 @@ class Scroller extends BaseStatesControl
 	
 	private var _forelayer:IceControl;
 	
+	/**
+	 * Включает округление координат во время анимации
+	 */
+	private var _roundToInt:Bool = true;
+	public var roundToInt(get, set):Bool;
+	private function get_roundToInt() : Bool {
+		return _roundToInt;
+	}
+	private function set_roundToInt(v:Bool) : Bool {
+		if (_roundToInt != v)
+			_roundToInt = v;
+		return _roundToInt;
+	}
+	
 	private var _enableBarriers:Bool = false;
 	public var enableBarriers(get, set):Bool;
 	private function get_enableBarriers():Bool{
@@ -310,7 +324,8 @@ class Scroller extends BaseStatesControl
 	private function set_horizontalScrollPosition(v:Float) : Float {
 		if (horizontalScrollPosition != v) {
 			clearAnimations();
-			_content.x = maxScrollX * v;
+			var xx:Float = maxScrollX * v;
+			_content.x = _roundToInt ? Math.round(xx) : xx;
 		}
 		return get_horizontalScrollPosition();
 	}
@@ -327,7 +342,8 @@ class Scroller extends BaseStatesControl
 	private function set_verticalScrollPosition(v:Float) : Float {
 		if (verticalScrollPosition != v) {
 			clearAnimations();
-			_content.y = maxScrollY * v;
+			var yy:Float = maxScrollY * v;
+			_content.y = _roundToInt ? Math.round(yy) : yy;
 		}
 		return get_verticalScrollPosition();
 	}
@@ -550,7 +566,7 @@ class Scroller extends BaseStatesControl
 			if (newX != lastX) {
 				Ice.animator.remove(_xTween);
 				var durationX:Float = calculateDynamicThrowDurationByDistance(Math.abs(Math.abs(newX) - Math.abs(lastX)));
-				_xTween = Ice.animator.tween(_content, durationX, {x:newX, transitionFunc:_throwEase, onUpdate:scrollX});
+				_xTween = Ice.animator.tween(_content, durationX, {x:newX, transitionFunc:_throwEase, onUpdate:scrollX, roundToInt:_roundToInt});
 			}
 		}
 		if (_paggination == PAGGINATION_VERTICAL) {
@@ -559,7 +575,7 @@ class Scroller extends BaseStatesControl
 			if (newY != lastY) {
 				var durationY:Float = calculateDynamicThrowDurationByDistance(Math.abs(Math.abs(newY) - Math.abs(lastY)));
 				Ice.animator.remove(_yTween);
-				_yTween = Ice.animator.tween(_content, 1, {y:newY, transitionFunc:_throwEase, onUpdate:scrollY});
+				_yTween = Ice.animator.tween(_content, 1, {y:newY, transitionFunc:_throwEase, onUpdate:scrollY, roundToInt:_roundToInt});
 			}
 		}
 	}
@@ -620,12 +636,11 @@ class Scroller extends BaseStatesControl
 		stageMoveHandler(e);
 	}
 	
-	public override function update(emitResize:Bool = true) : Void
+	public override function update(emitResize:Bool = true) : ResizeData
 	{
-		super.update(emitResize);
-		if (!_isDragging && !_isCalcVelocity)
-			return;
-		calculateVelocity();
+		var data:ResizeData = super.update(emitResize);
+		if (_isDragging || _isCalcVelocity) calculateVelocity();
+		return data;
 	}
 	
 	/**
@@ -798,10 +813,10 @@ class Scroller extends BaseStatesControl
 			durationX = calculateDynamicThrowDurationByDistance(Math.abs(_viewportAbsOffset.x));
 			if (_content._x > 0 || (rightOffset < 0 && maxScrollX > 0)) {
 				Ice.animator.remove(_xTween);
-				_xTween = Ice.animator.tween(_content, durationX, {x:0, transitionFunc:_throwEase, onUpdate:scrollX});
+				_xTween = Ice.animator.tween(_content, durationX, {x:0, transitionFunc:_throwEase, onUpdate:scrollX, roundToInt:_roundToInt});
 			} else if (rightOffset < 0) {
 				Ice.animator.remove(_xTween);
-				_xTween = Ice.animator.tween(_content, durationX, {x:maxScrollX, transitionFunc:_throwEase, onUpdate:scrollX});
+				_xTween = Ice.animator.tween(_content, durationX, {x:maxScrollX, transitionFunc:_throwEase, onUpdate:scrollX, roundToInt:_roundToInt});
 			} else if (_velocityX != 0 && !Math.isNaN(_velocityX)) {
 				throwScrollInertialForceX();
 			}
@@ -814,10 +829,10 @@ class Scroller extends BaseStatesControl
 			durationY = calculateDynamicThrowDurationByDistance(Math.abs(_viewportAbsOffset.y));
 			if (_content._y > 0 || (bottomOffset < 0 && maxScrollY > 0)) {
 				Ice.animator.remove(_yTween);
-				_yTween = Ice.animator.tween(_content, durationY, {y:0, transitionFunc:_throwEase, onUpdate:scrollY});
+				_yTween = Ice.animator.tween(_content, durationY, {y:0, transitionFunc:_throwEase, onUpdate:scrollY, roundToInt:_roundToInt});
 			} else if (bottomOffset < 0) {
 				Ice.animator.remove(_yTween);
-				_yTween = Ice.animator.tween(_content, durationY, {y:maxScrollY, transitionFunc:_throwEase, onUpdate:scrollY});
+				_yTween = Ice.animator.tween(_content, durationY, {y:maxScrollY, transitionFunc:_throwEase, onUpdate:scrollY, roundToInt:_roundToInt});
 			} else if (_velocityY != 0 && !Math.isNaN(_velocityY)) {
 				throwScrollInertialForceY();
 			}
@@ -860,7 +875,7 @@ class Scroller extends BaseStatesControl
 				_content.x = 0;
 				scrollX();
 			} else
-				_xTween = Ice.animator.tween(_content, duration / _easeBackTimeRatio, {x:0, transitionFunc:_easeOutBack, onUpdate:scrollX});
+				_xTween = Ice.animator.tween(_content, duration / _easeBackTimeRatio, {x:0, transitionFunc:_easeOutBack, onUpdate:scrollX, roundToInt:_roundToInt});
 		} else if (offset < 0) {
 			if (distance != null)
 				duration = calculateDynamicThrowDurationByDistance(Math.abs(offset));
@@ -873,7 +888,7 @@ class Scroller extends BaseStatesControl
 				_content.x = maxScrollX;
 				scrollX();
 			} else
-				_xTween = Ice.animator.tween(_content, duration / _easeBackTimeRatio, {x:maxScrollX, transitionFunc:_easeOutBack, onUpdate:scrollX});
+				_xTween = Ice.animator.tween(_content, duration / _easeBackTimeRatio, {x:maxScrollX, transitionFunc:_easeOutBack, onUpdate:scrollX, roundToInt:_roundToInt});
 		} else {
 			if (distance != null)
 				duration = calculateDynamicThrowDurationByDistance(Math.abs(distance));
@@ -892,7 +907,7 @@ class Scroller extends BaseStatesControl
 					newX = calcPositionByHorrizontalPaggination(contentPos);
 				else 
 					newX = contentPos;
-				_xTween = Ice.animator.tween(_content, duration, {x:newX, transitionFunc:_throwEase, onUpdate:scrollX});
+				_xTween = Ice.animator.tween(_content, duration, {x:newX, transitionFunc:_throwEase, onUpdate:scrollX, roundToInt:_roundToInt});
 			}
 		}
 	}
@@ -958,7 +973,7 @@ class Scroller extends BaseStatesControl
 				_content.y = 0;
 				scrollY();
 			} else
-				_yTween = Ice.animator.tween(_content, duration / _easeBackTimeRatio, {y:0, transitionFunc:_easeOutBack, onUpdate:scrollY});
+				_yTween = Ice.animator.tween(_content, duration / _easeBackTimeRatio, {y:0, transitionFunc:_easeOutBack, onUpdate:scrollY, roundToInt:_roundToInt});
 		} else if (offset < 0) {
 			if (distance != null)
 				duration = calculateDynamicThrowDurationByDistance(Math.abs(offset));
@@ -971,7 +986,7 @@ class Scroller extends BaseStatesControl
 				_content.y = maxScrollY;
 				scrollY();
 			} else
-				_yTween = Ice.animator.tween(_content, duration / _easeBackTimeRatio, {y:maxScrollY, transitionFunc:_easeOutBack, onUpdate:scrollY});
+				_yTween = Ice.animator.tween(_content, duration / _easeBackTimeRatio, {y:maxScrollY, transitionFunc:_easeOutBack, onUpdate:scrollY, roundToInt:_roundToInt});
 		} else {
 			if (distance != null)
 				duration = calculateDynamicThrowDurationByDistance(Math.abs(distance));
@@ -987,7 +1002,7 @@ class Scroller extends BaseStatesControl
 					newY = calcPositionByVerticalPaggination(contentPos);
 				else 
 					newY = contentPos;
-				_yTween = Ice.animator.tween(_content, duration, {y:newY, transitionFunc:_throwEase, onUpdate:scrollY});
+				_yTween = Ice.animator.tween(_content, duration, {y:newY, transitionFunc:_throwEase, onUpdate:scrollY, roundToInt:_roundToInt});
 			}
 		}
 	}

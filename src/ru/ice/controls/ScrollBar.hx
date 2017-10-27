@@ -464,13 +464,13 @@ class ScrollBar extends Scroller
 				Ice.animator.remove(_wTween);
 				Ice.animator.remove(_xTween);
 				_content.x = 0;
-				_xTween = Ice.animator.tween(_content, durationX, {x:0, transitionFunc:_throwEase, onUpdate:scrollX});
-				_wTween = Ice.animator.tween(_thumb, durationX, {width:ts, transitionFunc:_throwEase});
+				_xTween = Ice.animator.tween(_content, durationX, {x:0, transitionFunc:_throwEase, onUpdate:scrollX, roundToInt:_roundToInt});
+				_wTween = Ice.animator.tween(_thumb, durationX, {width:ts, transitionFunc:_throwEase, roundToInt:_roundToInt});
 			} else if (rightOffset > 0) {
 				Ice.animator.remove(_xTween);
 				Ice.animator.remove(_wTween);
-				_xTween = Ice.animator.tween(_content, durationX, {x:_width - ts, transitionFunc:_throwEase, onUpdate:scrollX});
-				_wTween = Ice.animator.tween(_thumb, durationX, {width:ts, transitionFunc:_throwEase});
+				_xTween = Ice.animator.tween(_content, durationX, {x:_width - ts, transitionFunc:_throwEase, onUpdate:scrollX, roundToInt:_roundToInt});
+				_wTween = Ice.animator.tween(_thumb, durationX, {width:ts, transitionFunc:_throwEase, roundToInt:_roundToInt});
 			} else if (_velocityX != 0 && !Math.isNaN(_velocityX))
 				throwScrollInertialForceX();
 		}
@@ -483,13 +483,13 @@ class ScrollBar extends Scroller
 				Ice.animator.remove(_hTween);
 				Ice.animator.remove(_yTween);
 				_content.y = 0;
-				_yTween = Ice.animator.tween(_content, durationY, {y:0, transitionFunc:_throwEase, onUpdate:scrollY});
-				_hTween = Ice.animator.tween(_thumb, durationY, {height:ts, transitionFunc:_throwEase});
+				_yTween = Ice.animator.tween(_content, durationY, {y:0, transitionFunc:_throwEase, onUpdate:scrollY, roundToInt:_roundToInt});
+				_hTween = Ice.animator.tween(_thumb, durationY, {height:ts, transitionFunc:_throwEase, roundToInt:_roundToInt});
 			} else if (bottomOffset > 0) {
 				Ice.animator.remove(_yTween);
 				Ice.animator.remove(_hTween);
-				_yTween = Ice.animator.tween(_content, durationY, {y:_height - ts, transitionFunc:_throwEase, onUpdate:scrollY});
-				_hTween = Ice.animator.tween(_thumb, durationY, {height:ts, transitionFunc:_throwEase});
+				_yTween = Ice.animator.tween(_content, durationY, {y:_height - ts, transitionFunc:_throwEase, onUpdate:scrollY, roundToInt:_roundToInt});
+				_hTween = Ice.animator.tween(_thumb, durationY, {height:ts, transitionFunc:_throwEase, roundToInt:_roundToInt});
 			} else if (_velocityY != 0 && !Math.isNaN(_velocityY))
 				throwScrollInertialForceY();
 		}
@@ -537,7 +537,7 @@ class ScrollBar extends Scroller
 							_content.x = 0;
 						}
 						scrollX();
-					}
+					}, roundToInt:_roundToInt
 				});
 			}
 		} else if (offset > 0) {
@@ -555,7 +555,7 @@ class ScrollBar extends Scroller
 							_content.x = _width - _thumb.width;
 						}
 						scrollX();
-					}
+					}, roundToInt:_roundToInt
 				});
 			}
 		} else {
@@ -567,7 +567,7 @@ class ScrollBar extends Scroller
 				_content.x = contentPos;
 				scrollX();
 			} else
-				_xTween = Ice.animator.tween(_content, duration, {x:contentPos, transitionFunc:_throwEase, onUpdate:scrollX});
+				_xTween = Ice.animator.tween(_content, duration, {x:contentPos, transitionFunc:_throwEase, onUpdate:scrollX, roundToInt:_roundToInt});
 		}
 	}
 	
@@ -613,7 +613,7 @@ class ScrollBar extends Scroller
 							_content.y = 0;
 						}
 						scrollY();
-					}
+					}, roundToInt:_roundToInt
 				});
 			}
 		} else if (offset > 0) {
@@ -631,7 +631,7 @@ class ScrollBar extends Scroller
 							_content.y = _height - _thumb.height;
 						}
 						scrollY();
-					}
+					}, roundToInt:_roundToInt
 				});
 			}
 		} else {
@@ -643,7 +643,7 @@ class ScrollBar extends Scroller
 				_content.y = contentPos;
 				scrollY();
 			} else
-				_yTween = Ice.animator.tween(_content, duration, {y:contentPos, transitionFunc:_throwEase, onUpdate:scrollY});
+				_yTween = Ice.animator.tween(_content, duration, {y:contentPos, transitionFunc:_throwEase, onUpdate:scrollY, roundToInt:_roundToInt});
 		}
 	}
 	
