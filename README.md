@@ -1,1 +1,6 @@
-# Ice - high tactile engine for touch ui based on html5
+# Ice - ui framework based on html5
+- A routing model is used
+- Own system of events
+- Own system for animation
+- DOM sprite system
+- Implementation of custom layouts
