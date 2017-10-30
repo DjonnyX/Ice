@@ -75,25 +75,11 @@ class HorizontalLayout extends BaseLayout
 		return _justifyAlign;
 	}
 	
-	private var _maxWidth:Float = 0;
-	public var maxWidth(get, set):Float;
-	private function get_maxWidth() : Float {
-		return _maxWidth;
-	}
-	private function set_maxWidth(v:Float) : Float {
-		if (_maxWidth != v) {
-			_maxWidth = v;
-			if (_owner != null)
-				update();
-		}
-		return _maxWidth;
-	}
-	
 	public function new() {
 		super();
 	}
 	
-	public override function update() : Rectangle
+	public override function update(width:Float = 0, height:Float = 0) : Rectangle
 	{
 		if (_owner == null || !_owner.isInitialized)
 			return _bound;
@@ -101,11 +87,11 @@ class HorizontalLayout extends BaseLayout
 		if (_needSort)
 			sort();
 		
-		var w:Float = _owner._width;
-		var h:Float = _owner._height;
+		var w:Float = width > 0 ? width : _owner._width;
+		var h:Float = height > 0 ? height : _owner._height;
 		var fw:Float = w;
 		
-		if (_maxWidth != 0 && _maxWidth < w)
+		if (_maxWidth > MathUtil.INT_MIN_VALUE && _maxWidth < w)
 			w = _maxWidth;
 		
 		#if debug
@@ -134,7 +120,7 @@ class HorizontalLayout extends BaseLayout
 					var p:HorizontalLayoutParams = cast c.layoutParams;
 					if (p != null && p.fitWidth == HorizontalLayoutParams.NO_FIT) {
 						isNoFit = true;
-						var ch:Float = c.width;
+						var ch:Float = c._width;
 						widths.push(ch);
 						fixedWidths += ch + (i < ol - 1 ? _horizontalGap : 0);
 						fixedL ++;
@@ -151,7 +137,6 @@ class HorizontalLayout extends BaseLayout
 				itemWidth = Math.round(itemWidth);
 		}
 		var i:Int = 0;
-		
 		for (child in _objects) {
 			if (_verticalAlign == VERTICAL_ALIGN_JUSTIFY)
 				child.height = stageHeight;
@@ -171,7 +156,7 @@ class HorizontalLayout extends BaseLayout
 		}
 		
 		if (!ignoreX) {
-			if (_maxWidth > 0) {
+			if (_maxWidth > MathUtil.INT_MIN_VALUE) {
 				if (_justifyAlign == JUSTIFY_ALIGN_CENTER)
 					x = _paddingLeft + (fw - fullWidth) * .5;
 				else if (_justifyAlign == JUSTIFY_ALIGN_RIGHT)
@@ -225,8 +210,9 @@ class HorizontalLayout extends BaseLayout
 		_bound.setSize(fullWidth + _paddingLeft + _paddingRight,
 					   fullHeight + _paddingTop + _paddingBottom);
 		
-		if (_owner._width != _bound.width || _owner._height != _bound.height)
+		if (_owner._width != _bound.width || _owner._height != _bound.height) {
 			_owner.setSize(_bound.width, _bound.height);
+		}
 		
 		if (_postLayout != null) {
 			_bound = _postLayout.update();

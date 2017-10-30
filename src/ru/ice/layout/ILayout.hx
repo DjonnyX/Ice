@@ -23,6 +23,8 @@ interface ILayout extends IEventDispatcher
 	public var bound(get, never) : Rectangle;
 	public var needResize(get, never) : Bool;
 	public var needCalcParams(get, never) : Bool;
+	public var maxWidth(get, never) : Float;
+	public var maxHeight(get, never) : Float;
 	public var commonPaddingLeft(get, never) : Float;
 	public var commonPaddingRight(get, never) : Float;
 	public var commonPaddingTop(get, never) : Float;
@@ -35,7 +37,7 @@ interface ILayout extends IEventDispatcher
 	public var verticalGap(never, set):Float;
 	public var horizontalGap(never, set):Float;
 	public var postLayout(get, set):ILayout;
-	public function update():Rectangle;
-	public function setSize(w:Float, h:Float):Void;
+	public function update(width:Float = 0, height:Float = 0):Rectangle;
+	//public function setSize(w:Float, h:Float):Void;
 	public function dispose():Void;
 }

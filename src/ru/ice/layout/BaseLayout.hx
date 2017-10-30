@@ -9,6 +9,7 @@ import ru.ice.layout.ILayout;
 import ru.ice.math.Rectangle;
 import ru.ice.display.Stage;
 import ru.ice.events.Event;
+import ru.ice.utils.MathUtil;
 /**
  * ...
  * @author Evgenii Grebennikov
@@ -30,6 +31,36 @@ class BaseLayout extends EventDispatcher implements ILayout
 				update();
 		}
 		return _roundToInt;
+	}
+	
+	private var _maxWidth:Float = MathUtil.INT_MIN_VALUE;
+	public var maxWidth(get, set):Float;
+	private function get_maxWidth() : Float {
+		return _maxWidth;
+	}
+	private function set_maxWidth(v:Float) : Float {
+		if (_maxWidth != v) {
+			_maxWidth = v;
+			updateParams();
+			if (_owner != null)
+				update();
+		}
+		return _maxWidth;
+	}
+	
+	private var _maxHeight:Float = MathUtil.INT_MIN_VALUE;
+	public var maxHeight(get, set):Float;
+	private function get_maxHeight() : Float {
+		return _maxHeight;
+	}
+	private function set_maxHeight(v:Float) : Float {
+		if (_maxHeight != v) {
+			_maxHeight = v;
+			updateParams();
+			if (_owner != null)
+				update();
+		}
+		return _maxHeight;
 	}
 	
 	/**
@@ -317,7 +348,7 @@ class BaseLayout extends EventDispatcher implements ILayout
 	/**
 	 * Высота
 	 */
-	public var width(get, set) : Float;
+	/*public var width(get, set) : Float;
 	private var _width:Float = 0;
 	private function get_width() : Float {
 		return _width;
@@ -326,12 +357,12 @@ class BaseLayout extends EventDispatcher implements ILayout
 		if (_width != v)
 			_width = v;
 		return _width;
-	}
+	}*/
 	
 	/**
 	 * Ширина
 	 */
-	private var _height:Float = 0;
+	/*private var _height:Float = 0;
 	public var height(get, set) : Float;
 	private function get_height() : Float {
 		return _height;
@@ -340,7 +371,7 @@ class BaseLayout extends EventDispatcher implements ILayout
 		if (_height != v)
 			_height = v;
 		return _height;
-	}
+	}*/
 	
 	private var _postLayoutPaddingLeft:Float = 0;
 	private var _postLayoutPaddingRight:Float = 0;
@@ -544,15 +575,15 @@ class BaseLayout extends EventDispatcher implements ILayout
 	/**
 	 * Устанавливает размеры лэйаута
 	 */
-	public function setSize(w:Float, h:Float) : Void {
+	/*public function setSize(w:Float, h:Float) : Void {
 		_width = w;
 		_height = h;
-	}
+	}*/
 	
 	/**
 	 * Обновление лэйаута
 	 */
-	public function update() : Rectangle {
+	public function update(width:Float = MathUtil.INT_MIN_VALUE, height:Float = MathUtil.INT_MIN_VALUE) : Rectangle {
 		return null;
 	}
 	
