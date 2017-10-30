@@ -8,7 +8,7 @@ import ru.ice.utils.MathUtil;
 import ru.ice.layout.ILayout;
 import ru.ice.math.Rectangle;
 /**
- * ...
+ * Вертикальный лэйаут
  * @author Evgenii Grebennikov
  */
 class VerticalLayout extends BaseLayout
@@ -61,16 +61,16 @@ class VerticalLayout extends BaseLayout
 		super();
 	}
 	
-	public override function update() : Rectangle
+	public override function update(width:Float = 0, height:Float = 0) : Rectangle
 	{
 		if (_owner == null || !_owner.isInitialized)
 			return _bound;
 		
 		if (_needSort)
 			sort();
-			
-		var w:Float = _owner._width;
-		var h:Float = _owner._height;
+		
+		var w:Float = width > 0 ? width : _owner._width;
+		var h:Float = height > 0 ? height : _owner._height;
 		
 		#if debug
 			trace('update layout', _owner.elementName, w, h, _paddingLeft, _paddingRight);
@@ -98,7 +98,7 @@ class VerticalLayout extends BaseLayout
 					var p:VerticalLayoutParams = cast c.layoutParams;
 					if (p != null && p.fitHeight == VerticalLayoutParams.NO_FIT) {
 						isNoFit = true;
-						var ch:Float = c.height;
+						var ch:Float = c._height;
 						heights.push(ch);
 						fixedHeights += ch + (i < ol - 1 ? _verticalGap : 0);
 						fixedL ++;
@@ -117,8 +117,9 @@ class VerticalLayout extends BaseLayout
 		var i:Int = 0;
 		
 		for (child in _objects) {
-			if (_horizontalAlign == HORIZONTAL_ALIGN_JUSTIFY)
+			if (_horizontalAlign == HORIZONTAL_ALIGN_JUSTIFY) {
 				child.width = stageWidth;
+			}
 			
 			if (_verticalAlign == VERTICAL_ALIGN_JUSTIFY)
 				child.height = itemHeight;
